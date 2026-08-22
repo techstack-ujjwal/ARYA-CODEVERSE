@@ -34,11 +34,6 @@ class MockCodeQualityAgent(BaseAgent):
         return f"Evaluate code quality for {context.project_name} at {context.submission_data.get('github_url')}"
 
 
-@pytest.fixture(autouse=True)
-async def ensure_db():
-    await init_db()
-
-
 @pytest.mark.asyncio
 async def test_agent_schemas_validation():
     # 1. BaseAgentOutput

@@ -32,7 +32,7 @@ class StructuredLLMClient:
     - Structured Pydantic output validation and self-correction
     - Multi-provider failover (OpenAI <-> Gemini)
     - Tenacity exponential backoff retries for transient errors
-    - Zero silent mock fallback when real API keys are configured
+    - Support for mock provider in isolated unit test suites
     """
 
     def __init__(
@@ -80,7 +80,6 @@ class StructuredLLMClient:
     async def _call_gemini_api(self, prompt: str, system_prompt: Optional[str] = None, temperature: float = 0.2) -> str:
         """Invokes Google Gemini REST API."""
         key = settings.GOOGLE_API_KEY
-        # Fallback to supported models if needed
         model = self.model_name if self.model_name in ["gemini-3.7-flash", "gemini-3.5-flash"] else "gemini-3.7-flash"
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
         headers = {"Content-Type": "application/json"}
@@ -139,6 +138,96 @@ class StructuredLLMClient:
             data = response.json()
             return data["choices"][0]["message"]["content"]
 
+    def _generate_mock_response(self, response_model: Type[T], prompt: str) -> Dict[str, Any]:
+        """Generates realistic mock evaluation data strictly for unit tests."""
+        schema_fields = response_model.model_fields
+        mock_data: Dict[str, Any] = {}
+
+        if "score" in schema_fields:
+            mock_data["score"] = 86.5
+        if "confidence" in schema_fields:
+            mock_data["confidence"] = 0.95
+        if "summary" in schema_fields:
+            mock_data["summary"] = "Structured evaluation completed with high confidence and verified criteria."
+        if "reasoning" in schema_fields:
+            mock_data["reasoning"] = "The submission exhibits strong domain adherence and verified criteria."
+        if "evidence" in schema_fields:
+            mock_data["evidence"] = [
+                {
+                    "evidence_type": "rubric_analysis",
+                    "source": "submission_payload",
+                    "tool_used": "deterministic_evaluator",
+                    "content": {"criterion": "feasibility", "status": "verified"},
+                    "summary": "Core workflow and functional claims verified against criteria.",
+                }
+            ]
+        if "risks" in schema_fields:
+            mock_data["risks"] = ["Monitor external API rate limits."]
+        if "questions" in schema_fields:
+            mock_data["questions"] = ["How does the system scale under load?"]
+        if "metrics" in schema_fields:
+            mock_data["metrics"] = {"coverage": 0.88, "latency_ms": 145}
+
+        # Stage specific fields
+        if "uniqueness_score" in schema_fields:
+            mock_data.update({
+                "uniqueness_score": 88.0,
+                "problem_clarity_score": 90.0,
+                "feasibility_score": 85.0,
+                "market_differentiation_score": 83.0,
+                "identified_competitors": ["Existing Solution A", "Generic Competitor B"],
+            })
+        if "presentation_quality_score" in schema_fields:
+            mock_data.update({
+                "presentation_quality_score": 86.0,
+                "architecture_clarity_score": 88.0,
+                "business_impact_score": 82.0,
+                "extracted_claims": [
+                    {
+                        "claim_type": "architecture",
+                        "claim_text": "Microservices backend with async event pipeline",
+                        "origin_stage": "ppt",
+                        "confidence": 0.92,
+                    }
+                ],
+            })
+        if "code_quality_score" in schema_fields:
+            mock_data.update({
+                "code_quality_score": 89.0,
+                "functionality_score": 92.0,
+                "ui_ux_score": 84.0,
+                "security_score": 88.0,
+                "real_world_impact_score": 85.0,
+                "verified_claims_count": 4,
+                "total_claims_count": 5,
+            })
+        if "overall_health" in schema_fields:
+            mock_data.update({
+                "overall_health": "ok",
+                "dimensions": {
+                    "code_quality": {"status": "ok", "notes": ["Clean modular layout"]},
+                    "deployment_health": {"status": "ok", "response_ms": 280},
+                    "functional_smoke": {"status": "ok", "passed_steps": 4},
+                    "security_scan": {"status": "ok", "findings": []},
+                    "documentation": {"status": "ok", "readme_present": True},
+                },
+                "top_fixes": ["Add end-to-end integration tests for the primary auth workflow."],
+            })
+        if "weighted_ai_score" in schema_fields:
+            mock_data.update({
+                "weighted_ai_score": 87.2,
+                "idea_score": 86.5,
+                "ppt_score": 85.0,
+                "product_score": 88.5,
+                "confidence": 0.94,
+                "executive_summary": "Strong submission demonstrating cohesive execution across all stages.",
+                "strengths": ["Clean modular architecture", "Clear problem definition"],
+                "weaknesses": ["Minor edge case error handling in external API calls"],
+                "suggested_judge_questions": ["What is the primary bottleneck when scaling to 10k concurrent users?"],
+            })
+
+        return mock_data
+
     async def generate_structured(
         self,
         prompt: str,
@@ -151,6 +240,10 @@ class StructuredLLMClient:
         Executes prompt and returns a validated Pydantic model.
         Uses OpenAI or Gemini real APIs with automatic self-correction re-prompts on schema mismatch.
         """
+        if self.provider == "mock":
+            mock_dict = self._generate_mock_response(response_model, prompt)
+            return response_model.model_validate(mock_dict)
+
         # Append schema instructions to prompt
         json_schema_str = json.dumps(response_model.model_json_schema(), indent=2)
         enhanced_prompt = (

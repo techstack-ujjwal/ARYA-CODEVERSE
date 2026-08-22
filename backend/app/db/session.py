@@ -1,13 +1,15 @@
 from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.pool import NullPool
 from loguru import logger
 from backend.app.core.config import settings
 from backend.app.models.db_models.base import Base
 
-# Create async engine with pool configuration
 engine_kwargs = {"echo": False}
 if "sqlite" in settings.DATABASE_URL:
     engine_kwargs["connect_args"] = {"check_same_thread": False}
+else:
+    engine_kwargs["poolclass"] = NullPool
 
 async_engine = create_async_engine(settings.DATABASE_URL, **engine_kwargs)
 
@@ -18,6 +20,7 @@ AsyncSessionLocal = async_sessionmaker(
     autocommit=False,
     autoflush=False,
 )
+
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
@@ -34,7 +37,9 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
 
 
 async def init_db():
-    """Initializes the database schema (useful for dev / sqlite)."""
-    async with async_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    logger.info("Database initialized successfully.")
+    """Initializes the database schema if needed."""
+    if "sqlite" in settings.DATABASE_URL:
+        async with async_engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+    logger.info("Database initialized.")
+

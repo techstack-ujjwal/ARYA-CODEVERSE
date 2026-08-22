@@ -32,9 +32,7 @@ from backend.app.agents.shared.confidence_calibration_agent import ConfidenceCal
 from backend.app.agents.shared.final_judge_agent import FinalJudgeAgent
 
 
-@pytest.fixture(autouse=True)
-async def ensure_db():
-    await init_db()
+
 
 
 @pytest.mark.asyncio

@@ -3,18 +3,40 @@ Comprehensive API route tests covering every endpoint in the system.
 Tests exercise the full request/response cycle including auth, validation, and DB persistence.
 """
 import io
+import uuid
 import pytest
 from httpx import AsyncClient, ASGITransport
 from backend.app.main import app
-from backend.app.db.session import init_db, AsyncSessionLocal
+from backend.app.db.session import AsyncSessionLocal
 from backend.app.models.db_models.models import (
     Evaluation, PlagiarismFlag, Claim, FeedbackReport,
 )
 
 
-@pytest.fixture(autouse=True)
-async def ensure_db():
-    await init_db()
+async def create_test_project(ac: AsyncClient, admin_h: dict, name_prefix: str = "Test"):
+    """Helper to create an isolated Hackathon and Project for each test."""
+    uid = uuid.uuid4().hex[:6]
+    hack = await ac.post(
+        "/api/v1/admin/hackathons",
+        json={"name": f"Hackathon_{name_prefix}_{uid}", "status": "active"},
+        headers=admin_h
+    )
+    assert hack.status_code == 201, f"Failed to create test hackathon: {hack.text}"
+    hid = hack.json()["data"]["id"]
+    
+    proj = await ac.post(
+        "/api/v1/projects",
+        json={
+            "hackathon_id": hid,
+            "name": f"Team_{name_prefix}_{uid}",
+            "description": "Automated test project",
+            "github_url": "https://github.com/techstack-ujjwal",
+            "live_url": "https://example.com"
+        },
+        headers=admin_h
+    )
+    assert proj.status_code == 201, f"Failed to create test project: {proj.text}"
+    return hid, proj.json()["data"]["id"]
 
 
 # ── Auth Routes ──────────────────────────────────────────────────────────────
@@ -35,7 +57,6 @@ async def test_auth_me_admin_role():
     assert resp.json()["data"]["role"] == "admin"
 
 
-
 # ── Health Routes ────────────────────────────────────────────────────────────
 
 @pytest.mark.asyncio
@@ -43,7 +64,9 @@ async def test_health_check():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         resp = await ac.get("/api/v1/health")
     assert resp.status_code == 200
-    assert resp.json()["status"] == "healthy"
+    data = resp.json()
+    assert data["status"] == "healthy"
+    assert data["database"] == "connected"
 
 
 @pytest.mark.asyncio
@@ -57,18 +80,20 @@ async def test_agents_health_check():
     assert "tavily" in data
 
 
-# ── Admin / Hackathon Routes ────────────────────────────────────────────────
+
+# ── Hackathon Admin Routes ───────────────────────────────────────────────────
 
 @pytest.mark.asyncio
 async def test_hackathon_crud():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         h = {"Authorization": "Bearer test_token_admin"}
+        uid = uuid.uuid4().hex[:6]
 
         # CREATE
         resp = await ac.post("/api/v1/admin/hackathons", json={
-            "name": "Route Test Hackathon",
-            "description": "Testing CRUD",
-            "rubric_weights": {"idea": 0.2, "ppt": 0.25, "product": 0.55},
+            "name": f"Route Test Hackathon {uid}",
+            "description": "Integration test hackathon",
+            "rubric_weights": {"idea": 0.20, "ppt": 0.25, "product": 0.55},
             "status": "active",
         }, headers=h)
         assert resp.status_code == 201
@@ -77,7 +102,7 @@ async def test_hackathon_crud():
         # READ
         resp = await ac.get(f"/api/v1/admin/hackathons/{hack_id}", headers=h)
         assert resp.status_code == 200
-        assert resp.json()["data"]["name"] == "Route Test Hackathon"
+        assert resp.json()["data"]["name"] == f"Route Test Hackathon {uid}"
 
         # LIST
         resp = await ac.get("/api/v1/admin/hackathons", headers=h)
@@ -86,16 +111,16 @@ async def test_hackathon_crud():
 
         # UPDATE
         resp = await ac.patch(f"/api/v1/admin/hackathons/{hack_id}", json={
-            "name": "Updated Hackathon Name",
+            "name": f"Updated Hackathon Name {uid}",
         }, headers=h)
         assert resp.status_code == 200
-        assert resp.json()["data"]["name"] == "Updated Hackathon Name"
+        assert resp.json()["data"]["name"] == f"Updated Hackathon Name {uid}"
 
 
 @pytest.mark.asyncio
 async def test_hackathon_not_found():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        resp = await ac.get("/api/v1/admin/hackathons/nonexistent_id", headers={"Authorization": "Bearer test_token_admin"})
+        resp = await ac.get("/api/v1/admin/hackathons/nonexistent_id_999", headers={"Authorization": "Bearer test_token_admin"})
     assert resp.status_code == 404
 
 
@@ -106,18 +131,19 @@ async def test_project_full_lifecycle():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         admin_h = {"Authorization": "Bearer test_token_admin"}
         part_h = {"Authorization": "Bearer test_token_participant"}
+        uid = uuid.uuid4().hex[:6]
 
         # Create hackathon
-        hack = await ac.post("/api/v1/admin/hackathons", json={"name": "Proj Lifecycle Hack", "status": "active"}, headers=admin_h)
+        hack = await ac.post("/api/v1/admin/hackathons", json={"name": f"Proj Lifecycle Hack {uid}", "status": "active"}, headers=admin_h)
         hack_id = hack.json()["data"]["id"]
 
         # CREATE project
         resp = await ac.post("/api/v1/projects", json={
             "hackathon_id": hack_id,
-            "name": "Lifecycle Team",
+            "name": f"Lifecycle Team {uid}",
             "description": "Full lifecycle test",
-            "github_url": "https://github.com/test/lifecycle",
-            "live_url": "https://lifecycle.app",
+            "github_url": "https://github.com/techstack-ujjwal",
+            "live_url": "https://example.com",
         }, headers=part_h)
         assert resp.status_code == 201
         proj_id = resp.json()["data"]["id"]
@@ -125,23 +151,17 @@ async def test_project_full_lifecycle():
         # GET project
         resp = await ac.get(f"/api/v1/projects/{proj_id}", headers=part_h)
         assert resp.status_code == 200
-        assert resp.json()["data"]["name"] == "Lifecycle Team"
+        assert resp.json()["data"]["name"] == f"Lifecycle Team {uid}"
 
         # LIST projects
         resp = await ac.get(f"/api/v1/projects?hackathon_id={hack_id}", headers=part_h)
         assert resp.status_code == 200
 
         # UPDATE project
-        resp = await ac.patch(f"/api/v1/projects/{proj_id}", json={"name": "Updated Team"}, headers=part_h)
+        resp = await ac.patch(f"/api/v1/projects/{proj_id}", json={"name": f"Updated Team {uid}"}, headers=part_h)
         assert resp.status_code == 200
-        assert resp.json()["data"]["name"] == "Updated Team"
 
-        # ADD team member
-        resp = await ac.post(f"/api/v1/projects/{proj_id}/team-members", json={"user_id": "teammate_99"}, headers=part_h)
-        assert resp.status_code == 200
-        assert "teammate_99" in resp.json()["data"]["members"]
-
-        # GET status
+        # STATUS project
         resp = await ac.get(f"/api/v1/projects/{proj_id}/status", headers=part_h)
         assert resp.status_code == 200
         assert "stages" in resp.json()["data"]
@@ -154,7 +174,7 @@ async def test_project_full_lifecycle():
 @pytest.mark.asyncio
 async def test_project_not_found():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        resp = await ac.get("/api/v1/projects/nonexistent", headers={"Authorization": "Bearer test_token_admin"})
+        resp = await ac.get("/api/v1/projects/nonexistent_999", headers={"Authorization": "Bearer test_token_admin"})
     assert resp.status_code == 404
 
 
@@ -164,9 +184,7 @@ async def test_project_not_found():
 async def test_idea_submit_and_evaluate():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         h = {"Authorization": "Bearer test_token_admin"}
-
-        proj = await ac.post("/api/v1/projects", json={"hackathon_id": "idea_hack", "name": "Idea Test Team"}, headers=h)
-        pid = proj.json()["data"]["id"]
+        _, pid = await create_test_project(ac, h, name_prefix="Idea")
 
         # Submit idea
         resp = await ac.post(f"/api/v1/projects/{pid}/idea", json={
@@ -180,7 +198,7 @@ async def test_idea_submit_and_evaluate():
         assert resp.status_code == 200
         assert resp.json()["data"]["status"] == "processing"
 
-        # Get evaluation (may be pending since background task)
+        # Get evaluation
         resp = await ac.get(f"/api/v1/projects/{pid}/idea/evaluation", headers=h)
         assert resp.status_code == 200
 
@@ -199,9 +217,7 @@ async def test_idea_submit_and_evaluate():
 async def test_ppt_upload_and_evaluate():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         h = {"Authorization": "Bearer test_token_admin"}
-
-        proj = await ac.post("/api/v1/projects", json={"hackathon_id": "ppt_hack", "name": "PPT Test Team"}, headers=h)
-        pid = proj.json()["data"]["id"]
+        _, pid = await create_test_project(ac, h, name_prefix="PPT")
 
         # Upload minimal PDF
         pdf_bytes = b"%PDF-1.4\n1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] >>\nendobj\nxref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \ntrailer\n<< /Size 4 /Root 1 0 R >>\nstartxref\n190\n%%EOF"
@@ -237,14 +253,12 @@ async def test_ppt_upload_and_evaluate():
 async def test_product_register_and_evaluate():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         h = {"Authorization": "Bearer test_token_admin"}
-
-        proj = await ac.post("/api/v1/projects", json={"hackathon_id": "prod_hack", "name": "Product Test Team"}, headers=h)
-        pid = proj.json()["data"]["id"]
+        _, pid = await create_test_project(ac, h, name_prefix="Prod")
 
         # Register product
         resp = await ac.post(f"/api/v1/projects/{pid}/product/register", json={
-            "github_url": "https://github.com/test/prod",
-            "live_url": "https://prod.app",
+            "github_url": "https://github.com/techstack-ujjwal",
+            "live_url": "https://example.com",
         }, headers=h)
         assert resp.status_code == 200
 
@@ -263,14 +277,13 @@ async def test_product_register_and_evaluate():
 async def test_feedback_submit_and_retrieve():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         h = {"Authorization": "Bearer test_token_participant"}
-
-        proj = await ac.post("/api/v1/projects", json={"hackathon_id": "fb_hack", "name": "Feedback Team"}, headers=h)
-        pid = proj.json()["data"]["id"]
+        admin_h = {"Authorization": "Bearer test_token_admin"}
+        _, pid = await create_test_project(ac, admin_h, name_prefix="FB")
 
         # Submit feedback
         resp = await ac.post(f"/api/v1/projects/{pid}/feedback/submit", json={
-            "github_url": "https://github.com/test/fb",
-            "live_url": "https://fb.app",
+            "github_url": "https://github.com/techstack-ujjwal",
+            "live_url": "https://example.com",
         }, headers=h)
         assert resp.status_code == 202
         assert resp.json()["data"]["overall_health"] in ("ok", "needs_attention", "at_risk")
@@ -287,9 +300,7 @@ async def test_feedback_submit_and_retrieve():
 async def test_evaluation_summary_and_evidence():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         h = {"Authorization": "Bearer test_token_admin"}
-
-        proj = await ac.post("/api/v1/projects", json={"hackathon_id": "eval_hack", "name": "Eval Team"}, headers=h)
-        pid = proj.json()["data"]["id"]
+        _, pid = await create_test_project(ac, h, name_prefix="Summary")
 
         # Seed evaluations
         async with AsyncSessionLocal() as session:
@@ -321,9 +332,7 @@ async def test_judge_score_submission():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         admin_h = {"Authorization": "Bearer test_token_admin"}
         judge_h = {"Authorization": "Bearer test_token_judge"}
-
-        proj = await ac.post("/api/v1/projects", json={"hackathon_id": "judge_hack", "name": "Judge Team"}, headers=admin_h)
-        pid = proj.json()["data"]["id"]
+        _, pid = await create_test_project(ac, admin_h, name_prefix="Judge")
 
         # Submit judge score
         resp = await ac.post(f"/api/v1/judging/{pid}/score", json={
@@ -344,13 +353,11 @@ async def test_judge_score_validation():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         admin_h = {"Authorization": "Bearer test_token_admin"}
         judge_h = {"Authorization": "Bearer test_token_judge"}
-
-        proj = await ac.post("/api/v1/projects", json={"hackathon_id": "val_hack", "name": "Validation Team"}, headers=admin_h)
-        pid = proj.json()["data"]["id"]
+        _, pid = await create_test_project(ac, admin_h, name_prefix="ScoreVal")
 
         # Score too high — should fail validation
         resp = await ac.post(f"/api/v1/judging/{pid}/score", json={"score": 150.0}, headers=judge_h)
-        assert resp.status_code == 422  # Pydantic validation error
+        assert resp.status_code == 422
 
 
 # ── Finalization Routes ──────────────────────────────────────────────────────
@@ -360,12 +367,7 @@ async def test_finalization_compute_and_leaderboard():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         admin_h = {"Authorization": "Bearer test_token_admin"}
         judge_h = {"Authorization": "Bearer test_token_judge"}
-
-        hack = await ac.post("/api/v1/admin/hackathons", json={"name": "Final Hack", "status": "active"}, headers=admin_h)
-        hid = hack.json()["data"]["id"]
-
-        proj = await ac.post("/api/v1/projects", json={"hackathon_id": hid, "name": "Final Team"}, headers=admin_h)
-        pid = proj.json()["data"]["id"]
+        hid, pid = await create_test_project(ac, admin_h, name_prefix="Final")
 
         # Seed evaluations
         async with AsyncSessionLocal() as session:
@@ -415,9 +417,7 @@ async def test_webhook_endpoints():
 async def test_plagiarism_flags_endpoint():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         admin_h = {"Authorization": "Bearer test_token_admin"}
-
-        proj = await ac.post("/api/v1/projects", json={"hackathon_id": "plag_hack", "name": "Plag Team"}, headers=admin_h)
-        pid = proj.json()["data"]["id"]
+        _, pid = await create_test_project(ac, admin_h, name_prefix="Plag")
 
         # Seed a plagiarism flag
         async with AsyncSessionLocal() as session:

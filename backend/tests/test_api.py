@@ -48,24 +48,41 @@ async def test_projects_list():
     assert data["success"] is True
 
 
+import uuid
+
+
 @pytest.mark.asyncio
 async def test_feedback_submit():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        auth_header = {"Authorization": "Bearer test_token_participant"}
-        # Create project first
+        admin_header = {"Authorization": "Bearer test_token_admin"}
+        part_header = {"Authorization": "Bearer test_token_participant"}
+        uid = uuid.uuid4().hex[:6]
+
+        # 1. Create hackathon
+        hack = await ac.post(
+            "/api/v1/admin/hackathons",
+            json={"name": f"FB Hack {uid}", "status": "active"},
+            headers=admin_header,
+        )
+        assert hack.status_code == 201
+        hid = hack.json()["data"]["id"]
+
+        # 2. Create project
         proj_resp = await ac.post(
             "/api/v1/projects",
-            json={"hackathon_id": "hack_fb_test", "name": "FB Test Project"},
-            headers=auth_header,
+            json={"hackathon_id": hid, "name": f"FB Test Project {uid}"},
+            headers=part_header,
         )
+        assert proj_resp.status_code == 201
         proj_id = proj_resp.json()["data"]["id"]
 
         response = await ac.post(
             f"/api/v1/projects/{proj_id}/feedback/submit",
-            json={"github_url": "https://github.com/test/repo", "live_url": "https://test.app"},
-            headers=auth_header,
+            json={"github_url": "https://github.com/techstack-ujjwal", "live_url": "https://example.com"},
+            headers=part_header,
         )
     assert response.status_code == 202
     data = response.json()
     assert data["success"] is True
     assert data["data"]["project_id"] == proj_id
+

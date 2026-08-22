@@ -1,22 +1,18 @@
+import uuid
 import pytest
 from httpx import AsyncClient, ASGITransport
 from backend.app.main import app
-from backend.app.db.session import init_db
-
-
-@pytest.fixture(autouse=True)
-async def setup_db():
-    await init_db()
 
 
 @pytest.mark.asyncio
 async def test_hackathon_and_project_lifecycle():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        uid = uuid.uuid4().hex[:6]
         # 1. Admin creates a Hackathon
         hack_resp = await ac.post(
             "/api/v1/admin/hackathons",
             json={
-                "name": "Global AI Hackathon 2026",
+                "name": f"Global AI Hackathon {uid}",
                 "description": "Evaluate multi-agent innovations",
                 "rubric_weights": {"idea": 0.20, "ppt": 0.25, "product": 0.55},
                 "status": "active",
@@ -26,14 +22,14 @@ async def test_hackathon_and_project_lifecycle():
         assert hack_resp.status_code == 201
         hack_data = hack_resp.json()["data"]
         hack_id = hack_data["id"]
-        assert hack_data["name"] == "Global AI Hackathon 2026"
+        assert hack_data["name"] == f"Global AI Hackathon {uid}"
 
         # 2. Participant creates a Project under Hackathon
         proj_resp = await ac.post(
             "/api/v1/projects",
             json={
                 "hackathon_id": hack_id,
-                "name": "Team SuperAgents",
+                "name": f"Team SuperAgents {uid}",
                 "description": "Autonomous Code Review Engine",
                 "github_url": "https://github.com/super/repo",
                 "live_url": "https://super.vercel.app",
@@ -43,8 +39,9 @@ async def test_hackathon_and_project_lifecycle():
         assert proj_resp.status_code == 201
         proj_data = proj_resp.json()["data"]
         proj_id = proj_data["id"]
-        assert proj_data["name"] == "Team SuperAgents"
+        assert proj_data["name"] == f"Team SuperAgents {uid}"
         assert proj_data["status"] == "idea"
+
 
         # 3. Add team member
         member_resp = await ac.post(

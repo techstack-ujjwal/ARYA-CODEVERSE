@@ -1,18 +1,14 @@
+import uuid
 import pytest
 from httpx import AsyncClient, ASGITransport
 from backend.app.main import app
-from backend.app.db.session import init_db, AsyncSessionLocal
+from backend.app.db.session import AsyncSessionLocal
 from backend.app.models.db_models.models import Evaluation, Hackathon, Project
 from backend.app.agents.shared.cross_stage_consistency_agent import CrossStageConsistencyAgent
 from backend.app.agents.shared.plagiarism_agent import PlagiarismAgent
 from backend.app.agents.shared.final_judge_agent import FinalJudgeAgent
 from backend.app.agents.orchestrator.base_agent import AgentInputContext
 from backend.app.models.schemas.agent_schema import ExtractedClaim, EvidenceItem
-
-
-@pytest.fixture(autouse=True)
-async def ensure_db():
-    await init_db()
 
 
 @pytest.mark.asyncio
@@ -56,11 +52,12 @@ async def test_judging_and_finalization_flow():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         admin_header = {"Authorization": "Bearer test_token_admin"}
         judge_header = {"Authorization": "Bearer test_token_judge"}
+        uid = uuid.uuid4().hex[:6]
 
         # 1. Create Hackathon
         hack_resp = await ac.post(
             "/api/v1/admin/hackathons",
-            json={"name": "Finals AI Hackathon", "status": "active"},
+            json={"name": f"Finals AI Hackathon {uid}", "status": "active"},
             headers=admin_header,
         )
         hack_id = hack_resp.json()["data"]["id"]
@@ -68,10 +65,11 @@ async def test_judging_and_finalization_flow():
         # 2. Create Project
         proj_resp = await ac.post(
             "/api/v1/projects",
-            json={"hackathon_id": hack_id, "name": "Team Champion"},
+            json={"hackathon_id": hack_id, "name": f"Team Champion {uid}"},
             headers=admin_header,
         )
         proj_id = proj_resp.json()["data"]["id"]
+
 
         # Seed Stage Evaluations into DB
         async with AsyncSessionLocal() as session:

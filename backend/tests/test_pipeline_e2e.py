@@ -5,11 +5,6 @@ from backend.app.main import app
 from backend.app.db.session import init_db
 
 
-@pytest.fixture(autouse=True)
-async def ensure_db():
-    await init_db()
-
-
 @pytest.mark.asyncio
 async def test_full_evaluation_pipeline_e2e():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
