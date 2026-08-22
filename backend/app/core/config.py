@@ -36,31 +36,94 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite+aiosqlite:///./eval_engine.db"
     SYNC_DATABASE_URL: str = "sqlite:///./eval_engine.db"
 
+    @staticmethod
+    def _sanitize_url(v: str, is_async: bool = True) -> str:
+        if not v:
+            return "sqlite+aiosqlite:///./eval_engine.db" if is_async else "sqlite:///./eval_engine.db"
+        url = str(v).strip().strip("\"'").strip()
+        
+        # Strip accidental key prefix (e.g. DATABASE_URL=...)
+        if "=" in url and not url.startswith("sqlite") and "://" in url:
+            prefix_part, rest = url.split("=", 1)
+            if "DATABASE_URL" in prefix_part.upper() or "SYNC_DATABASE_URL" in prefix_part.upper():
+                url = rest.strip().strip("\"'").strip()
+
+        if not url:
+            return "sqlite+aiosqlite:///./eval_engine.db" if is_async else "sqlite:///./eval_engine.db"
+
+        # Handle SQLite
+        if url.startswith("sqlite"):
+            if is_async and not url.startswith("sqlite+aiosqlite://"):
+                url = "sqlite+aiosqlite://" + url[len("sqlite://"):] if url.startswith("sqlite://") else url
+            elif not is_async and url.startswith("sqlite+aiosqlite://"):
+                url = "sqlite://" + url[len("sqlite+aiosqlite://"):]
+            return url
+
+        if "://" not in url:
+            return url
+
+        raw_scheme, remainder = url.split("://", 1)
+        raw_scheme = raw_scheme.lower().strip()
+
+        if is_async:
+            if raw_scheme in ("postgres", "postgresql"):
+                scheme = "postgresql+asyncpg"
+            elif raw_scheme.startswith("postgres"):
+                scheme = raw_scheme.replace("postgres://", "postgresql+asyncpg://").replace("postgres+", "postgresql+")
+                if not ("+" in scheme):
+                    scheme = "postgresql+asyncpg"
+            else:
+                scheme = raw_scheme
+        else:
+            if raw_scheme in ("postgres", "postgresql+asyncpg"):
+                scheme = "postgresql"
+            elif raw_scheme.startswith("postgresql+"):
+                scheme = "postgresql"
+            elif raw_scheme == "postgres":
+                scheme = "postgresql"
+            else:
+                scheme = raw_scheme
+
+        query_str = ""
+        if "?" in remainder:
+            remainder, query_str = remainder.split("?", 1)
+            query_str = "?" + query_str
+
+        path_str = ""
+        if "/" in remainder:
+            authority, path_str = remainder.split("/", 1)
+            path_str = "/" + path_str
+        else:
+            authority = remainder
+
+        if "@" in authority:
+            import urllib.parse
+            last_at_idx = authority.rfind("@")
+            creds = authority[:last_at_idx]
+            host_port = authority[last_at_idx + 1:]
+
+            if ":" in creds:
+                user, password = creds.split(":", 1)
+                enc_user = urllib.parse.quote(urllib.parse.unquote(user), safe="")
+                enc_password = urllib.parse.quote(urllib.parse.unquote(password), safe="")
+                clean_authority = f"{enc_user}:{enc_password}@{host_port}"
+            else:
+                enc_user = urllib.parse.quote(urllib.parse.unquote(creds), safe="")
+                clean_authority = f"{enc_user}@{host_port}"
+        else:
+            clean_authority = authority
+
+        return f"{scheme}://{clean_authority}{path_str}{query_str}"
+
     @field_validator("DATABASE_URL", mode="before")
     @classmethod
     def sanitize_database_url(cls, v: str) -> str:
-        if not v:
-            return "sqlite+aiosqlite:///./eval_engine.db"
-        url = str(v).strip()
-        # 1. Normalize postgres:// or postgresql:// to postgresql+asyncpg://
-        if url.startswith("postgres://"):
-            url = "postgresql+asyncpg://" + url[len("postgres://"):]
-        elif url.startswith("postgresql://") and not url.startswith("postgresql+asyncpg://"):
-            url = "postgresql+asyncpg://" + url[len("postgresql://"):]
+        return cls._sanitize_url(v, is_async=True)
 
-        # 2. Fix passwords with unescaped '@' characters
-        if "://" in url and url.count("@") > 1:
-            import urllib.parse
-            scheme, remainder = url.split("://", 1)
-            last_at_idx = remainder.rfind("@")
-            creds = remainder[:last_at_idx]
-            host_and_db = remainder[last_at_idx + 1:]
-            if ":" in creds:
-                user, password = creds.split(":", 1)
-                encoded_password = urllib.parse.quote(urllib.parse.unquote(password), safe="")
-                url = f"{scheme}://{user}:{encoded_password}@{host_and_db}"
-
-        return url
+    @field_validator("SYNC_DATABASE_URL", mode="before")
+    @classmethod
+    def sanitize_sync_database_url(cls, v: str) -> str:
+        return cls._sanitize_url(v, is_async=False)
 
 
     # Clerk Auth (Supports standard Clerk & Next.js frontend variable names)
