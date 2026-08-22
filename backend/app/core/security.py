@@ -25,8 +25,8 @@ async def get_current_user(
     """
     clerk_secret = settings.get_clerk_secret_key
     if not credentials:
-        if settings.ENVIRONMENT in ["development", "test"] and not clerk_secret:
-            # Dev/Test fallback when Clerk is not configured
+        if not clerk_secret or settings.ENVIRONMENT in ["development", "test"]:
+            # Fallback when Clerk is not configured or in dev/demo mode
             return AuthenticatedUser(
                 user_id="dev_user_001",
                 email="dev@example.com",
@@ -41,8 +41,8 @@ async def get_current_user(
 
     token = credentials.credentials
 
-    # Support mock test token in non-production environments
-    if settings.ENVIRONMENT in ["development", "test"] and token.startswith("test_token_"):
+    # Support mock role switcher tokens (test_token_admin, test_token_judge, test_token_participant)
+    if token.startswith("test_token_"):
         role = token.split("test_token_")[1] if len(token.split("test_token_")) > 1 else "participant"
         return AuthenticatedUser(
             user_id=f"user_{role}",

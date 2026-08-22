@@ -43,6 +43,21 @@ def create_application() -> FastAPI:
             allow_headers=["*"],
         )
 
+    @app.exception_handler(Exception)
+    async def global_exception_handler(request, exc: Exception):
+        logger.error(f"Unhandled server error on {request.url.path}: {exc}")
+        from fastapi.responses import JSONResponse
+        return JSONResponse(
+            status_code=500,
+            content={
+                "success": False,
+                "message": "Internal Server Error",
+                "detail": str(exc) if settings.DEBUG else "An unexpected server error occurred",
+                "data": None,
+                "error": str(exc),
+            },
+        )
+
     # Mount v1 router
     app.include_router(api_router, prefix=settings.API_V1_STR)
 

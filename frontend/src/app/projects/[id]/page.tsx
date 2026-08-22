@@ -126,13 +126,23 @@ export default function ProjectWorkspacePage({
       }
 
       // Parallel fetch of prior stage data
-      const [iEval, pEval, claims, prodEval, fbData] = await Promise.all([
+      const [iEval, pEval, claims, prodEval, fbData, ideaSub] = await Promise.all([
         StagesAPI.getIdeaEvaluation(projectId).catch(() => null),
         StagesAPI.getPPTEvaluation(projectId).catch(() => null),
         StagesAPI.getPPTClaims(projectId).catch(() => []),
         StagesAPI.getProductEvaluation(projectId).catch(() => null),
         FeedbackAPI.getLatest(projectId).catch(() => null),
+        StagesAPI.getIdeaSubmission(projectId).catch(() => null),
       ]);
+
+      if (ideaSub && (ideaSub.problem_statement || ideaSub.proposed_solution)) {
+        setIdeaForm({
+          problem_statement: ideaSub.problem_statement || "",
+          proposed_solution: ideaSub.proposed_solution || "",
+          target_audience: ideaSub.target_audience || "",
+          uniqueness: ideaSub.uniqueness || "",
+        });
+      }
 
       if (iEval && iEval.score !== undefined) setIdeaEval(iEval);
       if (pEval && pEval.score !== undefined) setPptEval(pEval);

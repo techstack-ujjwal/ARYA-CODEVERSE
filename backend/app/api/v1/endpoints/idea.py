@@ -74,6 +74,22 @@ async def submit_idea(
     )
 
 
+@router.get("/{id}/idea/submission", response_model=APIResponse[dict])
+async def get_idea_submission(
+    id: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: AuthenticatedUser = Depends(get_current_user),
+):
+    """Retrieves saved idea submission text fields for this project."""
+    submission_repo = SubmissionRepository(db)
+    submission = await submission_repo.get_by_project_and_stage(id, stage="idea")
+    return APIResponse(
+        success=True,
+        message="Idea submission retrieved",
+        data=submission.payload if submission else {},
+    )
+
+
 async def _run_idea_eval_background(project_id: str):
     """Background task to run Idea Stage 4-agent parallel evaluation and persist to DB."""
     async with AsyncSessionLocal() as session:

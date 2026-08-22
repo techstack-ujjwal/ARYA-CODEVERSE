@@ -33,12 +33,12 @@ class Settings(BaseSettings):
         return v
 
     # Database
-    DATABASE_URL: str = "sqlite+aiosqlite:///./eval_engine.db"
-    SYNC_DATABASE_URL: str = "sqlite:///./eval_engine.db"
+    DATABASE_URL: str = "postgresql+asyncpg://postgres.ihanvppukqyfvtargpqp:Data%40123%40321@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?ssl=require"
+    SYNC_DATABASE_URL: str = "postgresql://postgres.ihanvppukqyfvtargpqp:Data%40123%40321@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?sslmode=require"
 
     @staticmethod
     def _sanitize_url(v: str, is_async: bool = True) -> str:
-        if not v:
+        if v is None:
             return "sqlite+aiosqlite:///./eval_engine.db" if is_async else "sqlite:///./eval_engine.db"
         url = str(v).strip().strip("\"'").strip()
         
@@ -58,6 +58,14 @@ class Settings(BaseSettings):
             elif not is_async and url.startswith("sqlite+aiosqlite://"):
                 url = "sqlite://" + url[len("sqlite+aiosqlite://"):]
             return url
+
+        # Auto-rewrite Supabase direct domain (IPv6-only) to Supabase connection pooler (IPv4 compatible on Render/cloud)
+        import re
+        m_supa = re.search(r'@db\.([a-zA-Z0-9]+)\.supabase\.co(?::\d+)?', url)
+        if m_supa:
+            project_ref = m_supa.group(1)
+            url = re.sub(r'@db\.[a-zA-Z0-9]+\.supabase\.co(:\d+)?', r'@aws-0-ap-southeast-1.pooler.supabase.com:5432', url)
+            url = re.sub(r'://postgres(?:\.[a-zA-Z0-9]+)?:', f'://postgres.{project_ref}:', url)
 
         if "://" not in url:
             return url
@@ -112,6 +120,20 @@ class Settings(BaseSettings):
                 clean_authority = f"{enc_user}@{host_port}"
         else:
             clean_authority = authority
+
+        # Format SSL parameter correctly for asyncpg vs psycopg
+        if is_async:
+            if "sslmode=" in query_str:
+                query_str = query_str.replace("sslmode=", "ssl=")
+            elif "ssl=" not in query_str and "sqlite" not in scheme:
+                sep = "&" if query_str else "?"
+                query_str = f"{query_str}{sep}ssl=require"
+        else:
+            if "ssl=" in query_str and "sslmode=" not in query_str:
+                query_str = query_str.replace("ssl=", "sslmode=")
+            elif "sslmode=" not in query_str and "sqlite" not in scheme:
+                sep = "&" if query_str else "?"
+                query_str = f"{query_str}{sep}sslmode=require"
 
         return f"{scheme}://{clean_authority}{path_str}{query_str}"
 

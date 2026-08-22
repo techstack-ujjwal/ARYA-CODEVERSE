@@ -28,6 +28,11 @@ export const StagesAPI = {
     return res.data;
   },
 
+  getIdeaSubmission: async (projectId: string) => {
+    const res = await api.get<Record<string, string>>(`/projects/${projectId}/idea/submission`);
+    return res.data;
+  },
+
   // --- Stage 2: PPT Deck ---
   uploadPPT: async (projectId: string, file: File) => {
     const formData = new FormData();

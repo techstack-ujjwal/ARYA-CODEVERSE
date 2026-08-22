@@ -94,8 +94,10 @@ async def _run_ppt_eval_background(project_id: str):
         tech_agent = TechnicalArchitectureAgent()
         tech_output = await tech_agent.evaluate(context)
 
-        # Save extracted claims to DB
+        # Save extracted claims to DB (purging prior unverified claims for cleanliness)
         if hasattr(tech_output, "extracted_claims") and tech_output.extracted_claims:
+            from sqlalchemy import delete
+            await session.execute(delete(Claim).where(Claim.project_id == project.id, Claim.verification_status == "unverified"))
             for c in tech_output.extracted_claims:
                 claim = Claim(
                     project_id=project.id,

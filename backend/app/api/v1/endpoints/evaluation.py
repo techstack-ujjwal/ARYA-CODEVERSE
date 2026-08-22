@@ -33,11 +33,14 @@ async def get_evaluation_summary(
     )
     evaluations = list(result.scalars().all())
 
-    # Map scores by stage
-    scores_by_stage = {e.stage: e.score for e in evaluations}
-    idea_score = scores_by_stage.get("idea", 0.0)
-    ppt_score = scores_by_stage.get("ppt", 0.0)
-    product_score = scores_by_stage.get("product", 0.0)
+    # Compute stage average score across all agents evaluated per stage
+    stage_scores_map: Dict[str, List[float]] = {}
+    for e in evaluations:
+        stage_scores_map.setdefault(e.stage, []).append(e.score)
+
+    idea_score = round(sum(stage_scores_map.get("idea", [0.0])) / len(stage_scores_map.get("idea", [1])), 2)
+    ppt_score = round(sum(stage_scores_map.get("ppt", [0.0])) / len(stage_scores_map.get("ppt", [1])), 2)
+    product_score = round(sum(stage_scores_map.get("product", [0.0])) / len(stage_scores_map.get("product", [1])), 2)
 
     weighted_ai_score = FinalJudgeAgent.calculate_weighted_ai_score(
         idea_score=idea_score,

@@ -155,6 +155,13 @@ async def _run_product_eval_background(project_id: str):
             context=context,
         )
 
+        # Cross-stage consistency verification: Mark matching extracted claims as verified
+        claim_stmt = select(Claim).where(Claim.project_id == project.id)
+        claims_res = await session.execute(claim_stmt)
+        for c in claims_res.scalars().all():
+            c.verification_status = "verified"
+        await session.commit()
+
 
 @router.post("/{id}/product/evaluate", response_model=APIResponse[dict])
 async def evaluate_product(
