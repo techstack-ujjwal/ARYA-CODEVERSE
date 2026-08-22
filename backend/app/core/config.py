@@ -36,6 +36,32 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite+aiosqlite:///./eval_engine.db"
     SYNC_DATABASE_URL: str = "sqlite:///./eval_engine.db"
 
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def sanitize_database_url(cls, v: str) -> str:
+        if not v:
+            return "sqlite+aiosqlite:///./eval_engine.db"
+        url = str(v).strip()
+        # 1. Normalize postgres:// or postgresql:// to postgresql+asyncpg://
+        if url.startswith("postgres://"):
+            url = "postgresql+asyncpg://" + url[len("postgres://"):]
+        elif url.startswith("postgresql://") and not url.startswith("postgresql+asyncpg://"):
+            url = "postgresql+asyncpg://" + url[len("postgresql://"):]
+
+        # 2. Fix passwords with unescaped '@' characters
+        if "://" in url and url.count("@") > 1:
+            import urllib.parse
+            scheme, remainder = url.split("://", 1)
+            last_at_idx = remainder.rfind("@")
+            creds = remainder[:last_at_idx]
+            host_and_db = remainder[last_at_idx + 1:]
+            if ":" in creds:
+                user, password = creds.split(":", 1)
+                encoded_password = urllib.parse.quote(urllib.parse.unquote(password), safe="")
+                url = f"{scheme}://{user}:{encoded_password}@{host_and_db}"
+
+        return url
+
 
     # Clerk Auth (Supports standard Clerk & Next.js frontend variable names)
     CLERK_SECRET_KEY: str = ""

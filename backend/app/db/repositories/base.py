@@ -18,10 +18,13 @@ class BaseRepository(Generic[ModelType]):
         return result.scalars().first()
 
     async def list_all(self, skip: int = 0, limit: int = 100) -> List[ModelType]:
-        result = await self.session.execute(
-            select(self.model).offset(skip).limit(limit)
-        )
+        stmt = select(self.model)
+        if hasattr(self.model, "created_at"):
+            stmt = stmt.order_by(self.model.created_at.desc())
+        stmt = stmt.offset(skip).limit(limit)
+        result = await self.session.execute(stmt)
         return list(result.scalars().all())
+
 
     async def create(self, **kwargs) -> ModelType:
         instance = self.model(**kwargs)

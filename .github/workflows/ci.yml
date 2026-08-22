@@ -10,12 +10,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    services:
-      redis:
-        image: redis:7-alpine
-        ports:
-          - 6379:6379
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -30,12 +24,13 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r backend/requirements.txt
+          playwright install --with-deps chromium || playwright install chromium
 
       - name: Run Test Suite
         env:
           ENVIRONMENT: test
           DATABASE_URL: sqlite+aiosqlite:///./test_eval.db
           SYNC_DATABASE_URL: sqlite:///./test_eval.db
-          REDIS_URL: redis://localhost:6379/0
         run: |
           pytest backend/tests -v
+
