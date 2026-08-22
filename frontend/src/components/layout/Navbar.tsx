@@ -18,7 +18,7 @@ import {
   X,
   RefreshCw,
 } from "lucide-react";
-import { cn } from "@/components/ui/Button";
+import { cn } from "@/lib/utils";
 
 export function Navbar() {
   const pathname = usePathname();

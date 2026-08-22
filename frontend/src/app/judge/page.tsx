@@ -37,7 +37,7 @@ export default function JudgePortalPage() {
   // Scoring Modal State
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [scorePayload, setScorePayload] = useState<JudgeScorePayload>({
-    score: 88,
+    score: 75,
     feedback: "",
     override_reason: "",
   });
@@ -68,7 +68,7 @@ export default function JudgePortalPage() {
     const existingAssign = assignments.find((a) => a.project_id === project.id);
     setSelectedProject(project);
     setScorePayload({
-      score: existingAssign?.human_score || 88,
+      score: existingAssign?.human_score || 75,
       feedback: "",
       override_reason: "",
     });

@@ -33,6 +33,7 @@ async def compute_final_score(
     eval_result = await db.execute(
         select(Evaluation).where(Evaluation.project_id == project_id)
     )
+    evaluations = list(eval_result.scalars().all())
     # Compute stage average score across all agents evaluated per stage
     stage_scores_map = {}
     for e in evaluations:

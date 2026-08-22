@@ -164,13 +164,13 @@ export default function ProjectWorkspacePage({
   const handleFillDemoIdea = () => {
     setIdeaForm({
       problem_statement:
-        "Clinical triage in emergency rooms suffers from delayed diagnostic response times, leading to diagnostic fatigue and high mortality rates in acute cases.",
+        "Student mental health screening in universities lacks real-time early warning signals, leading to delayed interventions and poor outcomes during high-stress academic periods.",
       proposed_solution:
-        "HealthPulse AI provides sub-second edge LLM triage, synthesizing multimodal patient vital streams and EHR data into prioritized risk scores.",
+        "MindScope uses ambient behavioral signals from campus LMS activity and opt-in wearable data to generate early risk alerts using privacy-preserving federated learning — no raw student data leaves the device.",
       target_audience:
-        "Emergency departments, urgent care clinics, and remote telehealth clinicians.",
+        "University counseling centers, student wellness programs, and campus health administrators managing large student populations.",
       uniqueness:
-        "10x faster than traditional manual scoring, with localized privacy-first on-device inference and automated claim verification.",
+        "First federated approach to campus mental health screening — 5x earlier detection than periodic survey-based methods, with full FERPA compliance and on-device inference.",
     });
     toast("Pre-filled sample Stage 1 Idea data", "info");
   };

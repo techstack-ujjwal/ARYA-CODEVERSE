@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useAuth } from "@/lib/store/auth-context";
 import { UserRole } from "@/types/api";
 import { ShieldCheck, UserCheck, Award, ChevronDown } from "lucide-react";
-import { cn } from "@/components/ui/Button";
+import { cn } from "@/lib/utils";
 
 export function DevRoleSwitcher() {
   const { role, setRole } = useAuth();

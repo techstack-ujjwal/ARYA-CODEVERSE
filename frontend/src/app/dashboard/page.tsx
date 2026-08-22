@@ -167,7 +167,7 @@ export default function DashboardPage() {
             Active Hackathon
           </div>
           <div className="text-sm font-semibold text-zinc-200 mt-1 truncate">
-            Hackathon 2026
+            Active Event
           </div>
         </Card>
 
@@ -177,7 +177,7 @@ export default function DashboardPage() {
           </div>
           <div className="text-sm font-semibold text-emerald-400 mt-1 flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            17 Agents Ready
+            12 AI Agents
           </div>
         </Card>
 
@@ -377,7 +377,7 @@ export default function DashboardPage() {
             className="flex items-center gap-1 text-[11px] text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
           >
             <Wand2 className="w-3 h-3" />
-            <span>Fill Demo Project (NeuroScribe)</span>
+            <span>Fill Demo Project</span>
           </button>
         </div>
 
