@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "standalone",
+  // Use standalone output for Docker/Render; Vercel automatically handles serverless deployments
+  output: process.env.VERCEL ? undefined : "standalone",
   reactStrictMode: true,
 };
 
