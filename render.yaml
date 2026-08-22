@@ -1,5 +1,7 @@
 services:
-  # FastAPI Web Service
+  # -----------------------------------------------------------
+  # 1. FastAPI Backend API Core
+  # -----------------------------------------------------------
   - type: web
     name: eval-engine-api
     env: python
@@ -14,6 +16,8 @@ services:
         value: production
       - key: DEBUG
         value: "false"
+      - key: BACKEND_CORS_ORIGINS
+        value: "*"
       - key: DATABASE_URL
         sync: false
       - key: SUPABASE_URL
@@ -34,3 +38,23 @@ services:
         value: "true"
       - key: LANGCHAIN_PROJECT
         value: "eval-engine-hackathon"
+
+  # -----------------------------------------------------------
+  # 2. Next.js Minimalist Frontend
+  # -----------------------------------------------------------
+  - type: web
+    name: eval-engine-frontend
+    env: node
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    plan: free
+    envVars:
+      - key: NODE_VERSION
+        value: 20.18.0
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          type: web
+          name: eval-engine-api
+          property: host
+        transform: https://${host}/api/v1
