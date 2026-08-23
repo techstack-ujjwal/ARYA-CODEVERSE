@@ -128,21 +128,21 @@ export default function JudgePortalPage() {
     <RoleGuard
       allowedRoles={["judge", "admin"]}
       title="Human Judge Portal Restricted"
-      description="The Human Judge Portal is restricted to assigned Hackathon Judges and Evaluators. Switch to Judge mode in dev settings to inspect evidence dossiers and assign human rubric scores (30% weight)."
+      description="The Human Judge Portal is restricted to assigned Hackathon Judges and Evaluators. Switch to Judge mode in the top right to inspect evidence dossiers and assign human rubric scores (30% weight)."
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full bg-black text-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full bg-[#FAF8F5] text-[#18181B]">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-zinc-800">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#E8E3D8]">
           <div>
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-zinc-900 border border-zinc-700 flex items-center justify-center text-white">
-                <Award className="w-4.5 h-4.5" />
+              <div className="w-8 h-8 rounded-xl bg-white border border-[#E8E3D8] flex items-center justify-center text-[#18181B] shadow-2xs">
+                <Award className="w-4.5 h-4.5 text-[#3A4B86]" />
               </div>
-              <h1 className="text-2xl font-bold text-white tracking-tight">
+              <h1 className="font-serif text-2xl sm:text-3xl font-normal text-[#18181B] tracking-tight">
                 JuryX Human Judge Evaluation Portal
               </h1>
             </div>
-            <p className="text-xs text-zinc-400 mt-1">
+            <p className="text-xs text-[#52525B] mt-1">
               Evaluate assigned hackathon submissions, inspect grounded AI evidence dossiers, and submit calibrated scores (30% weight).
             </p>
           </div>
@@ -153,6 +153,7 @@ export default function JudgePortalPage() {
               size="sm"
               onClick={loadData}
               leftIcon={<RefreshCw className="w-3.5 h-3.5" />}
+              className="font-mono text-xs"
             >
               Refresh Queue
             </Button>
@@ -161,52 +162,48 @@ export default function JudgePortalPage() {
 
         {/* Assigned Projects Table / Card Slots */}
         <div className="my-8">
-          <Card variant="elevated" className="bg-zinc-950 border-zinc-800 shadow-xl">
-            <CardHeader
-              action={
-                <div className="flex items-center gap-4">
-                  {/* Interactive UI Toggle */}
-                  <Toggle
-                    checked={pendingOnly}
-                    onChange={setPendingOnly}
-                    size="sm"
-                    variant="default"
-                    label={
-                      <span className="text-xs font-mono">
-                        Pending Only ({pendingCount})
-                      </span>
-                    }
-                  />
-                </div>
-              }
-            >
-              <CardTitle>
+          <div className="nude-card p-6 rounded-2xl space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E8E3D8]">
+              <div>
                 <div className="flex items-center gap-2.5">
-                  <span className="text-white">Evaluation Queue</span>
-                  <Badge variant="default" size="sm">
+                  <h2 className="text-base font-bold text-[#18181B]">Evaluation Queue</h2>
+                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#DDE4F8] text-[#3A4B86]">
                     {scoredCount} / {projects.length} SCORED
-                  </Badge>
+                  </span>
                 </div>
-              </CardTitle>
-              <CardDescription>
-                Click "Score Project" to review student submissions, inspect multi-agent evidence dossiers, and calibrate your human rubric rating.
-              </CardDescription>
-            </CardHeader>
+                <p className="text-xs text-[#52525B] mt-0.5">
+                  Click &quot;Score Project&quot; to review student submissions, inspect multi-agent evidence dossiers, and calibrate your human rubric rating.
+                </p>
+              </div>
 
-            <CardContent>
+              {/* Interactive UI Toggle */}
+              <Toggle
+                checked={pendingOnly}
+                onChange={setPendingOnly}
+                size="sm"
+                variant="default"
+                label={
+                  <span className="text-xs font-mono text-[#18181B]">
+                    Pending Only ({pendingCount})
+                  </span>
+                }
+              />
+            </div>
+
+            <div>
               {isLoading ? (
-                <div className="py-12 text-center text-zinc-500">
-                  <Activity className="w-6 h-6 animate-spin mx-auto mb-2 text-white" />
+                <div className="py-12 text-center text-[#71717A]">
+                  <Activity className="w-6 h-6 animate-spin mx-auto mb-2 text-[#18181B]" />
                   <p className="text-xs font-mono">Loading evaluation queue...</p>
                 </div>
               ) : displayProjects.length === 0 ? (
-                <p className="py-8 text-center text-xs text-zinc-500 font-mono">
+                <p className="py-8 text-center text-xs text-[#71717A] font-mono">
                   {pendingOnly ? "All assigned projects have been scored!" : "No projects available for evaluation."}
                 </p>
               ) : (
-                <div className="overflow-x-auto rounded-xl border border-zinc-800">
+                <div className="overflow-x-auto rounded-xl border border-[#E8E3D8] bg-white">
                   <table className="w-full text-left text-xs">
-                    <thead className="bg-zinc-900 border-b border-zinc-800 text-zinc-400 font-mono uppercase text-[10px]">
+                    <thead className="bg-[#FAF8F5] border-b border-[#E8E3D8] text-[#71717A] font-mono uppercase text-[10px]">
                       <tr>
                         <th className="py-3 px-4">Project Name</th>
                         <th className="py-3 px-4">Status</th>
@@ -215,50 +212,49 @@ export default function JudgePortalPage() {
                         <th className="py-3 px-4 text-right">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-zinc-800">
+                    <tbody className="divide-y divide-[#E8E3D8]">
                       {displayProjects.map((p) => {
                         const assignment = assignments.find((a) => a.project_id === p.id);
                         const isScored = assignment?.status === "scored" || p.status === "finalized";
 
                         return (
-                          <tr key={p.id} className="hover:bg-zinc-900/40 transition-colors">
-                            <td className="py-3.5 px-4 font-semibold text-white">
+                          <tr key={p.id} className="hover:bg-[#FAF8F5] transition-colors">
+                            <td className="py-3.5 px-4 font-semibold text-[#18181B]">
                               <div className="flex flex-col">
                                 <span>{p.name}</span>
-                                <span className="text-[11px] text-zinc-500 line-clamp-1 font-normal">
+                                <span className="text-[11px] text-[#71717A] line-clamp-1 font-normal">
                                   {p.description || "No description"}
                                 </span>
                               </div>
                             </td>
                             <td className="py-3.5 px-4">
-                              <Badge
-                                variant={
+                              <span
+                                className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-md ${
                                   p.status === "finalized"
-                                    ? "success"
-                                    : "default"
-                                }
-                                size="sm"
+                                    ? "bg-[#D8EAD9] text-[#2D5A36]"
+                                    : "bg-[#DDE4F8] text-[#3A4B86]"
+                                }`}
                               >
                                 {p.status.toUpperCase()}
-                              </Badge>
+                              </span>
                             </td>
                             <td className="py-3.5 px-4 font-mono font-bold">
                               {assignment?.human_score ? (
-                                <span className="text-emerald-400">
+                                <span className="text-[#2D5A36]">
                                   {assignment.human_score.toFixed(1)} / 100
                                 </span>
                               ) : (
-                                <span className="text-zinc-500 font-normal">Not Graded</span>
+                                <span className="text-[#71717A] font-normal">Not Graded</span>
                               )}
                             </td>
                             <td className="py-3.5 px-4">
                               {isScored ? (
-                                <span className="inline-flex items-center gap-1 text-[11px] text-emerald-400 font-mono">
+                                <span className="inline-flex items-center gap-1 text-[11px] text-[#2D5A36] font-mono font-semibold">
                                   <CheckCircle2 className="w-3.5 h-3.5" />
                                   Scored
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center gap-1 text-[11px] text-zinc-400 font-mono">
+                                <span className="inline-flex items-center gap-1 text-[11px] text-[#71717A] font-mono">
                                   <Clock className="w-3.5 h-3.5" />
                                   Pending Review
                                 </span>
@@ -267,7 +263,7 @@ export default function JudgePortalPage() {
                             <td className="py-3.5 px-4 text-right">
                               <div className="flex items-center justify-end gap-2">
                                 <Link href={`/projects/${p.id}/evaluation`}>
-                                  <Button variant="ghost" size="sm">
+                                  <Button variant="ghost" size="sm" className="font-mono text-xs">
                                     Dossier
                                   </Button>
                                 </Link>
@@ -275,6 +271,7 @@ export default function JudgePortalPage() {
                                   variant="primary"
                                   size="sm"
                                   onClick={() => handleOpenScoreModal(p)}
+                                  className="bg-[#18181B] hover:bg-[#27272A] text-white font-mono font-bold text-xs"
                                 >
                                   {isScored ? "Edit Score" : "Score"}
                                 </Button>
@@ -287,8 +284,8 @@ export default function JudgePortalPage() {
                   </table>
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
 
         {/* Scoring Modal */}
@@ -300,14 +297,14 @@ export default function JudgePortalPage() {
           maxWidth="md"
         >
           <form onSubmit={handleSubmitScore} className="space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-zinc-800">
-              <span className="text-xs font-mono text-zinc-400 uppercase">Qualitative Calibration</span>
+            <div className="flex items-center justify-between pb-2 border-b border-[#E8E3D8]">
+              <span className="text-xs font-mono text-[#52525B] uppercase font-bold">Qualitative Calibration</span>
               <button
                 type="button"
                 onClick={handleFillDemoJudgeFeedback}
-                className="flex items-center gap-1 text-[11px] text-white hover:text-zinc-200 bg-zinc-800 border border-zinc-700 px-2 py-0.5 rounded cursor-pointer"
+                className="flex items-center gap-1 text-[11px] text-[#18181B] hover:text-black bg-[#FAF8F5] border border-[#E8E3D8] hover:border-[#D6CFBE] px-2 py-0.5 rounded cursor-pointer font-mono font-semibold"
               >
-                <Wand2 className="w-3 h-3" />
+                <Wand2 className="w-3 h-3 text-[#3A4B86]" />
                 <span>Fill Sample Rubric</span>
               </button>
             </div>
@@ -315,8 +312,8 @@ export default function JudgePortalPage() {
             {/* Score Slider */}
             <div className="space-y-2">
               <div className="flex justify-between items-center text-xs font-mono">
-                <span className="text-zinc-400 font-semibold">Human Rubric Score:</span>
-                <span className="text-xl font-bold text-emerald-400">
+                <span className="text-[#52525B] font-bold">Human Rubric Score:</span>
+                <span className="text-xl font-bold text-[#2D5A36]">
                   {scorePayload.score} / 100
                 </span>
               </div>
@@ -329,7 +326,7 @@ export default function JudgePortalPage() {
                 onChange={(e) =>
                   setScorePayload({ ...scorePayload, score: Number(e.target.value) })
                 }
-                className="w-full accent-white cursor-pointer bg-zinc-800 rounded-lg h-2"
+                className="w-full bg-[#E8E3D8] rounded-lg h-2"
               />
             </div>
 
@@ -354,16 +351,22 @@ export default function JudgePortalPage() {
               rows={2}
             />
 
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-zinc-800">
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#E8E3D8]">
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
                 onClick={() => setSelectedProject(null)}
+                className="font-mono text-xs"
               >
                 Cancel
               </Button>
-              <Button type="submit" size="sm" isLoading={isSubmittingScore}>
+              <Button
+                type="submit"
+                size="sm"
+                isLoading={isSubmittingScore}
+                className="bg-[#18181B] hover:bg-[#27272A] text-white font-mono font-bold text-xs"
+              >
                 Submit Official Rating
               </Button>
             </div>

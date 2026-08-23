@@ -50,31 +50,31 @@ export function Modal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity animate-in fade-in duration-200"
+        className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
         onClick={onClose}
       />
 
       {/* Modal Dialog Box */}
       <div
         className={cn(
-          "relative w-full bg-zinc-950 border border-zinc-800 rounded-2xl shadow-2xl p-6 z-10 transition-all duration-200 animate-in zoom-in-95 fade-in",
+          "relative w-full bg-white border border-[#E8E3D8] rounded-2xl shadow-xl p-6 z-10 transition-all duration-200 animate-in zoom-in-95 fade-in text-[#18181B]",
           maxWidths[maxWidth]
         )}
       >
-        <div className="flex items-start justify-between pb-4 mb-4 border-b border-zinc-800/80">
+        <div className="flex items-start justify-between pb-4 mb-4 border-b border-[#E8E3D8]">
           <div>
             {title && (
-              <h3 className="text-lg font-semibold text-zinc-100 tracking-tight">
+              <h3 className="text-lg font-bold text-[#18181B] tracking-tight">
                 {title}
               </h3>
             )}
             {description && (
-              <p className="text-xs text-zinc-400 mt-1">{description}</p>
+              <p className="text-xs text-[#52525B] mt-1">{description}</p>
             )}
           </div>
           <button
             onClick={onClose}
-            className="text-zinc-400 hover:text-zinc-200 p-1.5 rounded-lg hover:bg-zinc-800/60 transition-colors"
+            className="text-[#71717A] hover:text-[#18181B] p-1.5 rounded-lg hover:bg-[#FAF8F5] transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>

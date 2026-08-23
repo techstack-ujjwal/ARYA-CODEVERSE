@@ -27,7 +27,7 @@ interface PersonaProfile {
   userId: string;
   avatarBg: string;
   initials: string;
-  roleBadgeColor: "default" | "success" | "danger";
+  roleBadgeColor: "default" | "success" | "danger" | "info";
   permissions: string[];
 }
 
@@ -38,9 +38,9 @@ const PROFILES: Record<UserRole, PersonaProfile> = {
     title: "Lead Engineer @ NexusAgent",
     email: "alex.chen@hackathon.dev",
     userId: "user_participant",
-    avatarBg: "bg-zinc-800 text-white border-zinc-700",
+    avatarBg: "bg-[#DDE4F8] text-[#3A4B86] border-[#BAC7E8]",
     initials: "AC",
-    roleBadgeColor: "default",
+    roleBadgeColor: "info",
     permissions: [
       "Submit Idea, PPT & Code Repos",
       "Run Instant Pre-Judging Diagnostics",
@@ -53,9 +53,9 @@ const PROFILES: Record<UserRole, PersonaProfile> = {
     title: "Senior AI Evaluator & Research Judge",
     email: "s.jenkins@stanford.edu",
     userId: "user_judge",
-    avatarBg: "bg-zinc-800 text-white border-zinc-700",
+    avatarBg: "bg-[#D8EAD9] text-[#2D5A36] border-[#B5D7B7]",
     initials: "SJ",
-    roleBadgeColor: "default",
+    roleBadgeColor: "success",
     permissions: [
       "Access Assigned Projects Queue",
       "Inspect AI Evidence & Claim Dossiers",
@@ -68,9 +68,9 @@ const PROFILES: Record<UserRole, PersonaProfile> = {
     title: "Hackathon Director & Governance Lead",
     email: "marcus.vance@hackathon.global",
     userId: "user_admin",
-    avatarBg: "bg-emerald-950/60 text-emerald-400 border-emerald-800/80",
+    avatarBg: "bg-[#F5DCD7] text-[#7A3A30] border-[#E8B8B0]",
     initials: "MV",
-    roleBadgeColor: "success",
+    roleBadgeColor: "danger",
     permissions: [
       "Configure Rubric Weights & Deadlines",
       "Inspect Plagiarism & Similarity Flags",
@@ -95,7 +95,7 @@ export function UserProfileMenu() {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-2.5 py-1 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-zinc-700 transition-all cursor-pointer shadow-sm group"
+        className="flex items-center gap-2 px-2.5 py-1 rounded-xl bg-white border border-[#E8E3D8] hover:border-[#D6CFBE] transition-all cursor-pointer shadow-2xs group"
         title="Click to view profile & switch role"
       >
         {/* Avatar */}
@@ -110,27 +110,27 @@ export function UserProfileMenu() {
 
         {/* User Name & Role */}
         <div className="hidden sm:flex flex-col text-left">
-          <span className="text-xs font-semibold text-zinc-100 leading-none group-hover:text-white transition-colors">
+          <span className="text-xs font-semibold text-[#18181B] leading-none">
             {currentProfile.name}
           </span>
-          <span className="text-[9px] font-mono text-zinc-400 mt-0.5 capitalize">
+          <span className="text-[9px] font-mono text-[#71717A] mt-0.5 capitalize">
             {currentProfile.id}
           </span>
         </div>
 
-        <ChevronDown className="w-3 h-3 text-zinc-400 group-hover:text-zinc-200 transition-colors" />
+        <ChevronDown className="w-3 h-3 text-[#71717A] group-hover:text-[#18181B] transition-colors" />
       </button>
 
       {/* Profile Dropdown Modal */}
       {isOpen && (
         <>
           <div
-            className="fixed inset-0 z-40"
+            className="fixed inset-0 z-40 bg-black/20 backdrop-blur-2xs"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute right-0 mt-2 w-80 bg-zinc-950 border border-zinc-800 rounded-2xl shadow-2xl p-4 z-50 animate-in fade-in zoom-in-95 space-y-4">
+          <div className="absolute right-0 mt-2 w-80 bg-white border border-[#E8E3D8] rounded-2xl shadow-xl p-4 z-50 animate-in fade-in zoom-in-95 space-y-4 text-[#18181B]">
             {/* Active User Card */}
-            <div className="flex items-start gap-3 pb-3 border-b border-zinc-800">
+            <div className="flex items-start gap-3 pb-3 border-b border-[#E8E3D8]">
               <div
                 className={cn(
                   "w-10 h-10 rounded-xl border flex items-center justify-center font-mono font-bold text-xs shrink-0",
@@ -141,31 +141,31 @@ export function UserProfileMenu() {
               </div>
               <div className="flex flex-col min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-white truncate">
+                  <span className="text-sm font-bold text-[#18181B] truncate">
                     {currentProfile.name}
                   </span>
                   <Badge variant={currentProfile.roleBadgeColor} size="sm">
                     {currentProfile.id.toUpperCase()}
                   </Badge>
                 </div>
-                <span className="text-[11px] text-zinc-400 truncate">
+                <span className="text-[11px] text-[#52525B] truncate">
                   {currentProfile.title}
                 </span>
-                <span className="text-[10px] font-mono text-zinc-500 mt-0.5 truncate">
+                <span className="text-[10px] font-mono text-[#71717A] mt-0.5 truncate">
                   {currentProfile.email}
                 </span>
               </div>
             </div>
 
             {/* Active Permissions Summary */}
-            <div className="space-y-1.5 bg-zinc-900/60 p-2.5 rounded-xl border border-zinc-800">
-              <div className="text-[10px] font-mono uppercase text-zinc-500 tracking-wider font-semibold">
+            <div className="space-y-1.5 bg-[#FAF8F5] p-2.5 rounded-xl border border-[#E8E3D8]">
+              <div className="text-[10px] font-mono uppercase text-[#71717A] tracking-wider font-semibold">
                 Role Permissions
               </div>
-              <ul className="space-y-1 text-[11px] text-zinc-300">
+              <ul className="space-y-1 text-[11px] text-[#52525B]">
                 {currentProfile.permissions.map((perm, idx) => (
                   <li key={idx} className="flex items-start gap-1.5">
-                    <Check className="w-3 h-3 text-emerald-400 shrink-0 mt-0.5" />
+                    <Check className="w-3 h-3 text-[#2D5A36] shrink-0 mt-0.5" />
                     <span>{perm}</span>
                   </li>
                 ))}
@@ -174,8 +174,8 @@ export function UserProfileMenu() {
 
             {/* Persona Switcher Buttons */}
             <div className="space-y-1.5">
-              <div className="text-[10px] font-mono uppercase text-zinc-500 tracking-wider font-semibold">
-                Switch Identity (Dev / Hackathon Demo)
+              <div className="text-[10px] font-mono uppercase text-[#71717A] tracking-wider font-semibold">
+                Switch Identity (Studio Demo)
               </div>
               <div className="space-y-1">
                 {Object.values(PROFILES).map((p) => {
@@ -187,8 +187,8 @@ export function UserProfileMenu() {
                       className={cn(
                         "w-full flex items-center justify-between p-2 rounded-xl border text-left transition-all cursor-pointer",
                         isSelected
-                          ? "bg-zinc-800 border-zinc-700 text-white"
-                          : "bg-zinc-900 border-zinc-800 hover:bg-zinc-800 text-zinc-300 hover:text-white"
+                          ? "bg-[#18181B] text-white border-[#18181B]"
+                          : "bg-[#FAF8F5] border-[#E8E3D8] hover:bg-[#F4EFE6] text-[#18181B]"
                       )}
                     >
                       <div className="flex items-center gap-2 min-w-0">
@@ -202,7 +202,7 @@ export function UserProfileMenu() {
                         </div>
                         <div className="flex flex-col min-w-0">
                           <span className="text-xs font-semibold truncate">{p.name}</span>
-                          <span className="text-[10px] font-mono text-zinc-500 capitalize">
+                          <span className={cn("text-[10px] font-mono capitalize", isSelected ? "text-zinc-300" : "text-[#71717A]")}>
                             {p.id} ({p.userId})
                           </span>
                         </div>
@@ -216,10 +216,10 @@ export function UserProfileMenu() {
             </div>
 
             {/* Sign Out / Reset action */}
-            <div className="pt-2 border-t border-zinc-800">
+            <div className="pt-2 border-t border-[#E8E3D8]">
               <button
                 onClick={() => handleSelectRole("participant")}
-                className="w-full flex items-center justify-center gap-1.5 py-1.5 text-xs text-zinc-400 hover:text-white transition-colors cursor-pointer"
+                className="w-full flex items-center justify-center gap-1.5 py-1.5 text-xs text-[#71717A] hover:text-[#18181B] transition-colors cursor-pointer font-medium"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>Reset to Default Student Persona</span>

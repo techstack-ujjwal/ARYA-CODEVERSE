@@ -27,7 +27,7 @@ export function Tabs({
 }: TabsProps) {
   if (variant === "underline") {
     return (
-      <div className={cn("flex space-x-6 border-b border-zinc-800", className)}>
+      <div className={cn("flex space-x-6 border-b border-[#E8E3D8]", className)}>
         {tabs.map((tab) => {
           const isActive = tab.id === activeTab;
           return (
@@ -35,10 +35,10 @@ export function Tabs({
               key={tab.id}
               onClick={() => onChange(tab.id)}
               className={cn(
-                "flex items-center gap-2 py-3 text-sm font-medium border-b-2 transition-all -mb-[1px] cursor-pointer",
+                "flex items-center gap-2 py-3 text-xs sm:text-sm font-semibold border-b-2 transition-all -mb-[1px] cursor-pointer",
                 isActive
-                  ? "border-zinc-100 text-zinc-100 font-semibold"
-                  : "border-transparent text-zinc-400 hover:text-zinc-200 hover:border-zinc-700"
+                  ? "border-[#18181B] text-[#18181B]"
+                  : "border-transparent text-[#71717A] hover:text-[#18181B] hover:border-[#D6CFBE]"
               )}
             >
               {tab.icon}
@@ -46,10 +46,10 @@ export function Tabs({
               {tab.badge !== undefined && (
                 <span
                   className={cn(
-                    "text-[11px] px-1.5 py-0.2 rounded-full font-mono",
+                    "text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold",
                     isActive
-                      ? "bg-zinc-800 text-zinc-200"
-                      : "bg-zinc-800/60 text-zinc-400"
+                      ? "bg-[#18181B] text-white"
+                      : "bg-[#F4EFE6] text-[#52525B]"
                   )}
                 >
                   {tab.badge}
@@ -65,7 +65,7 @@ export function Tabs({
   return (
     <div
       className={cn(
-        "inline-flex items-center gap-1 p-1 bg-zinc-900/80 border border-zinc-800/80 rounded-xl",
+        "inline-flex items-center gap-1 p-1 bg-white border border-[#E8E3D8] rounded-xl shadow-xs",
         className
       )}
     >
@@ -76,10 +76,10 @@ export function Tabs({
             key={tab.id}
             onClick={() => onChange(tab.id)}
             className={cn(
-              "flex items-center gap-2 px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg transition-all duration-150 cursor-pointer",
+              "flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 cursor-pointer font-mono",
               isActive
-                ? "bg-zinc-800 text-zinc-100 shadow-sm border border-zinc-700/50 font-semibold"
-                : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40"
+                ? "bg-[#18181B] text-white shadow-xs"
+                : "text-[#52525B] hover:text-[#18181B] hover:bg-[#FAF8F5]"
             )}
           >
             {tab.icon}
@@ -87,10 +87,10 @@ export function Tabs({
             {tab.badge !== undefined && (
               <span
                 className={cn(
-                  "text-[10px] px-1.5 py-0.2 rounded-full font-mono",
+                  "text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold",
                   isActive
-                    ? "bg-zinc-700 text-zinc-200"
-                    : "bg-zinc-800 text-zinc-400"
+                    ? "bg-[#3A4B86] text-white"
+                    : "bg-[#FAF8F5] text-[#52525B]"
                 )}
               >
                 {tab.badge}

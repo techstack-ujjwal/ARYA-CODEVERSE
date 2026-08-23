@@ -22,11 +22,10 @@ export function ScoreMeter({
 }: ScoreMeterProps) {
   const percentage = Math.min(Math.max((score / maxScore) * 100, 0), 100);
 
-  // Color mapping strictly Black/White/Grey, Green (high), Red (low)
   const getColor = (pct: number) => {
-    if (pct >= 75) return { stroke: "#10b981", text: "text-emerald-400", bg: "bg-emerald-950/60" };
-    if (pct >= 50) return { stroke: "#ffffff", text: "text-white", bg: "bg-zinc-900" };
-    return { stroke: "#ef4444", text: "text-red-400", bg: "bg-red-950/60" };
+    if (pct >= 75) return { stroke: "#2D5A36", text: "text-[#2D5A36]" };
+    if (pct >= 50) return { stroke: "#18181B", text: "text-[#18181B]" };
+    return { stroke: "#7A3A30", text: "text-[#7A3A30]" };
   };
 
   const color = getColor(percentage);
@@ -57,7 +56,7 @@ export function ScoreMeter({
             stroke="currentColor"
             strokeWidth={strokeWidth}
             fill="transparent"
-            className="text-zinc-800"
+            className="text-[#E8E3D8]"
           />
           {/* Progress circle */}
           <circle
@@ -75,14 +74,14 @@ export function ScoreMeter({
         </svg>
         <span className={cn("absolute", textClass, color.text)}>
           {Math.round(score)}
-          {showPercent && <span className="text-[10px] text-zinc-500 ml-0.5">/100</span>}
+          {showPercent && <span className="text-[10px] text-[#71717A] ml-0.5 font-normal">/100</span>}
         </span>
       </div>
 
       {(label || sublabel) && (
         <div className="flex flex-col">
-          {label && <span className="text-xs font-semibold text-zinc-200">{label}</span>}
-          {sublabel && <span className="text-[11px] text-zinc-500">{sublabel}</span>}
+          {label && <span className="text-xs font-bold text-[#18181B]">{label}</span>}
+          {sublabel && <span className="text-[11px] text-[#71717A]">{sublabel}</span>}
         </div>
       )}
     </div>

@@ -53,22 +53,22 @@ export function EvidenceViewer({ evidence, filter = "all" }: EvidenceViewerProps
   const getToolIcon = (toolName: string) => {
     const t = toolName.toLowerCase();
     if (t.includes("search") || t.includes("tavily") || t.includes("serp"))
-      return <Search className="w-3.5 h-3.5 text-white" />;
+      return <Search className="w-3.5 h-3.5 text-[#3A4B86]" />;
     if (t.includes("ast") || t.includes("radon") || t.includes("code"))
-      return <Code2 className="w-3.5 h-3.5 text-emerald-400" />;
+      return <Code2 className="w-3.5 h-3.5 text-[#2D5A36]" />;
     if (t.includes("bandit") || t.includes("security") || t.includes("semgrep"))
-      return <Shield className="w-3.5 h-3.5 text-red-400" />;
+      return <Shield className="w-3.5 h-3.5 text-[#7A3A30]" />;
     if (t.includes("lighthouse") || t.includes("playwright") || t.includes("uptime"))
-      return <Globe className="w-3.5 h-3.5 text-white" />;
-    return <Cpu className="w-3.5 h-3.5 text-zinc-400" />;
+      return <Globe className="w-3.5 h-3.5 text-[#18181B]" />;
+    return <Cpu className="w-3.5 h-3.5 text-[#71717A]" />;
   };
 
   if (filteredEvidence.length === 0) {
     return (
-      <div className="py-10 text-center text-zinc-500">
-        <FileText className="w-8 h-8 text-zinc-700 mx-auto mb-2" />
-        <p className="text-xs font-semibold text-zinc-400">No Evidence Telemetry Artifacts</p>
-        <p className="text-[11px] text-zinc-500 mt-1">
+      <div className="py-10 text-center text-[#71717A]">
+        <FileText className="w-8 h-8 text-[#A1A1AA] mx-auto mb-2" />
+        <p className="text-xs font-bold text-[#18181B]">No Evidence Telemetry Artifacts</p>
+        <p className="text-[11px] text-[#71717A] mt-1">
           Run evaluations in the Stage Workspace to generate grounded proof dossiers.
         </p>
       </div>
@@ -84,16 +84,16 @@ export function EvidenceViewer({ evidence, filter = "all" }: EvidenceViewerProps
         return (
           <div
             key={ev.id}
-            className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 hover:border-zinc-700 transition-colors space-y-3"
+            className="p-4 rounded-xl bg-white border border-[#E8E3D8] hover:border-[#D6CFBE] transition-colors space-y-3 shadow-2xs"
           >
             {/* Header: Tool, Source & Type */}
             <div className="flex items-center justify-between flex-wrap gap-2">
               <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-xs font-mono font-medium text-zinc-200">
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#FAF8F5] border border-[#E8E3D8] text-xs font-mono font-bold text-[#18181B]">
                   {getToolIcon(ev.tool_used)}
                   <span>{ev.tool_used}</span>
                 </div>
-                <span className="text-[11px] font-mono text-zinc-400 truncate max-w-xs">
+                <span className="text-[11px] font-mono text-[#71717A] truncate max-w-xs">
                   {ev.source}
                 </span>
               </div>
@@ -104,13 +104,13 @@ export function EvidenceViewer({ evidence, filter = "all" }: EvidenceViewerProps
                 </Badge>
                 <button
                   onClick={() => handleCopyJSON(ev.id, ev.content)}
-                  className="flex items-center gap-1 text-[11px] text-zinc-400 hover:text-white bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 px-2 py-0.5 rounded transition-colors cursor-pointer"
+                  className="flex items-center gap-1 text-[11px] text-[#52525B] hover:text-[#18181B] bg-[#FAF8F5] hover:bg-[#F4EFE6] border border-[#E8E3D8] px-2 py-0.5 rounded transition-colors cursor-pointer font-mono font-semibold"
                   title="Copy formatted JSON payload"
                 >
                   {copiedId === ev.id ? (
                     <>
-                      <Check className="w-3 h-3 text-emerald-400" />
-                      <span className="text-emerald-400">Copied</span>
+                      <Check className="w-3 h-3 text-[#2D5A36]" />
+                      <span className="text-[#2D5A36]">Copied</span>
                     </>
                   ) : (
                     <>
@@ -126,11 +126,11 @@ export function EvidenceViewer({ evidence, filter = "all" }: EvidenceViewerProps
             <div className="space-y-2">
               {/* Web Search Query Item */}
               {content.query && (
-                <div className="flex items-start gap-2 p-2.5 rounded-lg bg-zinc-900 border border-zinc-800 text-xs">
-                  <span className="font-mono text-[11px] text-white font-semibold uppercase tracking-wider shrink-0 mt-0.5">
+                <div className="flex items-start gap-2 p-2.5 rounded-lg bg-[#FAF8F5] border border-[#E8E3D8] text-xs">
+                  <span className="font-mono text-[11px] text-[#18181B] font-bold uppercase tracking-wider shrink-0 mt-0.5">
                     Query:
                   </span>
-                  <span className="text-zinc-200 font-mono text-xs">"{content.query}"</span>
+                  <span className="text-[#18181B] font-mono text-xs">&quot;{content.query}&quot;</span>
                 </div>
               )}
 
@@ -138,14 +138,14 @@ export function EvidenceViewer({ evidence, filter = "all" }: EvidenceViewerProps
               {(content.status || content.score !== undefined || content.latency_ms !== undefined) && (
                 <div className="flex flex-wrap gap-2">
                   {content.status && (
-                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-[11px] font-mono text-zinc-300">
-                      <span className="text-zinc-500">Status:</span>
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#FAF8F5] border border-[#E8E3D8] text-[11px] font-mono text-[#18181B]">
+                      <span className="text-[#71717A]">Status:</span>
                       <span
                         className={cn(
                           "font-bold",
                           content.status === "verified" || content.status === "ok"
-                            ? "text-emerald-400"
-                            : "text-zinc-300"
+                            ? "text-[#2D5A36]"
+                            : "text-[#18181B]"
                         )}
                       >
                         {content.status.toUpperCase()}
@@ -153,15 +153,15 @@ export function EvidenceViewer({ evidence, filter = "all" }: EvidenceViewerProps
                     </div>
                   )}
                   {content.score !== undefined && (
-                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-[11px] font-mono text-zinc-300">
-                      <span className="text-zinc-500">Score:</span>
-                      <span className="text-emerald-400 font-bold">{content.score}/100</span>
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#FAF8F5] border border-[#E8E3D8] text-[11px] font-mono text-[#18181B]">
+                      <span className="text-[#71717A]">Score:</span>
+                      <span className="text-[#2D5A36] font-bold">{content.score}/100</span>
                     </div>
                   )}
                   {content.latency_ms !== undefined && (
-                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-[11px] font-mono text-zinc-300">
-                      <span className="text-zinc-500">Response:</span>
-                      <span className="text-white font-bold">{content.latency_ms}ms</span>
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#FAF8F5] border border-[#E8E3D8] text-[11px] font-mono text-[#18181B]">
+                      <span className="text-[#71717A]">Response:</span>
+                      <span className="text-[#18181B] font-bold">{content.latency_ms}ms</span>
                     </div>
                   )}
                 </div>
@@ -169,14 +169,14 @@ export function EvidenceViewer({ evidence, filter = "all" }: EvidenceViewerProps
 
               {/* Findings list */}
               {Array.isArray(content.findings) && content.findings.length > 0 && (
-                <div className="p-2.5 rounded-lg bg-zinc-900 border border-zinc-800 space-y-1.5">
-                  <div className="text-[11px] font-mono text-zinc-400 uppercase tracking-wider">
+                <div className="p-2.5 rounded-lg bg-[#FAF8F5] border border-[#E8E3D8] space-y-1.5">
+                  <div className="text-[11px] font-mono text-[#71717A] uppercase tracking-wider font-bold">
                     Key Findings ({content.findings.length}):
                   </div>
-                  <ul className="space-y-1 text-xs text-zinc-300">
+                  <ul className="space-y-1 text-xs text-[#52525B]">
                     {content.findings.map((f: any, idx: number) => (
                       <li key={idx} className="flex items-start gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#2D5A36] shrink-0 mt-0.5" />
                         <span>{typeof f === "string" ? f : JSON.stringify(f)}</span>
                       </li>
                     ))}
@@ -186,7 +186,7 @@ export function EvidenceViewer({ evidence, filter = "all" }: EvidenceViewerProps
 
               {/* Summary text */}
               {content.summary && (
-                <p className="text-xs text-zinc-300 leading-relaxed bg-zinc-900 p-2.5 rounded-lg border border-zinc-800">
+                <p className="text-xs text-[#52525B] leading-relaxed bg-[#FAF8F5] p-2.5 rounded-lg border border-[#E8E3D8]">
                   {content.summary}
                 </p>
               )}
@@ -201,10 +201,10 @@ export function EvidenceViewer({ evidence, filter = "all" }: EvidenceViewerProps
                 .map(([k, v]) => (
                   <div
                     key={k}
-                    className="flex items-start justify-between gap-3 px-2.5 py-1.5 rounded bg-zinc-900/50 text-[11px] font-mono"
+                    className="flex items-start justify-between gap-3 px-2.5 py-1.5 rounded bg-[#FAF8F5]/60 text-[11px] font-mono"
                   >
-                    <span className="text-zinc-400 capitalize">{k.replace(/_/g, " ")}:</span>
-                    <span className="text-zinc-200 text-right truncate max-w-sm">
+                    <span className="text-[#71717A] capitalize">{k.replace(/_/g, " ")}:</span>
+                    <span className="text-[#18181B] text-right truncate max-w-sm font-semibold">
                       {typeof v === "object" ? JSON.stringify(v) : String(v)}
                     </span>
                   </div>
@@ -212,10 +212,10 @@ export function EvidenceViewer({ evidence, filter = "all" }: EvidenceViewerProps
             </div>
 
             {/* Collapsible Raw Inspector */}
-            <div className="pt-2 border-t border-zinc-800">
+            <div className="pt-2 border-t border-[#E8E3D8]">
               <button
                 onClick={() => toggleRaw(ev.id)}
-                className="flex items-center gap-1.5 text-[11px] font-mono text-zinc-500 hover:text-zinc-300 transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 text-[11px] font-mono text-[#71717A] hover:text-[#18181B] transition-colors cursor-pointer"
               >
                 {isRawOpen ? (
                   <ChevronDown className="w-3 h-3" />
@@ -226,7 +226,7 @@ export function EvidenceViewer({ evidence, filter = "all" }: EvidenceViewerProps
               </button>
 
               {isRawOpen && (
-                <pre className="mt-2 p-3 rounded-lg bg-black border border-zinc-800 text-[11px] text-zinc-300 overflow-x-auto max-h-52 overflow-y-auto font-mono">
+                <pre className="mt-2 p-3 rounded-lg bg-[#FAF8F5] border border-[#E8E3D8] text-[11px] text-[#18181B] overflow-x-auto max-h-52 overflow-y-auto font-mono">
                   {JSON.stringify(ev.content, null, 2)}
                 </pre>
               )}

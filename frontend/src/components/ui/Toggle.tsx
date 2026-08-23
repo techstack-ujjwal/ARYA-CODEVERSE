@@ -52,11 +52,11 @@ export function Toggle({
   };
 
   const activeColors = {
-    default: "bg-white border-white text-black",
-    indigo: "bg-white border-white text-black",
-    emerald: "bg-emerald-600 border-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.4)]",
-    amber: "bg-white border-white text-black",
-    danger: "bg-red-600 border-red-500 shadow-[0_0_12px_rgba(239,68,68,0.4)]",
+    default: "bg-[#18181B] border-[#18181B]",
+    indigo: "bg-[#3A4B86] border-[#3A4B86]",
+    emerald: "bg-[#2D5A36] border-[#2D5A36]",
+    amber: "bg-[#6E5416] border-[#6E5416]",
+    danger: "bg-[#7A3A30] border-[#7A3A30]",
   };
 
   const currentSize = sizeClasses[size];
@@ -65,12 +65,12 @@ export function Toggle({
     <label
       htmlFor={toggleId}
       className={cn(
-        "inline-flex items-center gap-3 cursor-pointer select-none group",
+        "inline-flex items-center gap-2.5 cursor-pointer select-none group",
         disabled && "opacity-50 cursor-not-allowed",
         className
       )}
     >
-      {leftIcon && <span className="text-zinc-400 group-hover:text-zinc-200 transition-colors">{leftIcon}</span>}
+      {leftIcon && <span className="text-[#71717A] group-hover:text-[#18181B] transition-colors">{leftIcon}</span>}
 
       <div className="relative inline-flex items-center">
         <input
@@ -92,32 +92,31 @@ export function Toggle({
             currentSize.track,
             checked
               ? activeColors[variant] || activeColors.default
-              : "bg-zinc-900 border-zinc-800 group-hover:border-zinc-700"
+              : "bg-[#E8E3D8] border-[#D6CFBE] group-hover:border-[#B5AC9D]"
           )}
         >
           {/* Knob */}
           <div
             className={cn(
-              "rounded-full transition-all duration-200 ease-in-out transform shadow-sm flex items-center justify-center pointer-events-none",
+              "rounded-full transition-all duration-200 ease-in-out transform shadow-xs flex items-center justify-center pointer-events-none bg-white",
               currentSize.knob,
-              checked ? currentSize.translate : currentSize.translateZero,
-              checked ? (variant === "emerald" || variant === "danger" ? "bg-white" : "bg-black") : "bg-white"
+              checked ? currentSize.translate : currentSize.translateZero
             )}
           />
         </div>
       </div>
 
-      {rightIcon && <span className="text-zinc-400 group-hover:text-zinc-200 transition-colors">{rightIcon}</span>}
+      {rightIcon && <span className="text-[#71717A] group-hover:text-[#18181B] transition-colors">{rightIcon}</span>}
 
       {(label || description) && (
         <div className="flex flex-col">
           {label && (
-            <span className="text-xs font-medium text-zinc-200 group-hover:text-white transition-colors">
+            <span className="text-xs font-semibold text-[#18181B] transition-colors">
               {label}
             </span>
           )}
           {description && (
-            <span className="text-[11px] text-zinc-500 leading-tight">{description}</span>
+            <span className="text-[11px] text-[#71717A] leading-tight">{description}</span>
           )}
         </div>
       )}
@@ -148,7 +147,7 @@ export function SegmentedToggle<T extends string>({
   return (
     <div
       className={cn(
-        "inline-flex items-center p-1 rounded-xl bg-zinc-900/90 border border-zinc-800 shadow-inner backdrop-blur-sm",
+        "inline-flex items-center p-1 rounded-xl bg-white border border-[#E8E3D8] shadow-xs",
         className
       )}
       role="radiogroup"
@@ -163,14 +162,14 @@ export function SegmentedToggle<T extends string>({
             aria-checked={isActive}
             onClick={() => onChange(opt.value)}
             className={cn(
-              "relative flex items-center gap-1.5 rounded-lg font-medium transition-all duration-150 cursor-pointer",
+              "relative flex items-center gap-1.5 rounded-lg font-semibold transition-all duration-150 cursor-pointer",
               size === "sm" ? "px-2.5 py-1 text-xs" : "px-3 py-1.5 text-xs",
               isActive
-                ? "bg-zinc-800 text-white font-semibold shadow-sm border border-zinc-700"
-                : "text-zinc-400 hover:text-white hover:bg-zinc-800/40"
+                ? "bg-[#18181B] text-white shadow-xs"
+                : "text-[#52525B] hover:text-[#18181B] hover:bg-[#FAF8F5]"
             )}
           >
-            {opt.icon && <span className={cn(isActive ? "text-white" : "text-zinc-400")}>{opt.icon}</span>}
+            {opt.icon && <span className={cn(isActive ? "text-white" : "text-[#71717A]")}>{opt.icon}</span>}
             <span>{opt.label}</span>
             {opt.badge && <span className="ml-1">{opt.badge}</span>}
           </button>

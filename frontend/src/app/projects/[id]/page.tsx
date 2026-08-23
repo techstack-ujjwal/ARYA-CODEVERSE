@@ -378,8 +378,8 @@ export default function ProjectWorkspacePage({
 
   if (isLoading && !project) {
     return (
-      <div className="flex flex-col items-center justify-center py-24 text-zinc-500 bg-black">
-        <Activity className="w-8 h-8 animate-spin mb-3 text-white" />
+      <div className="flex flex-col items-center justify-center py-24 text-[#71717A] bg-[#FAF8F5]">
+        <Activity className="w-8 h-8 animate-spin mb-3 text-[#18181B]" />
         <p className="text-xs font-mono">Loading workspace...</p>
       </div>
     );
@@ -387,11 +387,11 @@ export default function ProjectWorkspacePage({
 
   if (!isLoading && !project) {
     return (
-      <div className="max-w-md mx-auto px-4 py-24 text-center bg-black">
-        <Card variant="subtle" className="border-red-800/40 bg-red-950/20 p-8">
-          <AlertCircle className="w-8 h-8 text-red-400 mx-auto mb-3" />
-          <h2 className="text-base font-bold text-white">Project Not Found</h2>
-          <p className="text-xs text-zinc-400 mt-1 mb-6">
+      <div className="max-w-md mx-auto px-4 py-24 text-center bg-[#FAF8F5]">
+        <Card variant="subtle" className="border-red-200 bg-red-50 p-8">
+          <AlertCircle className="w-8 h-8 text-red-500 mx-auto mb-3" />
+          <h2 className="text-base font-bold text-[#18181B]">Project Not Found</h2>
+          <p className="text-xs text-[#52525B] mt-1 mb-6">
             {loadError || "The project ID you requested does not exist or you do not have permission to access it."}
           </p>
           <Link href="/dashboard">
@@ -405,28 +405,28 @@ export default function ProjectWorkspacePage({
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full bg-black text-white">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full bg-[#FAF8F5] text-[#18181B]">
       {/* Back Navigation & Workspace Header */}
       <div className="mb-6">
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white transition-colors mb-3"
+          className="inline-flex items-center gap-1.5 text-xs text-[#71717A] hover:text-[#18181B] transition-colors mb-3"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Back to Dashboard</span>
         </Link>
 
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-zinc-800">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-[#E8E3D8]">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              <h1 className="font-serif text-2xl sm:text-3xl font-normal text-[#18181B] tracking-tight">
                 {project?.name || "Project Workspace"}
               </h1>
               <Badge variant={project?.status === "finalized" ? "success" : "default"} size="md">
                 {project?.status?.toUpperCase() || "IDEA"}
               </Badge>
             </div>
-            <p className="text-xs text-zinc-400 mt-1 max-w-2xl">
+            <p className="text-xs text-[#52525B] mt-1 max-w-2xl">
               {project?.description || "Structured submission portal and multi-agent evaluation sandbox."}
             </p>
           </div>
@@ -463,11 +463,11 @@ export default function ProjectWorkspacePage({
 
         {/* Role Perspective Notice Banner */}
         {role === "judge" && (
-          <div className="mt-3 p-3 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-between text-xs text-zinc-200">
+          <div className="mt-3 p-3 rounded-xl bg-white border border-[#E8E3D8] flex items-center justify-between text-xs text-[#18181B] shadow-2xs">
             <span className="flex items-center gap-2">
-              <Award className="w-4 h-4 text-white shrink-0" />
+              <Award className="w-4 h-4 text-[#3A4B86] shrink-0" />
               <span>
-                <strong>Judge Evaluation Mode:</strong> Submissions are in read-only inspection mode to preserve student work. Click "Grade in Judge Portal" to submit your official score.
+                <strong>Judge Evaluation Mode:</strong> Submissions are in read-only inspection mode to preserve student work. Click &quot;Grade in Judge Portal&quot; to submit your official score.
               </span>
             </span>
           </div>
@@ -476,10 +476,10 @@ export default function ProjectWorkspacePage({
 
       {/* Stage Stepper Progress Bar */}
       {pipelineStatus && (
-        <div className="mb-8 p-4 rounded-xl bg-zinc-900/60 border border-zinc-800 flex flex-wrap items-center justify-between gap-4 text-xs font-mono">
+        <div className="mb-8 p-4 rounded-xl bg-white border border-[#E8E3D8] flex flex-wrap items-center justify-between gap-4 text-xs font-mono shadow-2xs">
           <div className="flex items-center gap-2">
-            <span className="text-zinc-500">Pipeline Status:</span>
-            <span className="text-zinc-200 font-bold uppercase">{pipelineStatus.overall_status}</span>
+            <span className="text-[#71717A]">Pipeline Status:</span>
+            <span className="text-[#18181B] font-bold uppercase">{pipelineStatus.overall_status}</span>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
@@ -488,14 +488,14 @@ export default function ProjectWorkspacePage({
                 <span
                   className={`w-2 h-2 rounded-full ${
                     state === "completed"
-                      ? "bg-emerald-400"
+                      ? "bg-[#10B981]"
                       : state === "submitted" || state === "registered" || state === "generated"
-                      ? "bg-amber-400"
-                      : "bg-zinc-700"
+                      ? "bg-[#F59E0B]"
+                      : "bg-[#D6CFBE]"
                   }`}
                 />
-                <span className="capitalize text-zinc-400">{stg}:</span>
-                <span className="text-zinc-200 font-semibold">{state}</span>
+                <span className="capitalize text-[#71717A]">{stg}:</span>
+                <span className="text-[#18181B] font-semibold">{state}</span>
               </div>
             ))}
           </div>

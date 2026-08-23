@@ -15,32 +15,30 @@ export function Card({
 }: CardProps) {
   const variants = {
     default:
-      "bg-zinc-950 border border-zinc-800 shadow-md shadow-black/40",
+      "bg-white border border-[#E8E3D8] shadow-xs text-[#18181B]",
     subtle:
-      "bg-zinc-950/50 border border-zinc-800/60 shadow-sm",
+      "bg-[#FAF8F5] border border-[#E8E3D8] shadow-none text-[#18181B]",
     outline:
-      "bg-transparent border border-zinc-800 shadow-none",
+      "bg-transparent border border-[#E8E3D8] shadow-none text-[#18181B]",
     elevated:
-      "bg-zinc-950 border border-zinc-800 shadow-xl shadow-black/60",
+      "bg-white border border-[#E8E3D8] shadow-sm text-[#18181B]",
     glass:
-      "bg-zinc-950/80 backdrop-blur-xl border border-zinc-800 shadow-lg shadow-black/50",
+      "bg-white/85 backdrop-blur-md border border-[#E8E3D8] shadow-xs text-[#18181B]",
     interactive:
-      "bg-zinc-950 border border-zinc-800 hover:border-zinc-700 hover:bg-zinc-900 transition-all duration-200 cursor-pointer shadow-md",
+      "bg-white border border-[#E8E3D8] hover:border-[#D6CFBE] hover:bg-[#FAF8F5] transition-all duration-200 cursor-pointer shadow-xs text-[#18181B]",
     gradient:
-      "bg-zinc-950 border border-zinc-800 shadow-lg",
+      "bg-gradient-to-br from-white to-[#FAF8F5] border border-[#E8E3D8] shadow-xs text-[#18181B]",
     glow:
-      "bg-zinc-950 border border-emerald-800/80 shadow-[0_0_20px_rgba(16,185,129,0.12)]",
+      "bg-white border border-[#D8EAD9] shadow-[0_4px_20px_rgba(45,90,54,0.06)] text-[#18181B]",
   };
 
   return (
     <div
       className={cn(
-        "relative rounded-2xl p-5 text-white overflow-hidden transition-all duration-200",
-        // Top highlight specular line for modern UI depth
-        "before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:pointer-events-none",
+        "relative rounded-2xl p-5 text-[#18181B] overflow-hidden transition-all duration-200",
         variants[variant],
         hoverable &&
-          "hover:border-zinc-700 hover:bg-zinc-900 hover:translate-y-[-1.5px] hover:shadow-lg hover:shadow-black/60",
+          "hover:border-[#D6CFBE] hover:-translate-y-0.5 hover:shadow-md",
         className
       )}
       {...props}
@@ -62,10 +60,10 @@ export function CardHeader({
 }: CardHeaderProps) {
   return (
     <div
-      className={cn("flex items-start justify-between gap-4 pb-4 border-b border-zinc-800 mb-4", className)}
+      className={cn("flex items-start justify-between gap-4 pb-4 border-b border-[#E8E3D8] mb-4", className)}
       {...props}
     >
-      <div className="flex flex-col space-y-1.5 flex-1 min-w-0">{children}</div>
+      <div className="flex flex-col space-y-1 flex-1 min-w-0">{children}</div>
       {action && <div className="shrink-0 flex items-center">{action}</div>}
     </div>
   );
@@ -78,7 +76,7 @@ export function CardTitle({
 }: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
     <h3
-      className={cn("text-base font-semibold tracking-tight text-white flex items-center gap-2", className)}
+      className={cn("text-base font-bold tracking-tight text-[#18181B] flex items-center gap-2", className)}
       {...props}
     >
       {children}
@@ -92,7 +90,7 @@ export function CardDescription({
   ...props
 }: React.HTMLAttributes<HTMLParagraphElement>) {
   return (
-    <p className={cn("text-xs text-zinc-400 leading-relaxed", className)} {...props}>
+    <p className={cn("text-xs text-[#52525B] leading-relaxed", className)} {...props}>
       {children}
     </p>
   );
@@ -118,7 +116,7 @@ export function CardFooter({
   return (
     <div
       className={cn(
-        "mt-5 pt-3.5 border-t border-zinc-800 flex items-center justify-between gap-3 text-xs text-zinc-400",
+        "mt-5 pt-3.5 border-t border-[#E8E3D8] flex items-center justify-between gap-3 text-xs text-[#52525B]",
         className
       )}
       {...props}
@@ -139,12 +137,12 @@ export function CardSlot({
   ...props
 }: CardSlotProps) {
   const slotVariants = {
-    default: "bg-zinc-900 border-zinc-800 text-zinc-200",
-    muted: "bg-zinc-900 border-zinc-800 text-zinc-400",
-    highlight: "bg-zinc-800 border-zinc-700 text-white",
-    danger: "bg-red-950/60 border-red-800/80 text-red-200",
-    success: "bg-emerald-950/60 border-emerald-800/80 text-emerald-200",
-    warning: "bg-zinc-900 border-zinc-700 text-white",
+    default: "bg-[#FAF8F5] border-[#E8E3D8] text-[#18181B]",
+    muted: "bg-[#F4EFE6] border-[#E2DDD0] text-[#52525B]",
+    highlight: "bg-[#DDE4F8] border-[#BAC7E8] text-[#3A4B86]",
+    danger: "bg-[#F5DCD7] border-[#E8B8B0] text-[#7A3A30]",
+    success: "bg-[#D8EAD9] border-[#B5D7B7] text-[#2D5A36]",
+    warning: "bg-[#FBF1D5] border-[#E8DCB5] text-[#6E5416]",
   };
 
   return (
@@ -169,7 +167,7 @@ export function CardBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-medium tracking-wide uppercase",
+        "inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold tracking-wide uppercase",
         className
       )}
       {...props}

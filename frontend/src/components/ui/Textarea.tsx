@@ -6,76 +6,38 @@ export interface TextareaProps
   label?: string;
   helperText?: string;
   error?: string;
-  maxWords?: number;
-  wordCount?: number;
 }
 
 export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  (
-    {
-      className,
-      label,
-      helperText,
-      error,
-      maxWords,
-      wordCount,
-      id,
-      disabled,
-      ...props
-    },
-    ref
-  ) => {
+  ({ className, label, helperText, error, id, disabled, rows = 4, ...props }, ref) => {
     const textareaId = id || (label ? label.toLowerCase().replace(/\s+/g, "-") : undefined);
-
-    const isOverLimit =
-      maxWords !== undefined && wordCount !== undefined && wordCount > maxWords;
 
     return (
       <div className="w-full space-y-1.5">
-        <div className="flex items-center justify-between">
-          {label && (
-            <label
-              htmlFor={textareaId}
-              className="block text-xs font-semibold text-zinc-300"
-            >
-              {label}
-            </label>
-          )}
-          {maxWords !== undefined && wordCount !== undefined && (
-            <span
-              className={cn(
-                "text-[11px] font-mono",
-                isOverLimit
-                  ? "text-rose-400 font-semibold"
-                  : wordCount > maxWords * 0.9
-                  ? "text-amber-400 font-medium"
-                  : "text-zinc-500"
-              )}
-            >
-              {wordCount} / {maxWords} words
-            </span>
-          )}
-        </div>
+        {label && (
+          <label
+            htmlFor={textareaId}
+            className="block text-xs font-semibold text-[#18181B]"
+          >
+            {label}
+          </label>
+        )}
         <textarea
           ref={ref}
           id={textareaId}
+          rows={rows}
           disabled={disabled}
           className={cn(
-            "w-full bg-zinc-900/90 border border-zinc-800 rounded-xl p-3 text-xs text-zinc-100 placeholder-zinc-500 shadow-inner transition-all duration-200 focus:outline-none focus:border-indigo-500/80 focus:ring-2 focus:ring-indigo-500/20 disabled:opacity-50 disabled:cursor-not-allowed resize-y min-h-[100px] leading-relaxed",
-            (error || isOverLimit) &&
-              "border-rose-500/60 focus:border-rose-500 focus:ring-rose-500/20",
+            "w-full bg-[#FAF8F5] border border-[#E8E3D8] rounded-xl p-3 text-xs text-[#18181B] placeholder-[#A1A1AA] transition-all duration-200 focus:outline-none focus:border-[#18181B] focus:bg-white focus:ring-1 focus:ring-[#18181B] disabled:opacity-50 disabled:cursor-not-allowed resize-y",
+            error && "border-red-500 focus:border-red-500 focus:ring-red-500/20",
             className
           )}
           {...props}
         />
         {error ? (
-          <p className="text-[11px] text-rose-400 font-medium">{error}</p>
-        ) : isOverLimit ? (
-          <p className="text-[11px] text-rose-400 font-medium">
-            Exceeds maximum limit of {maxWords} words.
-          </p>
+          <p className="text-[11px] text-red-600 font-medium">{error}</p>
         ) : helperText ? (
-          <p className="text-[11px] text-zinc-500">{helperText}</p>
+          <p className="text-[11px] text-[#71717A]">{helperText}</p>
         ) : null}
       </div>
     );

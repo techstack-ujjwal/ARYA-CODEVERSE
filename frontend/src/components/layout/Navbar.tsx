@@ -16,7 +16,8 @@ import {
   Cpu,
   Menu,
   X,
-  RefreshCw,
+  Sparkles,
+  ArrowRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -50,7 +51,7 @@ export function Navbar() {
   }, [pathname]);
 
   const navLinks = [
-    { href: "/dashboard", label: "Dashboard", icon: <Layers className="w-4 h-4" /> },
+    { href: "/dashboard", label: "Workspace", icon: <Layers className="w-4 h-4" /> },
     { href: "/leaderboard", label: "Leaderboard", icon: <Trophy className="w-4 h-4" /> },
   ];
 
@@ -71,28 +72,26 @@ export function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-zinc-800 bg-black/90 backdrop-blur-xl specular-border">
-      <div className="max-w-7xl mx-auto flex h-14 items-center justify-between px-4 sm:px-6">
+    <header className="sticky top-0 z-40 w-full border-b border-[#E8E3D8] bg-[#FAF8F5]/90 backdrop-blur-md">
+      <div className="max-w-7xl mx-auto flex h-15 items-center justify-between px-4 sm:px-6">
         {/* Brand Logo */}
         <div className="flex items-center gap-6">
           <Link
             href="/"
-            className="flex items-center gap-3 group transition-opacity hover:opacity-90"
+            className="flex items-center gap-2.5 group transition-opacity hover:opacity-90"
           >
-            <div className="w-8 h-8 rounded-xl bg-zinc-900 border border-zinc-700 flex items-center justify-center shadow-sm">
-              <span className="font-mono font-black text-sm tracking-tight text-white">
-                JX
-              </span>
+            <div className="w-7 h-7 rounded-lg bg-[#18181B] text-white flex items-center justify-center font-mono font-bold text-xs shadow-sm">
+              JX
             </div>
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5">
-                <span className="text-sm font-black tracking-tight text-white font-mono">
-                  Jury<span className="text-emerald-400">X</span>
+                <span className="text-sm font-extrabold tracking-tight text-[#18181B] font-mono">
+                  Jury<span className="text-[#3A4B86]">X</span>
+                </span>
+                <span className="text-[10px] font-mono font-bold text-[#2D5A36] bg-[#D8EAD9] px-2 py-0.2 rounded-full">
+                  Swarm v2.4
                 </span>
               </div>
-              <span className="text-[9px] font-mono text-zinc-500 -mt-0.5 tracking-wider uppercase">
-                Autonomous AI Jury
-              </span>
             </div>
           </Link>
 
@@ -107,10 +106,10 @@ export function Navbar() {
                   key={link.href}
                   href={link.href}
                   className={cn(
-                    "flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-all",
+                    "flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all",
                     isActive
-                      ? "bg-zinc-800 text-white font-semibold shadow-sm"
-                      : "text-zinc-400 hover:text-white hover:bg-zinc-900"
+                      ? "bg-[#18181B] text-white shadow-sm"
+                      : "text-[#52525B] hover:text-[#18181B] hover:bg-[#F4EFE6]"
                   )}
                 >
                   {link.icon}
@@ -122,28 +121,28 @@ export function Navbar() {
         </div>
 
         {/* Right Actions: Health Pulse & Dev Switcher */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-3">
           {/* Live Backend Connection Indicator */}
           <button
             onClick={checkHealth}
-            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-[11px] font-mono hover:border-zinc-700 transition-colors cursor-pointer"
+            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-[#E8E3D8] text-[11px] font-mono hover:border-[#D6CFBE] transition-colors cursor-pointer shadow-xs"
             title={`Backend Core: ${isBackendHealthy ? "Connected (FastAPI :8000)" : "Disconnected / Offline"}. Click to re-check.`}
           >
             <span
               className={cn(
                 "w-2 h-2 rounded-full",
                 isBackendHealthy === true
-                  ? "bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.6)]"
+                  ? "bg-[#10B981] animate-pulse"
                   : isBackendHealthy === false
                   ? "bg-red-500"
-                  : "bg-zinc-500"
+                  : "bg-zinc-400"
               )}
             />
-            <span className="text-zinc-300 font-semibold">API</span>
+            <span className="text-[#18181B] font-semibold">API</span>
             {agentStatus && (
-              <span className="text-zinc-500 flex items-center gap-0.5 ml-1">
-                <Cpu className="w-3 h-3 text-zinc-400" />
-                <span className="text-[10px] text-zinc-300">17 Agents</span>
+              <span className="text-[#71717A] flex items-center gap-0.5 ml-1">
+                <Cpu className="w-3 h-3 text-[#3A4B86]" />
+                <span className="text-[10px] text-[#18181B] font-bold">17 Agents</span>
               </span>
             )}
           </button>
@@ -152,26 +151,26 @@ export function Navbar() {
 
           <Link
             href="/dashboard"
-            className="hidden lg:flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-lg bg-white text-black hover:bg-zinc-200 transition-all font-semibold shadow-sm"
+            className="hidden lg:flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-lg bg-[#18181B] text-white hover:bg-[#27272A] transition-all shadow-sm active:scale-95"
           >
             <PlusCircle className="w-3.5 h-3.5" />
-            <span>Workspace</span>
+            <span>Open Studio</span>
           </Link>
 
           {/* Mobile Menu Hamburger Toggle */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-900 border border-zinc-800 transition-colors cursor-pointer"
+            className="md:hidden p-1.5 rounded-lg text-[#52525B] hover:text-[#18181B] hover:bg-[#F4EFE6] border border-[#E8E3D8] transition-colors cursor-pointer"
             aria-label="Toggle navigation menu"
           >
-            {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4 text-[#18181B]" />}
           </button>
         </div>
       </div>
 
       {/* Mobile Drawer Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden border-t border-zinc-800 bg-black px-4 py-3 space-y-2 animate-in slide-in-from-top-2 duration-150">
+        <div className="md:hidden border-t border-[#E8E3D8] bg-[#FAF8F5] px-4 py-3 space-y-2 animate-in slide-in-from-top-2 duration-150 shadow-lg">
           <div className="space-y-1">
             {navLinks.map((link) => {
               const isActive =
@@ -182,10 +181,10 @@ export function Navbar() {
                   key={link.href}
                   href={link.href}
                   className={cn(
-                    "flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg transition-colors",
+                    "flex items-center gap-2.5 px-3 py-2 text-xs font-semibold rounded-lg transition-colors",
                     isActive
-                      ? "bg-zinc-800 text-white font-semibold"
-                      : "text-zinc-400 hover:text-white hover:bg-zinc-900"
+                      ? "bg-[#18181B] text-white"
+                      : "text-[#52525B] hover:text-[#18181B] hover:bg-[#F4EFE6]"
                   )}
                 >
                   {link.icon}
@@ -195,12 +194,12 @@ export function Navbar() {
             })}
           </div>
 
-          <div className="pt-2 border-t border-zinc-800 flex items-center justify-between text-xs font-mono text-zinc-400">
+          <div className="pt-2 border-t border-[#E8E3D8] flex items-center justify-between text-xs font-mono text-[#52525B]">
             <span className="flex items-center gap-1.5">
               <span
                 className={cn(
                   "w-2 h-2 rounded-full",
-                  isBackendHealthy ? "bg-emerald-400" : "bg-red-500"
+                  isBackendHealthy ? "bg-[#10B981]" : "bg-red-500"
                 )}
               />
               {isBackendHealthy ? "FastAPI Online" : "Backend Offline"}

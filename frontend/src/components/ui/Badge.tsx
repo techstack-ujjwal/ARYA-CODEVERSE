@@ -27,42 +27,42 @@ export function Badge({
   ...props
 }: BadgeProps) {
   const variants = {
-    default: "bg-zinc-900 text-zinc-200 border-zinc-800 shadow-sm",
-    outline: "bg-transparent text-zinc-400 border-zinc-800",
-    white: "bg-white text-black border-white font-semibold",
-    success: "bg-emerald-950/60 text-emerald-400 border-emerald-800/80 shadow-[0_0_8px_rgba(16,185,129,0.15)]",
-    emerald: "bg-emerald-950/60 text-emerald-400 border-emerald-800/80 shadow-[0_0_8px_rgba(16,185,129,0.15)]",
-    warning: "bg-red-950/50 text-red-300 border-red-800/60",
-    amber: "bg-zinc-900 text-zinc-300 border-zinc-700",
-    danger: "bg-red-950/60 text-red-400 border-red-800/80 shadow-[0_0_8px_rgba(239,68,68,0.15)]",
-    info: "bg-zinc-900 text-zinc-200 border-zinc-700",
-    cyan: "bg-zinc-900 text-zinc-200 border-zinc-700",
-    purple: "bg-zinc-900 text-zinc-200 border-zinc-700",
+    default: "bg-[#FAF8F5] text-[#18181B] border-[#E8E3D8]",
+    outline: "bg-transparent text-[#52525B] border-[#E8E3D8]",
+    white: "bg-white text-[#18181B] border-[#E8E3D8] font-semibold shadow-2xs",
+    success: "bg-[#D8EAD9] text-[#2D5A36] border-[#B5D7B7]",
+    emerald: "bg-[#D8EAD9] text-[#2D5A36] border-[#B5D7B7]",
+    warning: "bg-[#FBF1D5] text-[#6E5416] border-[#E8DCB5]",
+    amber: "bg-[#FBF1D5] text-[#6E5416] border-[#E8DCB5]",
+    danger: "bg-[#F5DCD7] text-[#7A3A30] border-[#E8B8B0]",
+    info: "bg-[#DDE4F8] text-[#3A4B86] border-[#BAC7E8]",
+    cyan: "bg-[#DDE4F8] text-[#3A4B86] border-[#BAC7E8]",
+    purple: "bg-[#EBE4F6] text-[#4F3B74] border-[#D3C7E6]",
   };
 
   const dotColors = {
-    default: "bg-zinc-400",
-    outline: "bg-zinc-500",
-    white: "bg-black",
-    success: "bg-emerald-400",
-    emerald: "bg-emerald-400",
-    warning: "bg-red-400",
-    amber: "bg-zinc-400",
-    danger: "bg-red-400",
-    info: "bg-zinc-300",
-    cyan: "bg-zinc-300",
-    purple: "bg-zinc-300",
+    default: "bg-[#71717A]",
+    outline: "bg-[#A1A1AA]",
+    white: "bg-[#18181B]",
+    success: "bg-[#2D5A36]",
+    emerald: "bg-[#2D5A36]",
+    warning: "bg-[#6E5416]",
+    amber: "bg-[#6E5416]",
+    danger: "bg-[#7A3A30]",
+    info: "bg-[#3A4B86]",
+    cyan: "bg-[#3A4B86]",
+    purple: "bg-[#4F3B74]",
   };
 
   const sizes = {
-    sm: "text-[10px] px-2 py-0.5 font-mono tracking-wide",
-    md: "text-xs px-2.5 py-0.5 font-medium tracking-normal",
+    sm: "text-[10px] px-2 py-0.5 font-mono font-bold tracking-wide",
+    md: "text-xs px-2.5 py-0.5 font-semibold tracking-normal",
   };
 
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border transition-colors select-none backdrop-blur-sm",
+        "inline-flex items-center gap-1.5 rounded-full border transition-colors select-none font-mono",
         variants[variant] || variants.default,
         sizes[size],
         className

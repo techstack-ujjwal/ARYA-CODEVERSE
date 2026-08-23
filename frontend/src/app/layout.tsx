@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Newsreader } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/store/auth-context";
 import { ToastProvider } from "@/lib/store/toast-context";
@@ -16,6 +16,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const newsreader = Newsreader({
+  variable: "--font-serif",
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+});
+
 export const metadata: Metadata = {
   title: "JuryX — Autonomous Multi-Agent Hackathon Evaluation Platform",
   description: "Evidence-grounded multi-agent hackathon evaluation, claim verification, and calibrated scoring platform",
@@ -29,9 +35,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} dark h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${newsreader.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#09090b] text-zinc-100 font-sans selection:bg-zinc-800 selection:text-zinc-100">
+      <body className="min-h-full flex flex-col bg-[#FAF8F5] text-[#18181B] font-sans selection:bg-[#EBE4F6] selection:text-[#18181B]">
         <AuthProvider>
           <ToastProvider>
             <Navbar />
