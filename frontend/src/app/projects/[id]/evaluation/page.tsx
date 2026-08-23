@@ -34,6 +34,8 @@ import {
   Lightbulb,
   Compass,
   Laptop,
+  Maximize2,
+  Minimize2,
 } from "lucide-react";
 import { ProjectsAPI } from "@/lib/api/projects";
 import { EvaluationAPI } from "@/lib/api/evaluation";
@@ -67,7 +69,7 @@ const AGENT_META: Record<
     title: "Idea Selection & Core Novelty",
     stage: "idea",
     stageLabel: "Stage 1: Idea (20%)",
-    desc: "Evaluates foundational novelty, solution defensibility, and product moat.",
+    desc: "Evaluates foundational novelty, solution defensibility, and technological moat.",
     icon: Sparkles,
     color: "sky",
   },
@@ -130,7 +132,7 @@ const AGENT_META: Record<
     color: "amber",
   },
 
-  // ── Stage 3: Product Agents (UI/UX first)
+  // ── Stage 3: Product Agents (UI/UX sorted first)
   ui_ux_agent: {
     title: "UI/UX Experience & WCAG Accessibility",
     stage: "product",
@@ -207,20 +209,16 @@ interface ParsedSuggestionPoint {
   detail: string;
 }
 
-// Helper to extract exactly 3 structured points from LLM reasoning text
-function extractThreePoints(reasoning: string, agentName: string): { overview: string; points: ParsedSuggestionPoint[] } {
+// Helper to extract 3 structured recommendation points from reasoning text
+function extractThreePoints(reasoning: string, agentName: string): ParsedSuggestionPoint[] {
   if (!reasoning) {
-    return {
-      overview: "Evaluation completed with automated consensus.",
-      points: [
-        { title: "Pipeline Optimization", detail: "Verify end-to-end execution latency and async response times under load." },
-        { title: "Error Boundary Guard", detail: "Implement structured fallback handlers for non-standard payloads." },
-        { title: "Documentation Rigor", detail: "Ensure API signatures and architecture schemas are fully documented." },
-      ],
-    };
+    return [
+      { title: "Pipeline Optimization", detail: "Verify end-to-end execution latency and async response times under load." },
+      { title: "Error Boundary Guard", detail: "Implement structured fallback handlers for non-standard payloads." },
+      { title: "Documentation Rigor", detail: "Ensure API signatures and architecture schemas are fully documented." },
+    ];
   }
 
-  // 1. Try to extract numbered points `1. **Title**: detail` or `1. Title: detail`
   const numberedPattern = /(?:^|\n)\s*(\d+)\.\s*(?:\*\*(.*?)\*\*|\*([^*]+)\*|([^:\n]+))(?::\s*|\s*-\s*)([^\n]+(?:\n(?!\d+\.|\n)[^\n]+)*)/g;
   const points: ParsedSuggestionPoint[] = [];
   let match;
@@ -231,7 +229,6 @@ function extractThreePoints(reasoning: string, agentName: string): { overview: s
     points.push({ title, detail });
   }
 
-  // 2. If regex found fewer than 3, try bullet points `• **Title**: detail` or `- **Title**: detail`
   if (points.length < 3) {
     const bulletPattern = /(?:^|\n)\s*[•\-*]\s*(?:\*\*(.*?)\*\*|\*([^*]+)\*|([^:\n]+))(?::\s*|\s*-\s*)([^\n]+(?:\n(?![•\-*]|\n)[^\n]+)*)/g;
     while ((match = bulletPattern.exec(reasoning)) !== null && points.length < 3) {
@@ -243,7 +240,6 @@ function extractThreePoints(reasoning: string, agentName: string): { overview: s
     }
   }
 
-  // 3. Fallback defaults per agent type if less than 3
   if (points.length === 0) {
     if (agentName.includes("ui") || agentName.includes("ux")) {
       points.push(
@@ -272,13 +268,7 @@ function extractThreePoints(reasoning: string, agentName: string): { overview: s
     }
   }
 
-  // Extract executive overview (text before suggestions if available)
-  let overview = reasoning.split(/###\s*💡|###\s*📌|💡|Recommendations/i)[0].trim();
-  if (!overview || overview.length < 20) {
-    overview = reasoning.replace(/###.*?\n/g, "").slice(0, 180) + "...";
-  }
-
-  return { overview, points };
+  return points;
 }
 
 export default function ProjectEvaluationSummaryPage({
@@ -300,8 +290,8 @@ export default function ProjectEvaluationSummaryPage({
   const [productEval, setProductEval] = useState<ProductEvaluationResult | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Active Stage Tab: 'product' | 'idea' | 'ppt'
-  const [activeStageTab, setActiveStageTab] = useState<"product" | "idea" | "ppt">("product");
+  // Active Stage Tab: 'all' | 'product' | 'idea' | 'ppt'
+  const [activeStageTab, setActiveStageTab] = useState<"all" | "product" | "idea" | "ppt">("all");
   const [expandedAgentCards, setExpandedAgentCards] = useState<Record<string, boolean>>({});
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
@@ -395,12 +385,13 @@ export default function ProjectEvaluationSummaryPage({
     });
 
   const stageAgentsMap = {
+    all: rawAgentEvaluations,
     idea: ideaAgents,
     ppt: pptAgents,
     product: productAgents,
   };
 
-  const currentStageAgents = stageAgentsMap[activeStageTab] || [];
+  const currentStageAgents = stageAgentsMap[activeStageTab] || rawAgentEvaluations;
 
   if (isLoading && !summary) {
     return (
@@ -432,11 +423,11 @@ export default function ProjectEvaluationSummaryPage({
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl sm:text-3xl font-black text-zinc-100 tracking-tight">
-                {project?.name || "Project"} — Multi-Agent Evaluation Dossier
+                {project?.name || "Project"} — Comprehensive Multi-Agent Evaluation Dossier
               </h1>
             </div>
             <p className="text-xs text-zinc-400 mt-1">
-              Deterministic point-by-point telemetry directly synthesized by the 17-agent AI Swarm, tool scanners, and faculty judge calibration.
+              Full, untruncated project-specific evaluation with structured criteria bullet points, verified technical strengths, and 3 actionable improvement points per agent.
             </p>
           </div>
 
@@ -580,11 +571,11 @@ export default function ProjectEvaluationSummaryPage({
             <div className="flex items-center gap-2">
               <Layers className="w-5 h-5 text-sky-400" />
               <h2 className="text-lg font-bold text-zinc-100 tracking-tight">
-                Interactive Stage Evaluation Reports
+                Direct LLM Multi-Agent Feedback Reports
               </h2>
             </div>
             <p className="text-xs text-zinc-400 mt-0.5">
-              Direct telemetry from specialized LLM evaluators with dedicated 3-point actionable suggestions per agent.
+              Structured in clear bullet points across Rubric Criteria, Verified Strengths, Identified Vulnerabilities, and 3 Actionable Suggestions.
             </p>
           </div>
 
@@ -604,42 +595,54 @@ export default function ProjectEvaluationSummaryPage({
           </div>
         </div>
 
-        {/* 3 Primary Stage Tabs (Idea, PPT, Prototype/Product) */}
-        <div className="grid grid-cols-3 gap-2 p-1.5 bg-zinc-950/80 border border-zinc-800/90 rounded-2xl mb-8">
+        {/* 3 Primary Stage Tabs + All View */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-1.5 bg-zinc-950/80 border border-zinc-800/90 rounded-2xl mb-8">
+          <button
+            onClick={() => setActiveStageTab("all")}
+            className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+              activeStageTab === "all"
+                ? "bg-zinc-800 text-zinc-100 border border-zinc-700 shadow-md"
+                : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/60"
+            }`}
+          >
+            <Layers className="w-4 h-4 text-zinc-300" />
+            <span>All Stages ({rawAgentEvaluations.length})</span>
+          </button>
+
           <button
             onClick={() => setActiveStageTab("idea")}
-            className={`flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+            className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
               activeStageTab === "idea"
                 ? "bg-zinc-800 text-zinc-100 border border-zinc-700 shadow-md"
                 : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/60"
             }`}
           >
             <Compass className="w-4 h-4 text-sky-400" />
-            <span>1. Idea & Feasibility ({ideaAgents.length})</span>
+            <span>1. Idea Stage ({ideaAgents.length})</span>
           </button>
 
           <button
             onClick={() => setActiveStageTab("ppt")}
-            className={`flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+            className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
               activeStageTab === "ppt"
                 ? "bg-zinc-800 text-zinc-100 border border-zinc-700 shadow-md"
                 : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/60"
             }`}
           >
             <FileText className="w-4 h-4 text-amber-400" />
-            <span>2. PPT & Architecture ({pptAgents.length})</span>
+            <span>2. PPT Stage ({pptAgents.length})</span>
           </button>
 
           <button
             onClick={() => setActiveStageTab("product")}
-            className={`flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+            className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
               activeStageTab === "product"
                 ? "bg-zinc-800 text-zinc-100 border border-zinc-700 shadow-md"
                 : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/60"
             }`}
           >
             <Code2 className="w-4 h-4 text-emerald-400" />
-            <span>3. Prototype & Product ({productAgents.length})</span>
+            <span>3. Product / UI/UX ({productAgents.length})</span>
           </button>
         </div>
 
@@ -655,7 +658,7 @@ export default function ProjectEvaluationSummaryPage({
               const meta = formatAgentMeta(ae.agent_name);
               const IconComp = meta.icon;
               const isExpanded = expandedAgentCards[ae.agent_name] ?? true;
-              const { overview, points } = extractThreePoints(ae.reasoning, ae.agent_name);
+              const points = extractThreePoints(ae.reasoning, ae.agent_name);
 
               return (
                 <Card
@@ -703,36 +706,36 @@ export default function ProjectEvaluationSummaryPage({
                     </div>
                   </div>
 
-                  {/* Expanded Content with 3 Actionable Suggestion Points */}
+                  {/* Expanded Content: 100% Complete Untruncated LLM Feedback + 3 Suggestion Cards */}
                   {isExpanded && (
                     <div className="p-6 border-t border-zinc-800/70 space-y-6 bg-zinc-950/60">
-                      {/* Executive Assessment Notes */}
+                      {/* 🌟 FULL UNTRUNCATED LLM FEEDBACK & BULLET POINTS */}
                       <div>
-                        <div className="text-xs font-semibold text-zinc-300 uppercase tracking-wider font-mono flex items-center gap-1.5 mb-2">
+                        <div className="text-xs font-semibold text-zinc-300 uppercase tracking-wider font-mono flex items-center gap-1.5 mb-2.5">
                           <Activity className="w-3.5 h-3.5 text-sky-400" />
-                          <span>Executive Verdict & Analysis:</span>
+                          <span>Detailed Agent Assessment & Bullet Points:</span>
                         </div>
-                        <div className="p-4 rounded-xl bg-zinc-900/70 border border-zinc-800/80 text-xs text-zinc-200 leading-relaxed font-sans">
-                          {overview}
+                        <div className="p-4 rounded-xl bg-zinc-900/80 border border-zinc-800/90 text-xs text-zinc-200 leading-relaxed font-sans whitespace-pre-line space-y-2">
+                          {ae.reasoning || "Evaluation completed with automated consensus."}
                         </div>
                       </div>
 
-                      {/* 🌟 3 Structured Actionable Suggestion Points (Requested by User) */}
+                      {/* 🌟 3 Structured Actionable Suggestion Cards (Interactive UI) */}
                       <div>
                         <div className="text-xs font-semibold text-zinc-300 uppercase tracking-wider font-mono flex items-center gap-1.5 mb-3">
                           <Lightbulb className="w-3.5 h-3.5 text-amber-400" />
-                          <span>Actionable Suggestions & Key Recommendations (3 Points):</span>
+                          <span>Actionable Project Suggestions (3 Key Points):</span>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
                           {points.map((pt, idx) => (
                             <div
                               key={idx}
-                              className="p-4 rounded-xl bg-zinc-900/80 border border-zinc-800/90 hover:border-zinc-700 transition-colors flex flex-col justify-between"
+                              className="p-4 rounded-xl bg-zinc-900/90 border border-zinc-800 hover:border-zinc-700 transition-colors flex flex-col justify-between"
                             >
                               <div>
                                 <div className="flex items-center gap-2 mb-2">
-                                  <span className="w-5 h-5 rounded-md bg-sky-500/10 border border-sky-500/20 text-sky-400 flex items-center justify-center text-[10px] font-mono font-bold">
+                                  <span className="w-5 h-5 rounded-md bg-sky-500/10 border border-sky-500/25 text-sky-400 flex items-center justify-center text-[10px] font-mono font-bold">
                                     0{idx + 1}
                                   </span>
                                   <h5 className="text-xs font-bold text-zinc-100 truncate">{pt.title}</h5>

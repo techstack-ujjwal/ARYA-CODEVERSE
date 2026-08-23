@@ -645,15 +645,15 @@ export default function ProjectWorkspacePage({
                   {Object.entries(ideaEval.agents || {}).map(([agentName, data]) => (
                     <div
                       key={agentName}
-                      className="p-3 rounded-lg bg-zinc-900/60 border border-zinc-800/80 text-xs space-y-1"
+                      className="p-3.5 rounded-xl bg-zinc-900/80 border border-zinc-800/90 text-xs space-y-2"
                     >
-                      <div className="flex items-center justify-between">
-                        <span className="font-semibold text-zinc-200">{agentName}</span>
+                      <div className="flex items-center justify-between pb-1.5 border-b border-zinc-800">
+                        <span className="font-bold text-zinc-100 uppercase tracking-wide text-[11px] font-mono">{agentName.replace(/_/g, " ")}</span>
                         <span className="font-mono text-emerald-400 font-bold">{data.score}/100</span>
                       </div>
-                      <p className="text-zinc-400 text-[11px] leading-relaxed line-clamp-3">
+                      <div className="text-zinc-300 text-[11px] leading-relaxed whitespace-pre-line font-sans bg-zinc-950/60 p-3 rounded-lg border border-zinc-850">
                         {data.reasoning}
-                      </p>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -841,15 +841,15 @@ export default function ProjectWorkspacePage({
                   {Object.entries(pptEval.agents || {}).map(([agentName, data]) => (
                     <div
                       key={agentName}
-                      className="p-3 rounded-lg bg-zinc-900/60 border border-zinc-800/80 text-xs space-y-1"
+                      className="p-3.5 rounded-xl bg-zinc-900/80 border border-zinc-800/90 text-xs space-y-2"
                     >
-                      <div className="flex items-center justify-between">
-                        <span className="font-semibold text-zinc-200">{agentName}</span>
+                      <div className="flex items-center justify-between pb-1.5 border-b border-zinc-800">
+                        <span className="font-bold text-zinc-100 uppercase tracking-wide text-[11px] font-mono">{agentName.replace(/_/g, " ")}</span>
                         <span className="font-mono text-emerald-400 font-bold">{data.score}/100</span>
                       </div>
-                      <p className="text-zinc-400 text-[11px] leading-relaxed line-clamp-3">
+                      <div className="text-zinc-300 text-[11px] leading-relaxed whitespace-pre-line font-sans bg-zinc-950/60 p-3 rounded-lg border border-zinc-850">
                         {data.reasoning}
-                      </p>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -956,15 +956,15 @@ export default function ProjectWorkspacePage({
                   {Object.entries(productEval.agents || {}).map(([agentName, data]) => (
                     <div
                       key={agentName}
-                      className="p-3 rounded-lg bg-zinc-900/60 border border-zinc-800/80 text-xs space-y-1"
+                      className="p-3.5 rounded-xl bg-zinc-900/80 border border-zinc-800/90 text-xs space-y-2"
                     >
-                      <div className="flex items-center justify-between">
-                        <span className="font-semibold text-zinc-200">{agentName}</span>
+                      <div className="flex items-center justify-between pb-1.5 border-b border-zinc-800">
+                        <span className="font-bold text-zinc-100 uppercase tracking-wide text-[11px] font-mono">{agentName.replace(/_/g, " ")}</span>
                         <span className="font-mono text-emerald-400 font-bold">{data.score}/100</span>
                       </div>
-                      <p className="text-zinc-400 text-[11px] leading-relaxed line-clamp-3">
+                      <div className="text-zinc-300 text-[11px] leading-relaxed whitespace-pre-line font-sans bg-zinc-950/60 p-3 rounded-lg border border-zinc-850">
                         {data.reasoning}
-                      </p>
+                      </div>
                     </div>
                   ))}
                 </div>
