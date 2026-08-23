@@ -45,7 +45,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       danger:
         "bg-rose-500/10 text-rose-300 hover:bg-rose-500/20 border border-rose-500/30 hover:border-rose-500/50 active:bg-rose-500/30",
       glow:
-        "bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:from-indigo-500 hover:to-purple-500 border border-indigo-400/30",
+        "bg-gradient-to-r from-sky-500 to-emerald-600 text-zinc-950 font-bold shadow-lg shadow-sky-500/20 hover:shadow-sky-500/35 hover:from-sky-400 hover:to-emerald-500 border border-sky-300/30",
     };
 
     const sizes = {

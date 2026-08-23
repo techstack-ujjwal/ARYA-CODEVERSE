@@ -202,7 +202,8 @@ export interface ConsistencyMetrics {
     claim_text: string;
     claim_type: string;
     origin_stage: string;
-    status: string;
+    status?: string;
+    verification_status?: string;
   }>;
 }
 

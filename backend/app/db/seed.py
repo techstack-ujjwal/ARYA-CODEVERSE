@@ -1,17 +1,10 @@
 """
-Database Seeding Script for AI Hackathon Evaluation Engine.
-Populates realistic Hackathons, Projects, Submissions, Claims, Evaluations,
-Judge Assignments, and Final Results for testing and local development.
+Database Seeding Script for JuryX Hackathon Evaluation Platform.
+Populates exactly 5 Hackathons, 5 Projects, Submissions, Claims, Evaluations,
+Evidence records, Judge Assignments, and Final Results.
 
 Usage:
     python -m backend.app.db.seed
-
-Projects seeded (5 total, diverse stages):
-  1. NexusAgent           - finalized  (full pipeline, rank 1)
-  2. VisionForge AI       - finalized  (full pipeline, rank 2)
-  3. DataPulse Edge       - product    (idea + ppt + product registered, awaiting eval)
-  4. CodeShield           - ppt        (idea submitted + ppt uploaded)
-  5. EcoRoute             - idea       (idea submitted only)
 """
 import asyncio
 from datetime import datetime, timezone, timedelta
@@ -32,24 +25,38 @@ from backend.app.models.db_models import (
 
 
 async def seed_database():
-    logger.info("Initializing database schema...")
+    logger.info("Initializing database schema for JuryX...")
     await init_db()
 
     async with AsyncSessionLocal() as session:
-        # ── 1. Hackathons ─────────────────────────────────────────────────────
+        logger.info("Purging existing records for a clean seed...")
+        from sqlalchemy import delete
+        await session.execute(delete(Evidence))
+        await session.execute(delete(Evaluation))
+        await session.execute(delete(Claim))
+        await session.execute(delete(Submission))
+        await session.execute(delete(FeedbackReport))
+        await session.execute(delete(JudgeAssignment))
+        await session.execute(delete(FinalResult))
+        await session.execute(delete(PlagiarismFlag))
+        await session.execute(delete(Project))
+        await session.execute(delete(Hackathon))
+        await session.commit()
+
         now = datetime.now(timezone.utc)
-        
+
+        # ── 1. EXACTLY 5 HACKATHONS ─────────────────────────────────────────────
         h1 = Hackathon(
             id="hack_global_ai_2026",
             name="Global AI Agent Hackathon 2026",
-            description="Premier international competition for autonomous multi-agent systems, developer tooling, and intelligent orchestration engines.",
+            description="Premier competition for autonomous multi-agent systems, developer tooling, and intelligent orchestration engines.",
             rubric_weights={"idea": 0.20, "ppt": 0.25, "product": 0.55},
             status="active",
             submission_deadline=now + timedelta(days=14),
         )
         h2 = Hackathon(
             id="hack_web3_infra_2026",
-            name="Next-Gen Web3 & Edge AI Summit",
+            name="Next-Gen Web3 & Edge AI Summit 2026",
             description="Decentralized intelligence, edge computing, WASM runtimes, and privacy-preserving federated machine learning.",
             rubric_weights={"idea": 0.25, "ppt": 0.25, "product": 0.50},
             status="active",
@@ -58,16 +65,35 @@ async def seed_database():
         h3 = Hackathon(
             id="hack_campus_innovate_2026",
             name="Campus Innovation & Health Challenge 2026",
-            description="Student-led breakthroughs in campus mental wellness, sustainable logistics, and automated academic support systems.",
+            description="Student-led breakthroughs in campus mental wellness, accessibility tools, and automated academic support systems.",
             rubric_weights={"idea": 0.30, "ppt": 0.30, "product": 0.40},
             status="active",
             submission_deadline=now + timedelta(days=7),
         )
-        session.add_all([h1, h2, h3])
-        await session.flush()
-        logger.info("Created 3 active Hackathons.")
+        h4 = Hackathon(
+            id="hack_cyber_sec_2026",
+            name="Autonomous Cybersecurity & DevSecOps Invitational 2026",
+            description="Next-generation vulnerability detection, automated fuzzing, and AST-level binary & source security defense engines.",
+            rubric_weights={"idea": 0.20, "ppt": 0.25, "product": 0.55},
+            status="active",
+            submission_deadline=now + timedelta(days=18),
+        )
+        h5 = Hackathon(
+            id="hack_climate_ai_2026",
+            name="GreenTech & Climate Intelligence Hackathon 2026",
+            description="Sustainable supply chains, carbon-aware logistics optimization, and renewable grid management via AI agents.",
+            rubric_weights={"idea": 0.20, "ppt": 0.25, "product": 0.55},
+            status="active",
+            submission_deadline=now + timedelta(days=30),
+        )
 
-        # ── 2. Project 1: NexusAgent — FINALIZED (Rank 1) ────────────────────
+        session.add_all([h1, h2, h3, h4, h5])
+        await session.flush()
+        logger.info("Created exactly 5 Hackathons.")
+
+        # ── 2. EXACTLY 5 SHOWCASE PROJECTS ─────────────────────────────────────
+
+        # Project 1: NexusAgent (Hackathon 1) — Finalized (Rank 1)
         p1 = Project(
             id="proj_nexus_agent_01",
             hackathon_id=h1.id,
@@ -79,12 +105,67 @@ async def seed_database():
             github_url="https://github.com/nexus-agent/core",
             live_url="https://nexus-agent.vercel.app",
         )
-        session.add(p1)
-        await session.flush()
 
+        # Project 2: VisionForge AI (Hackathon 1) — Finalized (Rank 2)
+        p2 = Project(
+            id="proj_vision_forge_02",
+            hackathon_id=h1.id,
+            name="VisionForge AI - Accessibility Audio Lens",
+            description="Real-time browser extension that converts complex SVG charts and interactive dashboards into natural spatial audio narratives for visually impaired users.",
+            owner_id="user_participant",
+            members=["user_participant", "user_dev_03"],
+            status="finalized",
+            github_url="https://github.com/visionforge/accessibility-lens",
+            live_url="https://visionforge.app",
+        )
+
+        # Project 3: DataPulse Edge (Hackathon 2) — Finalized (Rank 3)
+        p3 = Project(
+            id="proj_data_pulse_03",
+            hackathon_id=h2.id,
+            name="DataPulse Edge - Distributed IoT Engine",
+            description="Distributed edge processing engine that compresses and intelligently aggregates IoT telemetry locally, cutting cloud bandwidth by 94%.",
+            owner_id="user_participant",
+            members=["user_participant"],
+            status="finalized",
+            github_url="https://github.com/datapulse/edge-engine",
+            live_url="https://datapulse-dashboard.vercel.app",
+        )
+
+        # Project 4: CodeShield (Hackathon 4) — Finalized (Rank 4)
+        p4 = Project(
+            id="proj_code_shield_04",
+            hackathon_id=h4.id,
+            name="CodeShield - Zero-Day CI Scanner",
+            description="Proactive security vulnerability scanner trained on 2M CVE records to detect OWASP Top 10 risks with AST-level call-graph tracing.",
+            owner_id="user_participant",
+            members=["user_participant", "user_dev_07"],
+            status="finalized",
+            github_url="https://github.com/codeshield-ai/scanner",
+            live_url="https://codeshield.vercel.app",
+        )
+
+        # Project 5: EcoRoute (Hackathon 5) — Finalized (Rank 5)
+        p5 = Project(
+            id="proj_eco_route_05",
+            hackathon_id=h5.id,
+            name="EcoRoute - Carbon-Aware Last-Mile Delivery",
+            description="Sustainable last-mile delivery route optimizer using real-time traffic and vehicle emission profiles to minimize carbon footprint.",
+            owner_id="user_participant",
+            members=["user_participant"],
+            status="finalized",
+            github_url="https://github.com/ecoroute/solver",
+            live_url="https://ecoroute-live.vercel.app",
+        )
+
+        session.add_all([p1, p2, p3, p4, p5])
+        await session.flush()
+        logger.info("Created exactly 5 Projects.")
+
+        # ── 3. SUBMISSIONS & FULL EVALUATIONS FOR PROJECT 1 (NexusAgent) ─────────
+        # Submissions
         session.add(Submission(
-            project_id=p1.id,
-            stage="idea",
+            project_id=p1.id, stage="idea",
             payload={
                 "problem_statement": "Manual pull request reviews create severe engineering bottlenecks in high-velocity teams, delaying merges by 24–72 hours and causing developer fatigue.",
                 "proposed_solution": "Autonomous multi-agent code reviewer using AST parsing, security triage, and LLM-powered diff summarization to deliver consensus in under 60 seconds.",
@@ -94,55 +175,41 @@ async def seed_database():
             submitted_by="user_participant",
         ))
         session.add(Submission(
-            project_id=p1.id,
-            stage="ppt",
+            project_id=p1.id, stage="ppt",
             payload={"filename": "nexus_deck.pdf", "total_pages": 10, "deck_text": "NexusAgent Architecture Deck\nSlide 1: Overview\nSlide 2: Multi-Agent Parallel Pipeline\nSlide 3: AST Parsing & Security"},
             submitted_by="user_participant",
         ))
         session.add(Submission(
-            project_id=p1.id,
-            stage="product",
+            project_id=p1.id, stage="product",
             payload={"github_url": p1.github_url, "live_url": p1.live_url},
             submitted_by="user_participant",
         ))
 
-        # Claims
+        # Claims for P1
         session.add(Claim(
-            project_id=p1.id,
-            origin_stage="ppt",
-            claim_type="architecture",
+            project_id=p1.id, origin_stage="ppt", claim_type="architecture",
             claim_text="FastAPI async backend with multi-agent parallel execution under 60 seconds",
             verification_status="verified",
-            verification_notes="Verified in backend/app/agents/orchestrator/runner.py via async runner benchmarks.",
+            verification_notes="Verified in backend runner benchmarks with 42s p95 latency.",
         ))
         session.add(Claim(
-            project_id=p1.id,
-            origin_stage="ppt",
-            claim_type="security",
+            project_id=p1.id, origin_stage="ppt", claim_type="security",
             claim_text="Zero exposed secrets with AST-level static security scanner",
             verification_status="verified",
-            verification_notes="Verified in backend/app/tools/security_scan.py with 0 findings.",
+            verification_notes="Verified in backend security audit with 0 findings.",
         ))
 
-        # Stage 1 Idea Evaluations (4 Agents)
+        # ── Stage 1 (Idea) Evaluations with 3-Point Actionable Feedback
         eval_p1_idea_sel = Evaluation(
             project_id=p1.id, stage="idea", agent_name="idea_selection_agent",
             score=94.0, confidence=0.96,
             reasoning=(
-                "### 📌 Rubric Criteria Evaluation\n"
-                "• **Core Novelty (95/100)**: Multi-agent consensus mechanism fundamentally replaces single-prompt LLM wrappers with specialized AST parsing and security agents.\n"
-                "• **Problem-Solution Fit (94/100)**: Directly eliminates the 24-72 hour PR review latency in developer teams.\n"
-                "• **Defensibility (93/100)**: AST-level token caching and multi-agent cross-verification provides a strong technological moat.\n\n"
-                "### ✅ Verified Strengths\n"
-                "• Zero cloud credential exposure architecture keeping source code strictly localized.\n"
-                "• High-velocity parallel execution providing comprehensive reviews in <60 seconds.\n"
-                "• Multi-agent agreement threshold prevents hallucinated lint warnings.\n\n"
-                "### ⚠️ Identified Weaknesses & Risks\n"
-                "• Large monorepo diffs (>5,000 lines) may incur high token costs without pre-chunking.\n"
-                "• Edge-case binary and generated protobuf files require explicit ignore filters.\n\n"
-                "### 💡 Actionable Recommendations\n"
-                "• Implement AST diff token hashing to reduce LLM payload size by ~40%.\n"
-                "• Add auto-approval templates for low-risk dependency lockfile bumps."
+                "### 📌 Executive Assessment\n"
+                "The core premise of an autonomous multi-agent code review swarm addresses a high-friction engineering bottleneck with strong foundational defensibility and clear technological moat.\n\n"
+                "### 💡 Actionable Improvement Points\n"
+                "1. **AST Token Optimization**: Implement AST diff pre-tokenization to reduce raw LLM prompt payload by ~42% on massive 5,000+ line PRs.\n"
+                "2. **Specialized Syntax Handling**: Add explicit ignore rules and pre-compiled grammars for protobuf, generated OpenAPI client stubs, and large binary fixtures.\n"
+                "3. **CI Bot Auto-Approval Policy**: Introduce low-risk lockfile heuristics (e.g. yarn.lock/package-lock.json version bumps) to fast-track routine dependencies without full swarm synthesis."
             ),
         )
         session.add(eval_p1_idea_sel)
@@ -158,15 +225,12 @@ async def seed_database():
             project_id=p1.id, stage="idea", agent_name="problem_impact_agent",
             score=92.0, confidence=0.94,
             reasoning=(
-                "### 📌 Rubric Criteria Evaluation\n"
-                "• **Problem Magnitude (93/100)**: Developer review fatigue and PR queues cost engineering teams ~6.5 hours per engineer weekly.\n"
-                "• **Target Cohort Clarity (92/100)**: Highly precise focus on fast-growing engineering teams with 10+ PRs daily.\n"
-                "• **Economic & Team Impact (91/100)**: Quantifiable 70% reduction in first-pass review cycle time.\n\n"
-                "### ✅ Verified Strengths\n"
-                "• Strong grounding in actionable engineering metrics (PR cycle time, defect escape rate).\n"
-                "• High ROI with immediate developer productivity improvements.\n\n"
-                "### 💡 Actionable Recommendations\n"
-                "• Add interactive inline explanation buttons in GitHub PR review comments for junior devs."
+                "### 📌 Executive Assessment\n"
+                "Engineering PR review queues directly contribute to developer burnout and release delays. The target audience of high-velocity engineering organizations is well-defined with clear economic ROI.\n\n"
+                "### 💡 Actionable Improvement Points\n"
+                "1. **Developer Onboarding Flow**: Provide inline educational links inside GitHub comment suggestions explaining why specific design patterns fail quality thresholds.\n"
+                "2. **Team Analytics Dashboard**: Track aggregate team PR cycle time reduction and defect escape rates over 30-day cohorts.\n"
+                "3. **Custom Review Tone Presets**: Allow teams to configure review personality from 'Strict Formal Security' to 'Junior Friendly Mentorship'."
             ),
         )
         session.add(eval_p1_problem)
@@ -175,13 +239,12 @@ async def seed_database():
             project_id=p1.id, stage="idea", agent_name="feasibility_agent",
             score=91.0, confidence=0.95,
             reasoning=(
-                "### 📌 Rubric Criteria Evaluation\n"
-                "• **Stack Viability (93/100)**: FastAPI async coroutines + Pydantic v2 guarantee sub-second request handling.\n"
-                "• **Resource Realism (90/100)**: Lightweight deployment without heavy message brokers.\n"
-                "• **Execution Constraints (90/100)**: Realistic scope with clear microservice boundaries.\n\n"
-                "### ✅ Verified Strengths\n"
-                "• Fully non-blocking event loop handles GitHub webhook bursts reliably.\n"
-                "• Resilient fallback mechanics for rate limits."
+                "### 📌 Executive Assessment\n"
+                "The selected technology stack (FastAPI async coroutines, Pydantic v2 schemas, and localized AST parsers) is highly realistic and deployable within standard container runtimes.\n\n"
+                "### 💡 Actionable Improvement Points\n"
+                "1. **Redis Task Queue Integration**: Decouple incoming GitHub webhook bursts using Celery/Redis to prevent memory spikes during simultaneous repo webhooks.\n"
+                "2. **Rate Limit Exponential Backoff**: Implement token-bucket rate limiting for downstream GitHub GraphQL and LLM API calls.\n"
+                "3. **Lightweight Fallback Mode**: Provide a sub-5s regex/AST fast-check when LLM API providers experience transient latency spikes."
             ),
         )
         session.add(eval_p1_feas)
@@ -190,26 +253,27 @@ async def seed_database():
             project_id=p1.id, stage="idea", agent_name="market_agent",
             score=90.0, confidence=0.93,
             reasoning=(
-                "### 📌 Rubric Criteria Evaluation\n"
-                "• **Market Positioning (91/100)**: Clear separation from generic Copilot wrappers by offering multi-agent consensus.\n"
-                "• **Competitive Advantage (90/100)**: AST static security checking combined with semantic review.\n"
-                "• **Adoption Friction (89/100)**: Zero-config GitHub App integration ensures seamless onboarding."
+                "### 📌 Executive Assessment\n"
+                "Grounded Tavily web search validates market gap between generic single-prompt assistants and dedicated multi-agent static security reviewers.\n\n"
+                "### 💡 Actionable Improvement Points\n"
+                "1. **Open-Source GitHub App Verification**: Publish the bot to the official GitHub Marketplace with 1-click zero-config installation.\n"
+                "2. **SOC2 / Self-Hosted Docker Image**: Offer on-premise air-gapped deployment configurations for enterprise compliance.\n"
+                "3. **Competitive Moat Benchmarking**: Publish open benchmark datasets comparing precision and false-positive rates against existing static linters."
             ),
         )
         session.add(eval_p1_market)
 
-        # Stage 2 PPT Evaluations (3 Agents)
+        # ── Stage 2 (PPT) Evaluations with 3-Point Actionable Feedback
         eval_p1_arch = Evaluation(
             project_id=p1.id, stage="ppt", agent_name="technical_architecture_agent",
             score=91.0, confidence=0.94,
             reasoning=(
-                "### 📌 Rubric Criteria Evaluation\n"
-                "• **Architecture Modularity (93/100)**: Clear separation of orchestrator, AST workers, and LLM consensus agents.\n"
-                "• **Data Flow Integrity (90/100)**: End-to-end webhook ingestion pipeline clearly mapped.\n"
-                "• **Scalability Design (90/100)**: Stateless workers allow horizontal auto-scaling.\n\n"
-                "### ✅ Verified Strengths\n"
-                "• Well-defined claim extraction points verified against repository code.\n"
-                "• Error recovery workflows for Git API rate limits documented."
+                "### 📌 Executive Assessment\n"
+                "Architecture slides clearly articulate modular microservices, non-blocking webhook ingestion, and isolated AST execution sandboxes.\n\n"
+                "### 💡 Actionable Improvement Points\n"
+                "1. **Database Connection Pooling**: Explicitly specify PgBouncer / SQLAlchemy async connection pool sizes in architecture slides for >1,000 RPS scalability.\n"
+                "2. **Idempotency Keying**: Document webhook idempotency keys to avoid duplicate agent evaluations on rapid GitHub commit pushes.\n"
+                "3. **Secrets Isolation Diagram**: Highlight dedicated memory isolation for environment variables during dynamic code execution."
             ),
         )
         session.add(eval_p1_arch)
@@ -218,9 +282,12 @@ async def seed_database():
             project_id=p1.id, stage="ppt", agent_name="presentation_agent",
             score=89.0, confidence=0.92,
             reasoning=(
-                "### 📌 Rubric Criteria Evaluation\n"
-                "• **Visual Clarity & Flow (90/100)**: Crisp architecture diagrams and structured problem-to-solution narrative.\n"
-                "• **Technical Rigor (88/100)**: Concrete benchmark numbers provided for PR processing latency."
+                "### 📌 Executive Assessment\n"
+                "Presentation deck exhibits strong visual narrative, crisp system flow diagrams, and compelling problem-solution contrasts.\n\n"
+                "### 💡 Actionable Improvement Points\n"
+                "1. **Live Benchmark Graph**: Add a side-by-side bar chart showing latency comparison: 45s (NexusAgent) vs. 48 hours (Human Reviewers).\n"
+                "2. **Customer Persona Case Study**: Include a 1-slide concrete case study demonstrating false-positive reductions in a real repo.\n"
+                "3. **Visual Typography Polish**: Standardize slide font sizes and align footnote references consistently across slides 4 through 8."
             ),
         )
         session.add(eval_p1_pres)
@@ -229,24 +296,55 @@ async def seed_database():
             project_id=p1.id, stage="ppt", agent_name="business_impact_agent",
             score=88.0, confidence=0.90,
             reasoning=(
-                "### 📌 Rubric Criteria Evaluation\n"
-                "• **Business Model (89/100)**: Clear tiering for open-source (free) vs. private repositories (usage-based).\n"
-                "• **Enterprise Scaling (87/100)**: Clear path to on-premise deployments for security-sensitive organizations."
+                "### 📌 Executive Assessment\n"
+                "Freemium commercial model targeting open-source developers with tiered usage for enterprise private organizations has clear revenue expansion viability.\n\n"
+                "### 💡 Actionable Improvement Points\n"
+                "1. **Seat vs Usage Pricing**: Clarify whether enterprise billing is based on active developer seats or total lines of code reviewed.\n"
+                "2. **Self-Service Trial Conversion**: Define 14-day free trial limits (e.g. up to 100 PRs) to drive immediate team adoption.\n"
+                "3. **Enterprise SLA Guarantees**: Outline 99.9% uptime commitments and dedicated webhook processing pipelines for high-tier customers."
             ),
         )
         session.add(eval_p1_biz)
 
-        # Stage 3 Product Evaluations (5 Agents)
+        # ── Stage 3 (Product) Evaluations with 3-Point Actionable Feedback
+        eval_p1_ui = Evaluation(
+            project_id=p1.id, stage="product", agent_name="ui_ux_agent",
+            score=93.0, confidence=0.95,
+            reasoning=(
+                "### 📌 Executive Assessment\n"
+                "Frontend interface provides high density telemetry, responsive layout hierarchies, and smooth micro-interactions.\n\n"
+                "### 💡 Actionable Improvement Points (UI/UX Suggestions)\n"
+                "1. **Contrast & Tap Target Optimization**: Enhance mobile touch target boundaries to a minimum of 44x44px for icon buttons and navigation links.\n"
+                "2. **Keyboard Shortcut Navigation**: Introduce standard keyboard shortcuts ('j' / 'k' to cycle through review points, 'e' to expand evidence drawers).\n"
+                "3. **Real-Time Skeleton Loaders**: Replace generic spinner overlays with structured shimmer skeleton placeholders for a smoother perceived load experience."
+            ),
+        )
+        session.add(eval_p1_ui)
+
+        eval_p1_func = Evaluation(
+            project_id=p1.id, stage="product", agent_name="functionality_agent",
+            score=95.0, confidence=0.96,
+            reasoning=(
+                "### 📌 Executive Assessment\n"
+                "Core product flow executes deterministically. Automated evaluation pipeline, webhook triggers, and live score calculations pass end-to-end.\n\n"
+                "### 💡 Actionable Improvement Points (Functionality Suggestions)\n"
+                "1. **Granular Error Recovery**: Add client-side automatic retry with exponential backoff on transient network drops during stage evaluation.\n"
+                "2. **Batch Project Export**: Support exporting comprehensive evaluation dossiers into standalone PDF and JSON report formats.\n"
+                "3. **Interactive Test Runner Hook**: Enable participants to execute custom smoke test assertions directly from the stage workspace sandbox."
+            ),
+        )
+        session.add(eval_p1_func)
+
         eval_p1_code = Evaluation(
             project_id=p1.id, stage="product", agent_name="code_quality_agent",
             score=96.0, confidence=0.98,
             reasoning=(
-                "### 📌 Rubric Criteria Evaluation\n"
-                "• **Code Modularity (97/100)**: Clean layered architecture separating repositories, schemas, and agents.\n"
-                "• **Typing & Linting (96/100)**: Strict Pydantic v2 schemas across all routes with 100% type hints.\n"
-                "• **Test Suite Completeness (95/100)**: 66+ passing automated tests covering all edge cases.\n\n"
-                "### ✅ Verified Strengths\n"
-                "• Zero lint violations, clean async session management, and robust error boundaries."
+                "### 📌 Executive Assessment\n"
+                "AST static code inspection confirms strict modular separation, zero unused imports, full type annotations, and high test coverage.\n\n"
+                "### 💡 Actionable Improvement Points (Code Quality Suggestions)\n"
+                "1. **Pydantic Schema Serialization**: Ensure all datetime objects consistently serialize to ISO-8601 UTC across all endpoint schemas.\n"
+                "2. **Cyclomatic Complexity Refactor**: Break down large agent runner loops into composable pure helper functions with cyclomatic rank < 6.\n"
+                "3. **Database Repository Indexing**: Verify B-tree composite indices on (hackathon_id, created_at) for sub-10ms leaderboard queries."
             ),
         )
         session.add(eval_p1_code)
@@ -258,35 +356,16 @@ async def seed_database():
             content={"documentation_score": 96, "lint_clean": True, "test_coverage_pct": 98.5},
         ))
 
-        eval_p1_ui = Evaluation(
-            project_id=p1.id, stage="product", agent_name="ui_ux_agent",
-            score=92.0, confidence=0.94,
-            reasoning=(
-                "### 📌 Rubric Criteria Evaluation\n"
-                "• **User Experience (93/100)**: Intuitive dark-mode dashboard with real-time pipeline telemetry.\n"
-                "• **Accessibility & Responsiveness (91/100)**: Full keyboard navigation and clean mobile responsive layouts."
-            ),
-        )
-        session.add(eval_p1_ui)
-
-        eval_p1_func = Evaluation(
-            project_id=p1.id, stage="product", agent_name="functionality_agent",
-            score=95.0, confidence=0.96,
-            reasoning=(
-                "### 📌 Rubric Criteria Evaluation\n"
-                "• **Core Features (96/100)**: Complete 3-stage evaluation pipeline functioning seamlessly.\n"
-                "• **Error Handling (94/100)**: Graceful degradation with clear user feedback on invalid payloads."
-            ),
-        )
-        session.add(eval_p1_func)
-
         eval_p1_sec = Evaluation(
             project_id=p1.id, stage="product", agent_name="security_agent",
             score=98.0, confidence=0.99,
             reasoning=(
-                "### 📌 Rubric Criteria Evaluation\n"
-                "• **OWASP Top 10 Hygiene (99/100)**: Zero SQL injection vulnerabilities via SQLAlchemy ORM parameterized queries.\n"
-                "• **Secrets Management (97/100)**: Zero hardcoded API secrets; all configuration loaded from environment."
+                "### 📌 Executive Assessment\n"
+                "Deterministic security scan confirms zero exposed credentials, clean parameterized SQL queries, and strict CORS configuration.\n\n"
+                "### 💡 Actionable Improvement Points (Security Suggestions)\n"
+                "1. **Strict Content Security Policy**: Deploy strict CSP response headers restricting inline script execution on production domains.\n"
+                "2. **Automated Secret Rotation Webhooks**: Add proactive alerting webhooks when rotated API keys fail handshake tests.\n"
+                "3. **Subresource Integrity (SRI)**: Implement SRI hashes on all externally loaded fonts and CDN dependencies."
             ),
         )
         session.add(eval_p1_sec)
@@ -300,280 +379,129 @@ async def seed_database():
 
         eval_p1_impact = Evaluation(
             project_id=p1.id, stage="product", agent_name="real_world_impact_agent",
-            score=93.0, confidence=0.95,
+            score=94.0, confidence=0.96,
             reasoning=(
-                "### 📌 Rubric Criteria Evaluation\n"
-                "• **Production Readiness (94/100)**: Ready for immediate pilot deployment in engineering teams.\n"
-                "• **Developer Utility (92/100)**: High recurring daily engagement value for software engineers."
+                "### 📌 Executive Assessment\n"
+                "High practical utility with immediate developer workflow impact. Live demonstration showcases fast turnaround and zero hallucinated review comments.\n\n"
+                "### 💡 Actionable Improvement Points (Real-World Impact Suggestions)\n"
+                "1. **VS Code & JetBrains Extension**: Build lightweight IDE sidebars allowing developers to trigger multi-agent reviews before pushing PRs.\n"
+                "2. **Multi-Language AST Grammars**: Expand native AST parsing support to Rust, Go, TypeScript, and Python.\n"
+                "3. **Public Verified Badge**: Issue cryptographic verification badges that repos can display on their READMEs."
             ),
         )
         session.add(eval_p1_impact)
 
-        # Feedback Report
+        # Feedback report for P1
         session.add(FeedbackReport(
-            project_id=p1.id,
-            github_url=p1.github_url,
-            live_url=p1.live_url,
+            project_id=p1.id, github_url=p1.github_url, live_url=p1.live_url,
             overall_health="ok",
             dimensions={
-                "deployment_health": {"status": "ok", "response_ms": 78},
+                "deployment_health": {"status": "ok", "response_ms": 142},
                 "code_quality": {"status": "ok", "score": 96.0},
                 "security_scan": {"status": "ok", "findings_count": 0},
+                "presentation_rigor": {"status": "ok", "score": 90.0},
             },
-            top_fixes=["Add GitHub App webhook signature verification middleware for production defense."],
+            top_fixes=[
+                "Implement AST token hashing to reduce LLM payload size by ~42%.",
+                "Add Redis queue worker for high-volume webhook bursts.",
+                "Deploy strict CSP headers to prevent inline XSS vectors.",
+            ],
         ))
 
-        # Teacher / Judge Feedback
+        # ── 4. EXACTLY 5 JUDGE ASSIGNMENTS & SCORINGS ───────────────────────────
         session.add(JudgeAssignment(
             judge_id="user_judge", project_id=p1.id,
-            human_score=95.0,
+            human_score=92.0,
             comments=(
-                "⭐ Faculty & Chief Judge Comprehensive Evaluation:\n\n"
+                "⭐ Faculty Judge Final Evaluation:\n\n"
                 "• Core Highlights:\n"
-                "  1. Live Demo Performance: Verified sub-60s end-to-end multi-agent review consensus on live test PRs.\n"
-                "  2. Architecture Quality: Clean Pydantic v2 schemas and fully typed asynchronous endpoints with comprehensive exception handling.\n"
-                "  3. Security & Cleanliness: AST security scanner successfully identified test SSRF attempts with zero secret leakage.\n\n"
-                "• Recommendations for Scaling:\n"
-                "  1. Rate Limiting: Add Redis token bucket rate limiting for webhook burst ingestion from high-traffic GitHub orgs.\n"
-                "  2. On-Premise Support: Provide self-hosted Docker runner images for air-gapped enterprise compliance.\n\n"
-                "• Overall Verdict: Outstanding submission that sets the benchmark for AI-native developer tooling."
+                "  1. Architecture & Execution: Outstanding modular design with clean async separation and high static code quality.\n"
+                "  2. Practical Utility: Solves a high-friction engineering problem with verifiable 45s latency and zero secret leakage.\n\n"
+                "• Recommended Enhancements:\n"
+                "  1. Add Redis worker queue for enterprise-scale webhook ingestion.\n"
+                "  2. Build IDE extension integration to review code before git push.\n\n"
+                "• Verdict: Exemplary project demonstrating the highest standards of autonomous multi-agent engineering."
             ),
             status="scored",
-        ))
-
-        session.add(FinalResult(
-            project_id=p1.id, hackathon_id=h1.id,
-            ai_score=93.1, human_score=95.0, final_score=93.7, rank=1,
-        ))
-
-        # ── 3. Project 2: VisionForge AI — FINALIZED (Rank 2) ────────────────
-        p2 = Project(
-            id="proj_vision_forge_02",
-            hackathon_id=h1.id,
-            name="VisionForge AI - Multimodal Accessibility Layer",
-            description="Real-time multimodal accessibility assistant converting complex canvas visualizations and charts into structured audio descriptions for visually impaired users.",
-            owner_id="user_dev_03",
-            members=["user_dev_03", "user_dev_05"],
-            status="finalized",
-            github_url="https://github.com/visionforge/app",
-            live_url="https://visionforge-demo.vercel.app",
-        )
-        session.add(p2)
-        await session.flush()
-
-        session.add(Submission(
-            project_id=p2.id, stage="idea",
-            payload={
-                "problem_statement": "Screen readers fail on complex canvas visualizations, D3.js charts, and image-heavy dashboards — leaving 285M visually impaired users locked out of data-rich web apps.",
-                "proposed_solution": "VisionForge uses a multimodal LLM pipeline to convert charts, diagrams, and SVGs into structured, contextual audio narratives in real-time via a browser extension.",
-                "target_audience": "Visually impaired knowledge workers, data analysts, and students using modern web dashboards.",
-                "uniqueness": "First browser-native multimodal accessibility layer requiring zero developer integration — works on any website without code changes.",
-            },
-            submitted_by="user_dev_03",
-        ))
-        session.add(Submission(
-            project_id=p2.id, stage="ppt",
-            payload={"filename": "vision_forge_pitch.pdf", "total_pages": 12},
-            submitted_by="user_dev_03",
-        ))
-        session.add(Submission(
-            project_id=p2.id, stage="product",
-            payload={"github_url": p2.github_url, "live_url": p2.live_url},
-            submitted_by="user_dev_03",
-        ))
-
-        session.add(Claim(
-            project_id=p2.id, origin_stage="ppt",
-            claim_type="performance",
-            claim_text="Real-time chart narration with under 2-second end-to-end latency",
-            verification_status="verified",
-            verification_notes="Verified via live product demo — average 1.4s on complex SVGs.",
-        ))
-
-        # Evaluations for P2
-        eval_p2_idea = Evaluation(
-            project_id=p2.id, stage="idea", agent_name="problem_impact_agent",
-            score=91.0, confidence=0.92,
-            reasoning=(
-                "### 📌 Rubric Criteria Evaluation\n"
-                "• **Societal Impact (94/100)**: Directly empowers 285M visually impaired users to access dynamic visual data.\n"
-                "• **Market Need (90/100)**: Essential accessibility compliance (WCAG 2.2 / Section 508) for enterprise web apps.\n\n"
-                "### ✅ Verified Strengths\n"
-                "• Immediate social utility with zero integration overhead for end users."
-            ),
-        )
-        session.add(eval_p2_idea)
-
-        eval_p2_ppt = Evaluation(
-            project_id=p2.id, stage="ppt", agent_name="technical_architecture_agent",
-            score=86.0, confidence=0.89,
-            reasoning=(
-                "### 📌 Rubric Criteria Evaluation\n"
-                "• **Architecture Rigor (87/100)**: Effective browser content script + background worker + audio synthesis pipeline.\n"
-                "• **Latency Optimization (85/100)**: Edge caching for repetitive UI icons and chart legends."
-            ),
-        )
-        session.add(eval_p2_ppt)
-
-        eval_p2_prod = Evaluation(
-            project_id=p2.id, stage="product", agent_name="ui_ux_agent",
-            score=88.0, confidence=0.90,
-            reasoning=(
-                "### 📌 Rubric Criteria Evaluation\n"
-                "• **Accessibility UX (92/100)**: Exemplary ARIA support, high-contrast states, and seamless keyboard shortcut triggers.\n"
-                "• **Audio Fidelity (85/100)**: Natural sounding speech with customizable playback speed."
-            ),
-        )
-        session.add(eval_p2_prod)
-
-        session.add(FeedbackReport(
-            project_id=p2.id,
-            github_url=p2.github_url,
-            live_url=p2.live_url,
-            overall_health="ok",
-            dimensions={
-                "deployment_health": {"status": "ok", "response_ms": 195},
-                "code_quality": {"status": "ok", "score": 88.0},
-                "security_scan": {"status": "warning", "findings_count": 1, "detail": "Content Security Policy missing on extension popup"},
-            },
-            top_fixes=["Add strict Content Security Policy headers to extension popup.", "Optimize SVG parser for deeply nested DOM trees."],
         ))
 
         session.add(JudgeAssignment(
             judge_id="user_judge", project_id=p2.id,
             human_score=88.0,
             comments=(
-                "⭐ Faculty & Expert Judge Comprehensive Evaluation:\n\n"
+                "⭐ Faculty Judge Final Evaluation:\n\n"
                 "• Core Highlights:\n"
                 "  1. Societal Impact: Outstanding accessibility tool providing real-time chart-to-speech audio synthesis with 1.4s average latency.\n"
                 "  2. User Experience: Browser extension has polished keyboard navigation and full ARIA support.\n\n"
-                "• Recommendations for Future Iteration:\n"
-                "  1. Security: Add strict CSP headers to extension manifest popup to mitigate XSS risks.\n"
-                "  2. SVG Resilience: Enhance error handling when parsing deeply nested D3.js canvas elements.\n\n"
-                "• Overall Verdict: High-impact accessibility breakthrough with immediate real-world utility."
+                "• Recommended Enhancements:\n"
+                "  1. Security: Add strict CSP headers to extension manifest popup.\n"
+                "  2. SVG Resilience: Enhance error handling when parsing deeply nested D3 canvas elements."
             ),
             status="scored",
         ))
 
+        session.add(JudgeAssignment(
+            judge_id="user_judge", project_id=p3.id,
+            human_score=86.0,
+            comments=(
+                "⭐ Faculty Judge Final Evaluation:\n\n"
+                "• Core Highlights:\n"
+                "  1. Technical Depth: WASM-based edge inference demonstrates strong distributed systems understanding.\n"
+                "  2. Bandwidth Savings: Verified 94% telemetry reduction on remote IoT sensor feeds.\n\n"
+                "• Recommended Enhancements:\n"
+                "  1. Add automatic fallback when edge device memory is constrained."
+            ),
+            status="scored",
+        ))
+
+        session.add(JudgeAssignment(
+            judge_id="user_judge", project_id=p4.id,
+            human_score=85.0,
+            comments=(
+                "⭐ Faculty Judge Final Evaluation:\n\n"
+                "• Core Highlights:\n"
+                "  1. Security Focus: Strong zero-day pattern detection trained on 2M CVE records.\n"
+                "  2. CI Integration: Easy GitHub Action workflow with clear developer remediation guides."
+            ),
+            status="scored",
+        ))
+
+        session.add(JudgeAssignment(
+            judge_id="user_judge", project_id=p5.id,
+            human_score=83.0,
+            comments=(
+                "⭐ Faculty Judge Final Evaluation:\n\n"
+                "• Core Highlights:\n"
+                "  1. Environmental Impact: Pareto-optimal co-optimization of cost and carbon emissions.\n"
+                "  2. Financial Incentives: Live carbon credit pricing calculation makes sustainability attractive for fleet operators."
+            ),
+            status="scored",
+        ))
+
+        # ── 5. EXACTLY 5 FINAL RESULTS (Ranked Leaderboard) ─────────────────────
+        session.add(FinalResult(
+            project_id=p1.id, hackathon_id=h1.id,
+            ai_score=94.2, human_score=92.0, final_score=93.5, rank=1,
+        ))
         session.add(FinalResult(
             project_id=p2.id, hackathon_id=h1.id,
             ai_score=88.4, human_score=88.0, final_score=88.3, rank=2,
         ))
-
-        # ── 4. Project 3: DataPulse Edge — PRODUCT stage (Hackathon 2) ───────
-        p3 = Project(
-            id="proj_data_pulse_03",
-            hackathon_id=h2.id,
-            name="DataPulse Edge",
-            description="Distributed edge processing engine that compresses and intelligently aggregates IoT telemetry locally, reducing cloud bandwidth by 94% without losing anomaly detection fidelity.",
-            owner_id="user_dev_04",
-            members=["user_dev_04"],
-            status="product",
-            github_url="https://github.com/datapulse/edge-engine",
-            live_url="https://datapulse-dashboard.vercel.app",
-        )
-        session.add(p3)
-        await session.flush()
-
-        session.add(Submission(
-            project_id=p3.id, stage="idea",
-            payload={
-                "problem_statement": "Industrial IoT sensors in remote locations generate 50GB/day of telemetry but cellular bandwidth costs make full cloud streaming economically unviable.",
-                "proposed_solution": "DataPulse runs a local WASM anomaly detection model at the edge, transmitting only event-driven diffs and anomaly windows — cutting bandwidth by 94%.",
-                "target_audience": "Industrial IoT operators in manufacturing, agriculture, and remote infrastructure monitoring.",
-                "uniqueness": "WASM-based edge inference with automatic model sync — works offline for 72 hours and self-reconciles on reconnect.",
-            },
-            submitted_by="user_dev_04",
+        session.add(FinalResult(
+            project_id=p3.id, hackathon_id=h2.id,
+            ai_score=87.0, human_score=86.0, final_score=86.7, rank=3,
         ))
-        session.add(Submission(
-            project_id=p3.id, stage="ppt",
-            payload={"filename": "datapulse_deck.pdf", "total_pages": 9},
-            submitted_by="user_dev_04",
+        session.add(FinalResult(
+            project_id=p4.id, hackathon_id=h4.id,
+            ai_score=85.5, human_score=85.0, final_score=85.4, rank=4,
         ))
-        session.add(Submission(
-            project_id=p3.id, stage="product",
-            payload={"github_url": p3.github_url, "live_url": p3.live_url},
-            submitted_by="user_dev_04",
+        session.add(FinalResult(
+            project_id=p5.id, hackathon_id=h5.id,
+            ai_score=84.0, human_score=83.0, final_score=83.7, rank=5,
         ))
-
-        # ── 5. Project 4: CodeShield — PPT stage (Hackathon 1) ────────────────
-        p4 = Project(
-            id="proj_code_shield_04",
-            hackathon_id=h1.id,
-            name="CodeShield",
-            description="AI-powered security vulnerability scanner that detects OWASP Top 10 issues in any codebase using a fine-tuned LLM trained on 2M CVE records and security audit reports.",
-            owner_id="user_dev_06",
-            members=["user_dev_06", "user_dev_07"],
-            status="ppt",
-            github_url="https://github.com/codeshield-ai/scanner",
-        )
-        session.add(p4)
-        await session.flush()
-
-        session.add(Submission(
-            project_id=p4.id, stage="idea",
-            payload={
-                "problem_statement": "90% of security vulnerabilities are introduced in development but not caught until penetration testing — costing $4.5M per breach on average.",
-                "proposed_solution": "CodeShield integrates into CI/CD pipelines as a GitHub Action, scanning every PR with a fine-tuned security LLM and producing developer-friendly remediation guides.",
-                "target_audience": "DevSecOps teams, startup engineering leads, and security-conscious open-source maintainers.",
-                "uniqueness": "Fine-tuned on 2M CVE records with OWASP Top 10 coverage — outperforms Semgrep on novel vulnerability patterns by 37% in internal benchmarks.",
-            },
-            submitted_by="user_dev_06",
-        ))
-        session.add(Submission(
-            project_id=p4.id, stage="ppt",
-            payload={"filename": "codeshield_pitch.pdf", "total_pages": 11},
-            submitted_by="user_dev_06",
-        ))
-
-        eval_p4_idea = Evaluation(
-            project_id=p4.id, stage="idea", agent_name="idea_selection_agent",
-            score=91.0, confidence=0.93,
-            reasoning=(
-                "### 📌 Rubric Criteria Evaluation\n"
-                "• **Novelty (91/100)**: Focused fine-tuning on 2M CVE records provides high accuracy for zero-day pattern detection.\n"
-                "• **Market Urgency (93/100)**: Proactive DevSecOps tooling is a top engineering priority in 2026."
-            ),
-        )
-        session.add(eval_p4_idea)
-
-        # ── 6. Project 5: EcoRoute — IDEA stage (Hackathon 3) ─────────────────
-        p5 = Project(
-            id="proj_eco_route_05",
-            hackathon_id=h3.id,
-            name="EcoRoute - Carbon-Aware Last-Mile Delivery",
-            description="Sustainable last-mile delivery route optimizer using real-time traffic, vehicle emission profiles, and carbon credit pricing to minimize both cost and environmental impact.",
-            owner_id="user_dev_08",
-            members=["user_dev_08"],
-            status="idea",
-        )
-        session.add(p5)
-        await session.flush()
-
-        session.add(Submission(
-            project_id=p5.id, stage="idea",
-            payload={
-                "problem_statement": "Last-mile delivery generates 30% of urban CO₂ emissions. Fleet operators optimize for speed and cost, with zero visibility into per-route carbon footprint.",
-                "proposed_solution": "EcoRoute integrates with existing fleet management systems to provide carbon-aware route optimization, trading marginal time increases for significant emission reductions — with built-in carbon credit revenue calculation.",
-                "target_audience": "Urban logistics companies, e-commerce fulfillment centers, and municipal delivery fleets targeting net-zero pledges.",
-                "uniqueness": "First optimizer that co-optimizes cost, time, AND carbon in a single Pareto-optimal solver — with live carbon credit market integration to make sustainability financially rewarding.",
-            },
-            submitted_by="user_dev_08",
-        ))
-
-        eval_p5_idea = Evaluation(
-            project_id=p5.id, stage="idea", agent_name="problem_impact_agent",
-            score=89.0, confidence=0.91,
-            reasoning=(
-                "### 📌 Rubric Criteria Evaluation\n"
-                "• **Environmental Impact (92/100)**: Direct addressal of urban logistics emissions with quantified carbon credit offsets.\n"
-                "• **Commercial Viability (86/100)**: Financial incentive structure makes sustainability profitable for fleet managers."
-            ),
-        )
-        session.add(eval_p5_idea)
 
         await session.commit()
-        logger.info("Database seeding completed successfully! Created 3 Hackathons and 5 Projects.")
+        logger.info("JuryX database seeding completed! Exactly 5 Hackathons, 5 Projects, 5 Judge Assignments, and 5 Final Results seeded.")
 
 
 if __name__ == "__main__":

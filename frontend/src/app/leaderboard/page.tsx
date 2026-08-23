@@ -15,9 +15,12 @@ import {
   SlidersHorizontal,
   Eye,
   EyeOff,
+  Globe,
 } from "lucide-react";
+import { Github } from "@/components/ui/GithubIcon";
 import { FinalizationAPI } from "@/lib/api/finalization";
-import { LeaderboardEntry } from "@/types/api";
+import { ProjectsAPI } from "@/lib/api/projects";
+import { LeaderboardEntry, Hackathon } from "@/types/api";
 import { useToast } from "@/lib/store/toast-context";
 import { Button } from "@/components/ui/Button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardSlot, CardBadge } from "@/components/ui/Card";
@@ -27,7 +30,8 @@ import { Toggle, SegmentedToggle } from "@/components/ui/Toggle";
 export default function LeaderboardPage() {
   const { error } = useToast();
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
-  const [selectedHackathon, setSelectedHackathon] = useState<string>("hack_global_ai_2026");
+  const [hackathons, setHackathons] = useState<Hackathon[]>([]);
+  const [selectedHackathon, setSelectedHackathon] = useState<string>("all");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
@@ -35,10 +39,19 @@ export default function LeaderboardPage() {
   const [showPodium, setShowPodium] = useState<boolean>(true);
   const [showDetailedScores, setShowDetailedScores] = useState<boolean>(true);
 
+  const loadHackathons = async () => {
+    try {
+      const hList = await ProjectsAPI.listHackathons();
+      setHackathons(hList || []);
+    } catch {
+      // Fallback
+    }
+  };
+
   const fetchLeaderboard = async (hackId = selectedHackathon) => {
     try {
       setIsLoading(true);
-      const data = await FinalizationAPI.getLeaderboard(hackId);
+      const data = await FinalizationAPI.getLeaderboard(hackId === "all" ? undefined : hackId);
       setEntries(data || []);
     } catch (err: any) {
       error(err.message || "Failed to load leaderboard");
@@ -46,6 +59,10 @@ export default function LeaderboardPage() {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadHackathons();
+  }, []);
 
   useEffect(() => {
     fetchLeaderboard(selectedHackathon);
@@ -69,29 +86,31 @@ export default function LeaderboardPage() {
             </h1>
           </div>
           <p className="text-xs text-zinc-400 mt-1">
-            Calibrated multi-agent rankings by the composite formula:{" "}
+            Calibrated multi-agent rankings by composite formula:{" "}
             <span className="font-mono text-zinc-200 font-semibold">
-              Final Score = 70% AI Swarm + 30% Calibrated Human Score
+              Final Score = 70% AI Swarm + 30% Calibrated Human Judge Score
             </span>
             .
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          {/* Hackathon Selector */}
+          {/* Dynamic Hackathon Selector */}
           <div className="flex items-center gap-2 bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs text-zinc-200">
             <span className="text-zinc-500 font-mono text-[10px] uppercase">Event:</span>
             <select
               value={selectedHackathon}
               onChange={(e) => setSelectedHackathon(e.target.value)}
-              className="bg-transparent text-zinc-100 text-xs font-semibold focus:outline-none cursor-pointer"
+              className="bg-transparent text-zinc-100 text-xs font-semibold focus:outline-none cursor-pointer max-w-[220px] truncate"
             >
-              <option value="hack_global_ai_2026" className="bg-zinc-900 text-zinc-100">
-                Global AI Agent Hackathon 2026
+              <option value="all" className="bg-zinc-900 text-zinc-100">
+                All Hackathon Events (Global)
               </option>
-              <option value="hack_autonomous_2026" className="bg-zinc-900 text-zinc-100">
-                Autonomous Agents Invitational
-              </option>
+              {hackathons.map((h) => (
+                <option key={h.id} value={h.id} className="bg-zinc-900 text-zinc-100">
+                  {h.name}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -153,7 +172,7 @@ export default function LeaderboardPage() {
                 <Badge variant="outline" size="sm">SILVER MEDAL</Badge>
               </div>
               <h3 className="text-base font-bold text-zinc-100">{entries[1].project_name}</h3>
-              <p className="text-xs text-zinc-400 mt-1 font-mono">Rank #2 in overall standings</p>
+              <p className="text-xs text-zinc-400 mt-1 font-mono">Rank #2 in tournament standings</p>
             </div>
 
             <CardSlot variant="muted" className="mt-4 flex justify-between items-end font-mono">
@@ -172,7 +191,7 @@ export default function LeaderboardPage() {
                 <Badge variant="warning" size="sm">WINNER • GOLD</Badge>
               </div>
               <h3 className="text-lg font-black text-zinc-100">{entries[0].project_name}</h3>
-              <p className="text-xs text-zinc-400 mt-1 font-mono">Tournament Champion</p>
+              <p className="text-xs text-zinc-400 mt-1 font-mono">Grand Tournament Champion</p>
             </div>
 
             <CardSlot variant="warning" className="mt-4 flex justify-between items-end font-mono p-3.5">
@@ -191,7 +210,7 @@ export default function LeaderboardPage() {
                 <Badge variant="outline" size="sm">BRONZE MEDAL</Badge>
               </div>
               <h3 className="text-base font-bold text-zinc-100">{entries[2].project_name}</h3>
-              <p className="text-xs text-zinc-400 mt-1 font-mono">Rank #3 in overall standings</p>
+              <p className="text-xs text-zinc-400 mt-1 font-mono">Rank #3 in tournament standings</p>
             </div>
 
             <CardSlot variant="muted" className="mt-4 flex justify-between items-end font-mono">
@@ -202,7 +221,7 @@ export default function LeaderboardPage() {
         </div>
       )}
 
-      {/* Leaderboard Table with Enhanced Slots */}
+      {/* Leaderboard Table */}
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-20 text-zinc-500">
           <Activity className="w-6 h-6 animate-spin mb-3 text-zinc-400" />
@@ -212,13 +231,16 @@ export default function LeaderboardPage() {
         <div className="py-16 text-center rounded-2xl border border-dashed border-zinc-800 bg-zinc-950/40">
           <Trophy className="w-8 h-8 text-zinc-600 mx-auto mb-2" />
           <h4 className="text-xs font-semibold text-zinc-300">
-            {searchQuery ? "No matching projects" : "No finalized results yet"}
+            {searchQuery ? "No matching projects" : "No finalized results for this hackathon yet"}
           </h4>
-          <p className="text-[11px] text-zinc-500 mt-1 max-w-xs mx-auto">
+          <p className="text-[11px] text-zinc-500 mt-1 max-w-xs mx-auto mb-4">
             {searchQuery
-              ? "Try another search keyword."
-              : "Projects will appear here once the admin triggers final score computation."}
+              ? "Try another search keyword or clear filter."
+              : "Projects appear here once evaluations are completed and composite scores are calculated."}
           </p>
+          <Button size="sm" variant="secondary" onClick={() => setSelectedHackathon("all")}>
+            View All Events Leaderboard
+          </Button>
         </div>
       ) : (
         <div className="overflow-x-auto rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-lg">
@@ -230,7 +252,7 @@ export default function LeaderboardPage() {
                 {showDetailedScores && (
                   <>
                     <th className="py-3.5 px-4 text-right">AI Swarm (70%)</th>
-                    <th className="py-3.5 px-4 text-right">Human Score (30%)</th>
+                    <th className="py-3.5 px-4 text-right">Human Judge (30%)</th>
                   </>
                 )}
                 <th className="py-3.5 px-4 text-right">Final Score</th>
@@ -255,14 +277,16 @@ export default function LeaderboardPage() {
                     )}
                   </td>
                   <td className="py-3.5 px-4 font-sans font-semibold text-zinc-100">
-                    {item.project_name}
+                    <div>
+                      <span>{item.project_name}</span>
+                    </div>
                   </td>
                   {showDetailedScores && (
                     <>
-                      <td className="py-3.5 px-4 text-right text-indigo-400">
+                      <td className="py-3.5 px-4 text-right text-emerald-400">
                         {item.ai_score}
                       </td>
-                      <td className="py-3.5 px-4 text-right text-emerald-400">
+                      <td className="py-3.5 px-4 text-right text-amber-400">
                         {item.human_score}
                       </td>
                     </>

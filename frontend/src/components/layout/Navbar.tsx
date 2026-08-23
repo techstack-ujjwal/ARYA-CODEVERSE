@@ -79,9 +79,9 @@ export function Navbar() {
             href="/"
             className="flex items-center gap-3 group transition-opacity hover:opacity-90"
           >
-            <div className="relative w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 p-[1px] shadow-sm shadow-indigo-500/20 group-hover:shadow-indigo-500/40 transition-shadow">
+            <div className="relative w-8 h-8 rounded-xl bg-gradient-to-br from-sky-400 via-teal-500 to-emerald-500 p-[1px] shadow-sm shadow-sky-500/20 group-hover:shadow-sky-500/35 transition-shadow">
               <div className="w-full h-full rounded-[11px] bg-zinc-950 flex items-center justify-center">
-                <span className="font-mono font-black text-sm tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-purple-200 to-pink-300">
+                <span className="font-mono font-black text-sm tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-sky-200 via-teal-100 to-emerald-200">
                   JX
                 </span>
               </div>
@@ -89,7 +89,7 @@ export function Navbar() {
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5">
                 <span className="text-sm font-black tracking-tight text-white font-mono">
-                  Jury<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-pink-400">X</span>
+                  Jury<span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-emerald-400">X</span>
                 </span>
                 <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-zinc-800 text-zinc-300 border border-zinc-700">
                   v2.0

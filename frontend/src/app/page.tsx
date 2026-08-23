@@ -91,7 +91,7 @@ export default function HomePage() {
           {/* Heading */}
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-zinc-100 max-w-4xl mx-auto leading-[1.08]">
             Evidence-Grounded{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-200 via-teal-100 to-emerald-300">
               Hackathon Judging.
             </span>
           </h1>

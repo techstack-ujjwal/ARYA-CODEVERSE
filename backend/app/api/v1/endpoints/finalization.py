@@ -125,22 +125,26 @@ async def get_leaderboard(
 ):
     """Returns hackathon ranked leaderboard sorted by final_score descending."""
     stmt = (
-        select(FinalResult, Project.name)
+        select(FinalResult, Project.name, Project.description, Project.github_url, Project.live_url, Project.hackathon_id)
         .join(Project, FinalResult.project_id == Project.id)
         .order_by(FinalResult.final_score.desc())
     )
-    if hackathon_id:
-        stmt = stmt.where(FinalResult.hackathon_id == hackathon_id)
+    if hackathon_id and hackathon_id != "all" and hackathon_id.strip():
+        stmt = stmt.where(FinalResult.hackathon_id == hackathon_id.strip())
 
     result = await db.execute(stmt)
     rows = result.all()
 
     leaderboard = []
-    for rank, (final_res, project_name) in enumerate(rows, start=1):
+    for rank, (final_res, project_name, project_desc, github_url, live_url, proj_hack_id) in enumerate(rows, start=1):
         leaderboard.append({
             "rank": rank,
             "project_id": final_res.project_id,
             "project_name": project_name,
+            "description": project_desc,
+            "github_url": github_url,
+            "live_url": live_url,
+            "hackathon_id": proj_hack_id or final_res.hackathon_id,
             "ai_score": final_res.ai_score,
             "human_score": final_res.human_score,
             "final_score": final_res.final_score,
