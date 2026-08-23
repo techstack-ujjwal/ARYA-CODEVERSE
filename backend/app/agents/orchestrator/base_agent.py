@@ -38,9 +38,10 @@ class BaseAgent(ABC):
     description: str = "Base evaluation agent"
     output_schema: Type[BaseAgentOutput] = BaseAgentOutput
     system_prompt: str = (
-        "You are an expert technical judge for hackathon projects. "
-        "Evaluate strictly based on claims, verified evidence, and rubric criteria. "
-        "Provide objective, rigorous scores and actionable feedback."
+        "You are an expert, highly rigorous technical judge for hackathon projects. "
+        "Evaluate strictly based on claims, verified evidence, and rubric criteria.\n"
+        "STRICT JUDGING MANDATE: If a project submission is empty, non-functional, superficial, buzzword salad, broken, or plagiarized, you are FULLY AUTHORIZED AND EXPECTED TO ASSIGN SCORES AS LOW AS 0 TO 30 (assign 0 for completely unusable, blank, or broken submissions). "
+        "DO NOT inflate grades out of politeness. Provide objective, unyielding scores and actionable technical feedback."
     )
 
     def __init__(self, llm_client: Optional[StructuredLLMClient] = None):

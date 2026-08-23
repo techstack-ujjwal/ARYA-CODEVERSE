@@ -23,13 +23,14 @@ import { Badge } from "@/components/ui/Badge";
 export default function LeaderboardPage() {
   const { error } = useToast();
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
+  const [selectedHackathon, setSelectedHackathon] = useState<string>("hack_global_ai_2026");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  const fetchLeaderboard = async () => {
+  const fetchLeaderboard = async (hackId = selectedHackathon) => {
     try {
       setIsLoading(true);
-      const data = await FinalizationAPI.getLeaderboard();
+      const data = await FinalizationAPI.getLeaderboard(hackId);
       setEntries(data || []);
     } catch (err: any) {
       error(err.message || "Failed to load leaderboard");
@@ -39,8 +40,8 @@ export default function LeaderboardPage() {
   };
 
   useEffect(() => {
-    fetchLeaderboard();
-  }, []);
+    fetchLeaderboard(selectedHackathon);
+  }, [selectedHackathon]);
 
   const filteredEntries = entries.filter((e) =>
     e.project_name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -54,7 +55,7 @@ export default function LeaderboardPage() {
           <div className="flex items-center gap-2.5">
             <Trophy className="w-6 h-6 text-amber-400" />
             <h1 className="text-2xl font-bold text-zinc-100 tracking-tight">
-              Hackathon Leaderboard
+              Hackathon Leaderboard & Rankings
             </h1>
           </div>
           <p className="text-xs text-zinc-400 mt-1">
@@ -66,11 +67,28 @@ export default function LeaderboardPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Hackathon Selector */}
+          <div className="flex items-center gap-2 bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-1.5 text-xs text-zinc-200">
+            <span className="text-zinc-500 font-mono text-[10px] uppercase">Event:</span>
+            <select
+              value={selectedHackathon}
+              onChange={(e) => setSelectedHackathon(e.target.value)}
+              className="bg-transparent text-zinc-100 text-xs font-semibold focus:outline-none cursor-pointer"
+            >
+              <option value="hack_global_ai_2026" className="bg-zinc-900 text-zinc-100">
+                Global AI Agent Hackathon 2026
+              </option>
+              <option value="hack_autonomous_2026" className="bg-zinc-900 text-zinc-100">
+                Autonomous Agents Invitational
+              </option>
+            </select>
+          </div>
+
           <Button
             variant="outline"
             size="sm"
-            onClick={fetchLeaderboard}
+            onClick={() => fetchLeaderboard(selectedHackathon)}
             leftIcon={<RefreshCw className="w-3.5 h-3.5" />}
           >
             Refresh Rankings

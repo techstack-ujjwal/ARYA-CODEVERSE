@@ -14,15 +14,24 @@ from backend.app.agents.shared.final_judge_agent import FinalJudgeAgent
 router = APIRouter()
 
 
+from pydantic import BaseModel, Field
+
+
+class FinalizeScorePayload(BaseModel):
+    ai_weight: Optional[float] = Field(default=0.70, ge=0.0, le=1.0)
+    human_weight: Optional[float] = Field(default=0.30, ge=0.0, le=1.0)
+
+
 @router.post("/{project_id}/compute", response_model=APIResponse[dict])
 async def compute_final_score(
     project_id: str,
+    payload: Optional[FinalizeScorePayload] = None,
     db: AsyncSession = Depends(get_db),
     current_user: AuthenticatedUser = Depends(require_role("admin")),
 ):
     """
-    Computes combined 70% AI + 30% Human final score and saves to FinalResult.
-    Formula: Final = (AI_Score * 0.70) + (Human_Score * 0.30)
+    Computes combined AI + Human final composite score and saves to FinalResult.
+    Default formula: Final = (AI_Score * 0.70) + (Human_Score * 0.30), configurable by admin.
     """
     project_repo = ProjectRepository(db)
     project = await project_repo.get_by_id(project_id)
@@ -59,8 +68,16 @@ async def compute_final_score(
     judge_scores = [j.human_score for j in judge_result.scalars().all()]
     human_score = sum(judge_scores) / len(judge_scores) if judge_scores else ai_score  # fallback to AI score if unjudged
 
-    # 70% AI + 30% Human formula
-    final_score = round((ai_score * 0.70) + (human_score * 0.30), 2)
+    # Configurable AI + Human weight calculation
+    w_ai = payload.ai_weight if payload and payload.ai_weight is not None else 0.70
+    w_human = payload.human_weight if payload and payload.human_weight is not None else 0.30
+    total_w = w_ai + w_human
+    if total_w == 0:
+        total_w = 1.0
+    w_ai = w_ai / total_w
+    w_human = w_human / total_w
+
+    final_score = round((ai_score * w_ai) + (human_score * w_human), 2)
 
     # Persist or update FinalResult
     final_res_query = await db.execute(

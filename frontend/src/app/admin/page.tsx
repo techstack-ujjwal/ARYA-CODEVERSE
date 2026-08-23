@@ -84,11 +84,17 @@ export default function AdminControlRoomPage() {
     loadData();
   }, [role]);
 
+  const [aiWeight, setAiWeight] = useState<number>(70);
+  const humanWeight = 100 - aiWeight;
+
   const handleComputeFinalScore = async (projectId: string, projectName: string) => {
     try {
       setComputingProjectId(projectId);
-      const res = await FinalizationAPI.computeFinalScore(projectId);
-      success(`Final composite score computed for "${projectName}": ${res.final_score} pts!`);
+      const res = await FinalizationAPI.computeFinalScore(projectId, {
+        ai_weight: aiWeight / 100,
+        human_weight: humanWeight / 100,
+      });
+      success(`Final composite score computed for "${projectName}": ${res.final_score} pts (${aiWeight}% AI + ${humanWeight}% Human)!`);
       loadData();
     } catch (err: any) {
       error(err.message || "Failed to compute final score");
@@ -233,12 +239,105 @@ export default function AdminControlRoomPage() {
         {activeTab === "finalization" && (
           <Card className="bg-zinc-950/60 border-zinc-800">
             <CardHeader>
-              <CardTitle>Batch Finalization Trigger (70% AI + 30% Human)</CardTitle>
-              <CardDescription>
-                Synthesizes multi-agent scores with human judge ratings into a definitive composite score and updates the public leaderboard.
-              </CardDescription>
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                  <CardTitle>Batch Finalization Trigger & Scoring Ratio Calibrator</CardTitle>
+                  <CardDescription>
+                    Synthesizes multi-agent scores with human judge ratings into a definitive composite score. Adjust the AI vs. Human weight ratio in real-time.
+                  </CardDescription>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="purple" size="sm">
+                    AI: {aiWeight}%
+                  </Badge>
+                  <span className="text-zinc-600 font-mono">+</span>
+                  <Badge variant="warning" size="sm">
+                    HUMAN: {humanWeight}%
+                  </Badge>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
+              {/* Interactive Weight Calibrator */}
+              <div className="mb-6 p-4 rounded-xl border border-zinc-800 bg-zinc-900/40 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <Sliders className="w-4 h-4 text-indigo-400" />
+                    <span className="text-xs font-semibold text-zinc-200">
+                      Scoring Weight Ratio Calibrator
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setAiWeight(70)}
+                      className={`text-[10px] font-mono px-2 py-0.5 rounded border transition-colors cursor-pointer ${
+                        aiWeight === 70
+                          ? "bg-indigo-500/20 text-indigo-300 border-indigo-500/40 font-bold"
+                          : "bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200"
+                      }`}
+                    >
+                      70/30 (Default)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAiWeight(50)}
+                      className={`text-[10px] font-mono px-2 py-0.5 rounded border transition-colors cursor-pointer ${
+                        aiWeight === 50
+                          ? "bg-indigo-500/20 text-indigo-300 border-indigo-500/40 font-bold"
+                          : "bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200"
+                      }`}
+                    >
+                      50/50 Balanced
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAiWeight(85)}
+                      className={`text-[10px] font-mono px-2 py-0.5 rounded border transition-colors cursor-pointer ${
+                        aiWeight === 85
+                          ? "bg-indigo-500/20 text-indigo-300 border-indigo-500/40 font-bold"
+                          : "bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200"
+                      }`}
+                    >
+                      85/15 High-AI
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAiWeight(100)}
+                      className={`text-[10px] font-mono px-2 py-0.5 rounded border transition-colors cursor-pointer ${
+                        aiWeight === 100
+                          ? "bg-indigo-500/20 text-indigo-300 border-indigo-500/40 font-bold"
+                          : "bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200"
+                      }`}
+                    >
+                      100% Autonomous AI
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between text-[11px] font-mono text-zinc-400">
+                    <span className="text-indigo-400">🤖 AI Engine: {aiWeight}%</span>
+                    <span className="text-amber-400">⚖️ Human Judges: {humanWeight}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="5"
+                    value={aiWeight}
+                    onChange={(e) => setAiWeight(Number(e.target.value))}
+                    className="w-full h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                  />
+                  <div className="flex justify-between text-[10px] text-zinc-600 font-mono">
+                    <span>0% (Human Only)</span>
+                    <span>50%</span>
+                    <span>70% (Standard)</span>
+                    <span>100% (AI Autonomous)</span>
+                  </div>
+                </div>
+              </div>
+
               {isLoading ? (
                 <div className="py-12 text-center text-zinc-500">
                   <Activity className="w-6 h-6 animate-spin mx-auto mb-2" />

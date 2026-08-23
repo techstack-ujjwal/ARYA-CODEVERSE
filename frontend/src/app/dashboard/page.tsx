@@ -23,10 +23,12 @@ import {
   Zap,
   ArrowRight,
   Sliders,
+  Trophy,
 } from "lucide-react";
 import { Github } from "@/components/ui/GithubIcon";
 import { ProjectsAPI, CreateProjectPayload } from "@/lib/api/projects";
 import { AdminAPI } from "@/lib/api/admin";
+import { FinalizationAPI } from "@/lib/api/finalization";
 import { Project } from "@/types/api";
 import { useToast } from "@/lib/store/toast-context";
 import { useAuth } from "@/lib/store/auth-context";
@@ -41,6 +43,7 @@ export default function DashboardPage() {
   const { role, user } = useAuth();
   const { toast, success, error } = useToast();
   const [projects, setProjects] = useState<Project[]>([]);
+  const [scoresMap, setScoresMap] = useState<Record<string, { rank?: number; final_score?: number; ai_score?: number; human_score?: number }>>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -61,8 +64,21 @@ export default function DashboardPage() {
     try {
       setIsLoading(true);
       setFetchError(null);
-      const data = await ProjectsAPI.list();
+      const [data, lbData] = await Promise.all([
+        ProjectsAPI.list(),
+        FinalizationAPI.getLeaderboard().catch(() => []),
+      ]);
       setProjects(data || []);
+      const map: Record<string, { rank?: number; final_score?: number; ai_score?: number; human_score?: number }> = {};
+      (lbData || []).forEach((item: any) => {
+        map[item.project_id] = {
+          rank: item.rank,
+          final_score: item.final_score,
+          ai_score: item.ai_score,
+          human_score: item.human_score,
+        };
+      });
+      setScoresMap(map);
     } catch (err: any) {
       setFetchError(
         err.message || "Could not connect to backend server. Make sure FastAPI is running on port 8000."
@@ -475,6 +491,35 @@ export default function DashboardPage() {
                       </span>
                     )}
                   </div>
+
+                  {/* Final Composite Score & Rank Banner */}
+                  {scoresMap[project.id]?.final_score !== undefined ? (
+                    <div className="mt-3 p-2.5 rounded-lg bg-zinc-950/70 border border-amber-500/20 font-mono flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Trophy className="w-4 h-4 text-amber-400 shrink-0" />
+                        <div>
+                          <div className="text-[10px] text-zinc-400 uppercase tracking-wider">
+                            Rank #{scoresMap[project.id].rank} • Final
+                          </div>
+                          <div className="text-xs text-zinc-100 font-bold">
+                            {scoresMap[project.id].final_score} <span className="text-[10px] text-zinc-500 font-normal">/ 100</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-right text-[10px] text-zinc-400 space-y-0.5">
+                        <div>AI: <span className="text-indigo-400 font-semibold">{scoresMap[project.id].ai_score}</span></div>
+                        <div>Judge: <span className="text-emerald-400 font-semibold">{scoresMap[project.id].human_score}</span></div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="mt-3 p-2.5 rounded-lg bg-zinc-950/40 border border-zinc-800/80 font-mono flex items-center justify-between text-[11px]">
+                      <div className="flex items-center gap-2 text-zinc-400">
+                        <Activity className="w-3.5 h-3.5 text-indigo-400 animate-pulse shrink-0" />
+                        <span className="text-[11px]">Stage: <strong className="text-zinc-200 capitalize">{project.status}</strong></span>
+                      </div>
+                      <span className="text-zinc-500 text-[10px] uppercase font-mono">In Evaluation</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Contextual Action Buttons based on Role */}

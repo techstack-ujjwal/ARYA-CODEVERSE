@@ -2,14 +2,14 @@ import { api } from "./client";
 import { LeaderboardEntry } from "@/types/api";
 
 export const FinalizationAPI = {
-  computeFinalScore: async (projectId: string) => {
+  computeFinalScore: async (projectId: string, weights?: { ai_weight?: number; human_weight?: number }) => {
     const res = await api.post<{
       project_id: string;
       ai_score: number;
       human_score: number;
       final_score: number;
       formula: string;
-    }>(`/finalization/${projectId}/compute`);
+    }>(`/finalization/${projectId}/compute`, weights || {});
     return res.data;
   },
 
