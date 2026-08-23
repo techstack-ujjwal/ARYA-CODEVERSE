@@ -40,4 +40,9 @@ export const AdminAPI = {
     const res = await api.get<PlagiarismFlag[]>(`/admin/analytics/plagiarism-flags${query}`);
     return res.data;
   },
+
+  resetDatabase: async () => {
+    const res = await api.post<{ total_projects: number; hackathon_id: string }>("/admin/reset-database");
+    return res.data;
+  },
 };

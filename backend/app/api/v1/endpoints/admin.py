@@ -133,3 +133,25 @@ async def get_plagiarism_flags(
             for flag, project_name in rows
         ],
     )
+
+
+@router.post("/reset-database", response_model=APIResponse[dict])
+async def reset_and_seed_database_endpoint(
+    db: AsyncSession = Depends(get_db),
+    current_user: AuthenticatedUser = Depends(require_role("admin")),
+):
+    """Admin-only: Purges stale test records and restores 5 pristine seed projects."""
+    from backend.app.db.reset_and_seed import reset_and_seed
+    try:
+        await reset_and_seed()
+        return APIResponse(
+            success=True,
+            message="Database successfully reset and re-seeded with 5 pristine hackathon projects.",
+            data={"total_projects": 5, "hackathon_id": "hack_global_ai_2026"},
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to reset database: {str(e)}",
+        )
+

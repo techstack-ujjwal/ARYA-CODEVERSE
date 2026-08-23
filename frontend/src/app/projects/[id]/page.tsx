@@ -27,6 +27,7 @@ import {
   Cpu,
   Wand2,
   Check,
+  Award,
 } from "lucide-react";
 import { Github } from "@/components/ui/GithubIcon";
 import { ProjectsAPI } from "@/lib/api/projects";
@@ -42,6 +43,7 @@ import {
   FeedbackReportData,
 } from "@/types/api";
 import { useToast } from "@/lib/store/toast-context";
+import { useAuth } from "@/lib/store/auth-context";
 import { Button } from "@/components/ui/Button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -59,6 +61,7 @@ export default function ProjectWorkspacePage({
   const resolvedParams = use(params);
   const projectId = resolvedParams.id;
   const { toast, success, error } = useToast();
+  const { role } = useAuth();
 
   const [project, setProject] = useState<Project | null>(null);
   const [pipelineStatus, setPipelineStatus] = useState<ProjectStatus | null>(null);
@@ -418,12 +421,37 @@ export default function ProjectWorkspacePage({
             </Button>
 
             <Link href={`/projects/${projectId}/evaluation`}>
-              <Button variant="primary" size="sm" leftIcon={<Sparkles className="w-3.5 h-3.5 text-indigo-500" />}>
-                Audit Matrix & Summary
+              <Button variant="outline" size="sm" leftIcon={<Sparkles className="w-3.5 h-3.5 text-indigo-400" />}>
+                Audit Matrix
               </Button>
             </Link>
+
+            {role === "judge" && (
+              <Link href="/judge">
+                <Button
+                  variant="primary"
+                  size="sm"
+                  className="bg-amber-500/20 text-amber-300 border-amber-500/40 hover:bg-amber-500/30 font-semibold"
+                  leftIcon={<Award className="w-3.5 h-3.5 text-amber-400" />}
+                >
+                  Grade in Judge Portal
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
+
+        {/* Role Perspective Notice Banner */}
+        {role === "judge" && (
+          <div className="mt-3 p-3 rounded-xl bg-amber-500/5 border border-amber-500/20 flex items-center justify-between text-xs text-amber-300">
+            <span className="flex items-center gap-2">
+              <Award className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>
+                <strong>Judge Evaluation Mode:</strong> Submissions are in read-only inspection mode to preserve student work. Click "Grade in Judge Portal" to submit your official score.
+              </span>
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Stage Stepper Progress Bar */}
@@ -548,9 +576,15 @@ export default function ProjectWorkspacePage({
                   </div>
 
                   <div className="flex items-center justify-between pt-3 border-t border-zinc-800">
-                    <Button type="submit" size="sm" variant="secondary" isLoading={isSubmittingIdea}>
-                      Save Submission
-                    </Button>
+                    {role === "judge" ? (
+                      <span className="text-[11px] font-mono text-zinc-500 italic">
+                        Student form submission locked for judges
+                      </span>
+                    ) : (
+                      <Button type="submit" size="sm" variant="secondary" isLoading={isSubmittingIdea}>
+                        Save Submission
+                      </Button>
+                    )}
 
                     <Button
                       type="button"
@@ -840,9 +874,15 @@ export default function ProjectWorkspacePage({
                   />
 
                   <div className="flex items-center justify-between pt-2 border-t border-zinc-800">
-                    <Button type="submit" size="sm" variant="secondary" isLoading={isSavingProduct}>
-                      Update Links
-                    </Button>
+                    {role === "judge" ? (
+                      <span className="text-[11px] font-mono text-zinc-500 italic">
+                        Repository settings locked for judges
+                      </span>
+                    ) : (
+                      <Button type="submit" size="sm" variant="secondary" isLoading={isSavingProduct}>
+                        Update Links
+                      </Button>
+                    )}
                     <Button
                       type="button"
                       size="sm"

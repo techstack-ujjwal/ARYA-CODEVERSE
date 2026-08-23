@@ -38,6 +38,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Badge } from "@/components/ui/Badge";
 import { ScoreMeter } from "@/components/ui/ScoreMeter";
 import { Progress } from "@/components/ui/Progress";
+import { EvidenceViewer } from "@/components/ui/EvidenceViewer";
 
 export default function ProjectEvaluationSummaryPage({
   params,
@@ -345,55 +346,7 @@ export default function ProjectEvaluationSummaryPage({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {filteredEvidence.length === 0 ? (
-            <p className="text-xs text-zinc-500 py-6 text-center">
-              No evidence artifacts found for this filter. Run stage evaluations in the workspace.
-            </p>
-          ) : (
-            <div className="space-y-3">
-              {filteredEvidence.map((ev) => (
-                <div
-                  key={ev.id}
-                  className="p-3.5 rounded-xl bg-zinc-900/80 border border-zinc-800 font-mono text-xs space-y-2"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Badge variant="purple" size="sm">
-                        {ev.tool_used}
-                      </Badge>
-                      <span className="text-zinc-400 text-[11px]">{ev.source}</span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" size="sm">
-                        {ev.evidence_type}
-                      </Badge>
-                      <button
-                        onClick={() => handleCopyJSON(ev.id, ev.content)}
-                        className="flex items-center gap-1 text-[11px] text-zinc-400 hover:text-zinc-200 bg-zinc-800/80 px-2 py-0.5 rounded transition-colors cursor-pointer"
-                        title="Copy JSON to clipboard"
-                      >
-                        {copiedId === ev.id ? (
-                          <>
-                            <Check className="w-3 h-3 text-emerald-400" />
-                            <span className="text-emerald-400">Copied</span>
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="w-3 h-3" />
-                            <span>Copy</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                  <pre className="p-2.5 rounded-lg bg-zinc-950 border border-zinc-800/80 text-[11px] text-zinc-300 overflow-x-auto max-h-60 overflow-y-auto">
-                    {JSON.stringify(ev.content, null, 2)}
-                  </pre>
-                </div>
-              ))}
-            </div>
-          )}
+          <EvidenceViewer evidence={evidenceList} filter={evidenceFilter} />
         </CardContent>
       </Card>
     </div>

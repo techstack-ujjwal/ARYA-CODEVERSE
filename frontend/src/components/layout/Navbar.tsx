@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { DevRoleSwitcher } from "./DevRoleSwitcher";
+import { UserProfileMenu } from "./UserProfileMenu";
 import { useAuth } from "@/lib/store/auth-context";
 import { HealthAPI } from "@/lib/api/health";
 import {
@@ -144,7 +144,7 @@ export function Navbar() {
             )}
           </button>
 
-          <DevRoleSwitcher />
+          <UserProfileMenu />
 
           <Link
             href="/dashboard"
