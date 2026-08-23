@@ -1,5 +1,7 @@
 # AI-Powered Hackathon Evaluation Engine
 
+read plan.md for more
+
 Technical Blueprint v2 Implementation — Enhanced Multi-Agent Architecture, Evaluation Core & API Layer.
 
 ## Architecture Overview
