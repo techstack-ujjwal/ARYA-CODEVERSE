@@ -36,7 +36,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           {label && (
             <label
               htmlFor={textareaId}
-              className="block text-xs font-medium text-zinc-300"
+              className="block text-xs font-semibold text-zinc-300"
             >
               {label}
             </label>
@@ -48,7 +48,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
                 isOverLimit
                   ? "text-rose-400 font-semibold"
                   : wordCount > maxWords * 0.9
-                  ? "text-amber-400"
+                  ? "text-amber-400 font-medium"
                   : "text-zinc-500"
               )}
             >
@@ -61,9 +61,9 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           id={textareaId}
           disabled={disabled}
           className={cn(
-            "w-full bg-zinc-900/80 border border-zinc-800 rounded-lg p-3 text-sm text-zinc-100 placeholder-zinc-500 transition-all duration-150 focus:outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 disabled:opacity-50 disabled:cursor-not-allowed resize-y min-h-[100px]",
+            "w-full bg-zinc-900/90 border border-zinc-800 rounded-xl p-3 text-xs text-zinc-100 placeholder-zinc-500 shadow-inner transition-all duration-200 focus:outline-none focus:border-indigo-500/80 focus:ring-2 focus:ring-indigo-500/20 disabled:opacity-50 disabled:cursor-not-allowed resize-y min-h-[100px] leading-relaxed",
             (error || isOverLimit) &&
-              "border-rose-500/60 focus:border-rose-500 focus:ring-rose-500",
+              "border-rose-500/60 focus:border-rose-500 focus:ring-rose-500/20",
             className
           )}
           {...props}

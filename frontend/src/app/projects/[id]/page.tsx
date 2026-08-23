@@ -34,6 +34,7 @@ import { Github } from "@/components/ui/GithubIcon";
 import { ProjectsAPI } from "@/lib/api/projects";
 import { StagesAPI } from "@/lib/api/stages";
 import { FeedbackAPI } from "@/lib/api/feedback";
+import { JudgingAPI } from "@/lib/api/judging";
 import {
   Project,
   ProjectStatus,
@@ -42,6 +43,7 @@ import {
   ProductEvaluationResult,
   ExtractedClaim,
   FeedbackReportData,
+  TeacherFeedback,
 } from "@/types/api";
 import { useToast } from "@/lib/store/toast-context";
 import { useAuth } from "@/lib/store/auth-context";
@@ -104,6 +106,9 @@ export default function ProjectWorkspacePage({
   const [dimFilter, setDimFilter] = useState<string>("all");
   const [expandedFix, setExpandedFix] = useState<number | null>(null);
 
+  // Teacher / Judge Feedback State
+  const [teacherFeedback, setTeacherFeedback] = useState<TeacherFeedback | null>(null);
+
   const calculateTotalWords = (obj: Record<string, string>) => {
     return Object.values(obj).reduce((acc, str) => {
       if (!str) return acc;
@@ -131,14 +136,15 @@ export default function ProjectWorkspacePage({
         });
       }
 
-      // Parallel fetch of prior stage data
-      const [iEval, pEval, claims, prodEval, fbData, ideaSub] = await Promise.all([
+      // Parallel fetch of prior stage data and teacher feedback
+      const [iEval, pEval, claims, prodEval, fbData, ideaSub, judgeFb] = await Promise.all([
         StagesAPI.getIdeaEvaluation(projectId).catch(() => null),
         StagesAPI.getPPTEvaluation(projectId).catch(() => null),
         StagesAPI.getPPTClaims(projectId).catch(() => []),
         StagesAPI.getProductEvaluation(projectId).catch(() => null),
         FeedbackAPI.getLatest(projectId).catch(() => null),
         StagesAPI.getIdeaSubmission(projectId).catch(() => null),
+        JudgingAPI.getProjectFeedback(projectId).catch(() => null),
       ]);
 
       if (ideaSub && (ideaSub.problem_statement || ideaSub.proposed_solution)) {
@@ -155,6 +161,9 @@ export default function ProjectWorkspacePage({
       if (claims) setPptClaims(claims);
       if (prodEval && prodEval.score !== undefined) setProductEval(prodEval);
       if (fbData && fbData.overall_health) setFeedbackReport(fbData);
+      if (judgeFb && (judgeFb.human_score !== null || judgeFb.comments)) {
+        setTeacherFeedback(judgeFb as any);
+      }
     } catch (err: any) {
       setLoadError(err.message || "Failed to load project details");
     } finally {
@@ -349,6 +358,15 @@ export default function ProjectWorkspacePage({
       label: "Stage 3: Product (55%)",
       icon: <Code2 className="w-4 h-4" />,
       badge: productEval?.score ? `${Math.round(productEval.score)}pts` : undefined,
+    },
+    {
+      id: "teacher",
+      label: "Teacher Feedback (30%)",
+      icon: <Award className="w-4 h-4 text-amber-400" />,
+      badge:
+        teacherFeedback?.human_score !== null && teacherFeedback?.human_score !== undefined
+          ? `${Math.round(teacherFeedback.human_score)}pts`
+          : "Review",
     },
     {
       id: "feedback",
@@ -1250,6 +1268,91 @@ export default function ProjectWorkspacePage({
                 <h4 className="text-sm font-semibold text-zinc-200">No Instant Diagnostics Run Yet</h4>
                 <p className="text-xs text-zinc-500 mt-1 max-w-md mx-auto">
                   Click "Run Instant Diagnostic" to trigger automated deterministic health probes over live uptime, repository structure, and security hygiene in under 90s.
+                </p>
+              </div>
+            )}
+          </Card>
+        </div>
+      )}
+
+      {/* TAB CONTENT: Teacher & Judge Feedback */}
+      {activeTab === "teacher" && (
+        <div className="space-y-6">
+          <Card className="border-amber-500/30 bg-gradient-to-b from-amber-950/20 via-zinc-900/60 to-zinc-950/80 p-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-amber-500/20">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0">
+                  <Award className="w-6 h-6" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-lg font-bold text-zinc-100">
+                      Teacher & Faculty Judge Evaluation Report
+                    </h3>
+                    {teacherFeedback?.human_score !== null && teacherFeedback?.human_score !== undefined && (
+                      <Badge variant="warning" size="sm">
+                        VERIFIED FACULTY REVIEW
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-xs text-zinc-400 mt-0.5">
+                    Qualitative human expert assessment accounting for <strong className="text-amber-400">30% weight</strong> in the final composite hackathon ranking.
+                  </p>
+                </div>
+              </div>
+
+              {teacherFeedback?.human_score !== null && teacherFeedback?.human_score !== undefined && (
+                <div className="p-3.5 rounded-xl bg-zinc-950/90 border border-amber-500/30 text-right font-mono shrink-0 shadow-lg">
+                  <div className="text-[10px] text-zinc-400 uppercase tracking-wider font-semibold">Teacher / Judge Score</div>
+                  <div className="text-2xl font-black text-amber-400">
+                    {teacherFeedback.human_score.toFixed(1)} <span className="text-xs text-zinc-500 font-normal">/ 100</span>
+                  </div>
+                  <div className="text-[10px] text-emerald-400 font-semibold mt-0.5">30.0% Final Composite Weight</div>
+                </div>
+              )}
+            </div>
+
+            {teacherFeedback && (teacherFeedback.human_score !== null || teacherFeedback.comments) ? (
+              <div className="mt-6 space-y-6">
+                <div className="p-5 rounded-xl bg-zinc-900/90 border border-zinc-800 space-y-3">
+                  <div className="flex items-center justify-between text-xs text-zinc-400 font-mono">
+                    <span className="flex items-center gap-1.5 text-amber-300 font-semibold">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      Detailed Qualitative Feedback & Assessment Notes
+                    </span>
+                    {teacherFeedback.updated_at && (
+                      <span>Reviewed: {new Date(teacherFeedback.updated_at).toLocaleDateString()}</span>
+                    )}
+                  </div>
+                  <div className="text-xs text-zinc-200 leading-relaxed whitespace-pre-line font-sans bg-zinc-950/80 p-5 rounded-lg border border-zinc-800/80">
+                    {teacherFeedback.comments || "No written notes provided by the faculty judge."}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono text-xs">
+                  <div className="p-4 rounded-xl bg-zinc-900/60 border border-zinc-800">
+                    <div className="text-[10px] text-zinc-500 uppercase font-semibold">Grading Status</div>
+                    <div className="text-sm font-bold text-emerald-400 mt-1 capitalize flex items-center gap-1.5">
+                      <CheckCircle2 className="w-4 h-4" />
+                      {teacherFeedback.status || "Scored & Calibrated"}
+                    </div>
+                  </div>
+                  <div className="p-4 rounded-xl bg-zinc-900/60 border border-zinc-800">
+                    <div className="text-[10px] text-zinc-500 uppercase font-semibold">Reviewer Identifier</div>
+                    <div className="text-sm font-bold text-zinc-200 mt-1">{teacherFeedback.judge_id || "Lead Faculty Judge"}</div>
+                  </div>
+                  <div className="p-4 rounded-xl bg-zinc-900/60 border border-zinc-800">
+                    <div className="text-[10px] text-zinc-500 uppercase font-semibold">Composite Calibration</div>
+                    <div className="text-sm font-bold text-indigo-400 mt-1">70% AI Engine / 30% Judge</div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="mt-6 p-10 rounded-xl bg-zinc-900/40 border border-dashed border-zinc-800 text-center">
+                <Clock className="w-10 h-10 text-amber-400/60 mx-auto mb-3 animate-pulse" />
+                <h4 className="text-sm font-semibold text-zinc-200">Awaiting Teacher & Human Judge Scoring</h4>
+                <p className="text-xs text-zinc-400 mt-1 max-w-md mx-auto">
+                  Your project has been queued for faculty review. Once the judge submits their qualitative assessment and rubric score, it will automatically reflect here.
                 </p>
               </div>
             )}

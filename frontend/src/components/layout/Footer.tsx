@@ -7,12 +7,15 @@ export function Footer() {
     <footer className="mt-auto border-t border-zinc-800/60 bg-zinc-950/60 py-6 text-zinc-500 text-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 font-mono text-zinc-400">
-            <Terminal className="w-3.5 h-3.5 text-zinc-500" />
-            <span>AI Hackathon Evaluation Engine</span>
+          <div className="flex items-center gap-2 font-mono text-zinc-300">
+            <div className="w-5 h-5 rounded-md bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-[10px] font-black text-white">
+              JX
+            </div>
+            <span className="font-bold text-zinc-200">JuryX</span>
+            <span className="text-zinc-500 font-normal">Autonomous Evaluation Platform</span>
           </div>
           <span className="text-zinc-700">•</span>
-          <span className="font-mono text-zinc-600">v2.0.0</span>
+          <span className="font-mono text-zinc-400 bg-zinc-900 border border-zinc-800 px-1.5 py-0.5 rounded text-[10px]">v2.0</span>
         </div>
 
         <div className="flex items-center gap-4 text-[11px] text-zinc-500">

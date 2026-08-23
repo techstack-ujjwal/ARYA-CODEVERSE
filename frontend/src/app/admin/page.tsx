@@ -194,13 +194,14 @@ export default function AdminControlRoomPage() {
       description="The Admin Control Room is restricted to Hackathon Organizers and Platform Administrators. Switch to Admin mode in dev settings to manage rubric weights, anti-cheating telemetry, and score finalization."
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full">
-        {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-zinc-800/80">
           <div>
             <div className="flex items-center gap-2.5">
-              <ShieldCheck className="w-6 h-6 text-emerald-400" />
+              <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                <ShieldCheck className="w-4.5 h-4.5" />
+              </div>
               <h1 className="text-2xl font-bold text-zinc-100 tracking-tight">
-                Admin & Governance Control Room
+                JuryX Admin & Governance Control Room
               </h1>
             </div>
             <p className="text-xs text-zinc-400 mt-1">

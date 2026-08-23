@@ -23,4 +23,19 @@ export const JudgingAPI = {
     }>(`/judging/${projectId}/score`, payload);
     return res.data;
   },
+
+  getProjectFeedback: async (projectId: string) => {
+    const res = await api.get<{
+      assignment_id?: string;
+      project_id: string;
+      status: string;
+      human_score?: number | null;
+      comments?: string | null;
+      judge_id?: string | null;
+      created_at?: string | null;
+      updated_at?: string | null;
+      assignments?: any[];
+    }>(`/judging/${projectId}/feedback`);
+    return res.data;
+  },
 };

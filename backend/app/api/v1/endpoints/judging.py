@@ -45,6 +45,67 @@ async def get_assigned_projects(
     )
 
 
+@router.get("/{project_id}/feedback", response_model=APIResponse[dict])
+async def get_project_judge_feedback(
+    project_id: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: AuthenticatedUser = Depends(get_current_user),
+):
+    """Retrieves teacher/judge qualitative feedback, rubric score, and review details for a project."""
+    project_repo = ProjectRepository(db)
+    project = await project_repo.get_by_id(project_id)
+    if not project:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found")
+
+    result = await db.execute(
+        select(JudgeAssignment)
+        .where(JudgeAssignment.project_id == project_id)
+        .order_by(JudgeAssignment.updated_at.desc())
+    )
+    assignments = list(result.scalars().all())
+
+    if not assignments:
+        return APIResponse(
+            success=True,
+            message="No judge evaluations yet for this project",
+            data={
+                "project_id": project_id,
+                "status": "pending",
+                "human_score": None,
+                "comments": None,
+                "judge_id": None,
+                "assignments": [],
+            },
+        )
+
+    primary = assignments[0]
+    return APIResponse(
+        success=True,
+        message="Teacher and judge feedback retrieved successfully",
+        data={
+            "assignment_id": primary.id,
+            "project_id": project_id,
+            "status": primary.status,
+            "human_score": primary.human_score,
+            "comments": primary.comments,
+            "judge_id": primary.judge_id,
+            "created_at": str(primary.created_at) if primary.created_at else None,
+            "updated_at": str(primary.updated_at) if primary.updated_at else None,
+            "assignments": [
+                {
+                    "assignment_id": a.id,
+                    "judge_id": a.judge_id,
+                    "human_score": a.human_score,
+                    "comments": a.comments,
+                    "status": a.status,
+                    "updated_at": str(a.updated_at) if a.updated_at else None,
+                }
+                for a in assignments
+            ],
+        },
+    )
+
+
 @router.post("/{project_id}/score", response_model=APIResponse[dict])
 async def submit_judge_score(
     project_id: str,

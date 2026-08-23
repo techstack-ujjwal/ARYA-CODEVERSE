@@ -72,6 +72,47 @@ async def list_projects(
     )
 
 
+@router.get("/hackathons", response_model=APIResponse[List[dict]])
+async def list_available_hackathons(
+    db: AsyncSession = Depends(get_db),
+    current_user: AuthenticatedUser = Depends(get_current_user),
+):
+    """Lists all available Hackathon events with participation metadata for students and participants."""
+    hackathon_repo = HackathonRepository(db)
+    hackathons = await hackathon_repo.list_all()
+
+    project_repo = ProjectRepository(db)
+    all_projects = await project_repo.list_all()
+
+    hackathon_stats: dict = {}
+    for p in all_projects:
+        stats = hackathon_stats.setdefault(p.hackathon_id, {"total_projects": 0, "my_projects": 0})
+        stats["total_projects"] += 1
+        if p.owner_id == current_user.user_id or current_user.user_id in (p.members or []):
+            stats["my_projects"] += 1
+
+    return APIResponse(
+        success=True,
+        message="Available hackathons retrieved successfully",
+        data=[
+            {
+                "id": h.id,
+                "name": h.name,
+                "description": h.description,
+                "rubric_weights": h.rubric_weights or {"idea": 0.20, "ppt": 0.25, "product": 0.55},
+                "status": h.status,
+                "submission_deadline": str(h.submission_deadline) if h.submission_deadline else None,
+                "total_projects": hackathon_stats.get(h.id, {}).get("total_projects", 0),
+                "my_projects": hackathon_stats.get(h.id, {}).get("my_projects", 0),
+                "is_enrolled": hackathon_stats.get(h.id, {}).get("my_projects", 0) > 0,
+                "created_at": str(h.created_at) if h.created_at else None,
+                "updated_at": str(h.updated_at) if h.updated_at else None,
+            }
+            for h in hackathons
+        ],
+    )
+
+
 @router.get("/{id}", response_model=APIResponse[ProjectResponse])
 async def get_project(
     id: str,

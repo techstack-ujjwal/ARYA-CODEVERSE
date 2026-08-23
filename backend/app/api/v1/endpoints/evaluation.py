@@ -8,7 +8,7 @@ from backend.app.db.session import get_db
 from backend.app.db.repositories.project_repo import ProjectRepository
 from backend.app.core.security import get_current_user, AuthenticatedUser
 from backend.app.models.schemas.common import APIResponse
-from backend.app.models.db_models.models import Evaluation, Evidence, Claim
+from backend.app.models.db_models.models import Evaluation, Evidence, Claim, JudgeAssignment
 from backend.app.agents.shared.final_judge_agent import FinalJudgeAgent
 
 router = APIRouter()
@@ -20,7 +20,7 @@ async def get_evaluation_summary(
     db: AsyncSession = Depends(get_db),
     current_user: AuthenticatedUser = Depends(get_current_user),
 ):
-    """Returns combined multi-agent evaluation report across Idea, PPT, and Product stages."""
+    """Returns combined multi-agent evaluation report across Idea, PPT, and Product stages with teacher feedback."""
     project_repo = ProjectRepository(db)
     project = await project_repo.get_by_id(id)
     if not project:
@@ -48,6 +48,51 @@ async def get_evaluation_summary(
         product_score=product_score,
     )
 
+    # Fetch Teacher/Judge Assignment & Qualitative Feedback
+    judge_result = await db.execute(
+        select(JudgeAssignment)
+        .where(JudgeAssignment.project_id == id)
+        .order_by(JudgeAssignment.updated_at.desc())
+    )
+    judge_assignments = list(judge_result.scalars().all())
+    teacher_feedback = None
+    if judge_assignments:
+        primary_judge = judge_assignments[0]
+        teacher_feedback = {
+            "assignment_id": primary_judge.id,
+            "judge_id": primary_judge.judge_id,
+            "human_score": primary_judge.human_score,
+            "comments": primary_judge.comments,
+            "status": primary_judge.status,
+            "created_at": str(primary_judge.created_at) if primary_judge.created_at else None,
+            "updated_at": str(primary_judge.updated_at) if primary_judge.updated_at else None,
+        }
+
+    # Format detailed agent evaluations
+    agent_evaluations = [
+        {
+            "id": e.id,
+            "agent_name": e.agent_name,
+            "stage": e.stage,
+            "score": e.score,
+            "confidence": e.confidence,
+            "reasoning": e.reasoning,
+            "model_used": e.model_used,
+            "created_at": str(e.created_at) if e.created_at else None,
+            "evidence": [
+                {
+                    "id": ev.id,
+                    "evidence_type": ev.evidence_type,
+                    "source": ev.source,
+                    "tool_used": ev.tool_used,
+                    "content": ev.content,
+                }
+                for ev in e.evidence_items
+            ],
+        }
+        for e in evaluations
+    ]
+
     return APIResponse(
         success=True,
         message="Evaluation summary retrieved",
@@ -61,6 +106,8 @@ async def get_evaluation_summary(
                 "product_stage": {"weight": 0.55, "score": product_score},
             },
             "total_evaluations": len(evaluations),
+            "agent_evaluations": agent_evaluations,
+            "teacher_feedback": teacher_feedback,
         },
     )
 

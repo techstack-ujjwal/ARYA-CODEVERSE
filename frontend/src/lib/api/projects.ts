@@ -53,4 +53,14 @@ export const ProjectsAPI = {
     const res = await api.get<ProjectStatus>(`/projects/${id}/status`);
     return res.data;
   },
+
+  listHackathons: async () => {
+    try {
+      const res = await api.get<any[]>("/projects/hackathons");
+      return res.data;
+    } catch {
+      const fallbackRes = await api.get<any[]>("/admin/hackathons");
+      return fallbackRes.data;
+    }
+  },
 };

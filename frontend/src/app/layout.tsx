@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI Hackathon Evaluation Engine",
-  description: "Minimalist, evidence-grounded multi-agent hackathon evaluation platform",
+  title: "JuryX — Autonomous Multi-Agent Hackathon Evaluation Platform",
+  description: "Evidence-grounded multi-agent hackathon evaluation, claim verification, and calibrated scoring platform",
 };
 
 export default function RootLayout({

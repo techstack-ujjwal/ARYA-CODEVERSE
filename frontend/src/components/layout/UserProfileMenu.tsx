@@ -128,7 +128,7 @@ export function UserProfileMenu() {
             className="fixed inset-0 z-40"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute right-0 mt-2 w-80 bg-zinc-950 border border-zinc-800 rounded-2xl shadow-2xl p-4 z-50 animate-in fade-in zoom-in-95 space-y-4">
+          <div className="absolute right-0 mt-2 w-80 bg-zinc-950/95 backdrop-blur-2xl border border-zinc-800/90 rounded-2xl shadow-2xl p-4 z-50 animate-in fade-in zoom-in-95 space-y-4 specular-border">
             {/* Active User Card */}
             <div className="flex items-start gap-3 pb-3 border-b border-zinc-800/80">
               <div

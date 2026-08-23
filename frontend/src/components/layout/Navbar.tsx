@@ -71,23 +71,32 @@ export function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-zinc-800/80 bg-zinc-950/90 backdrop-blur-md">
+    <header className="sticky top-0 z-40 w-full border-b border-zinc-800/80 bg-zinc-950/85 backdrop-blur-xl specular-border">
       <div className="max-w-7xl mx-auto flex h-14 items-center justify-between px-4 sm:px-6">
         {/* Brand Logo */}
         <div className="flex items-center gap-6">
           <Link
             href="/"
-            className="flex items-center gap-2.5 group transition-opacity hover:opacity-90"
+            className="flex items-center gap-3 group transition-opacity hover:opacity-90"
           >
-            <div className="w-7 h-7 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-950 font-mono font-black text-sm tracking-tighter shadow-sm">
-              Æ
+            <div className="relative w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 p-[1px] shadow-sm shadow-indigo-500/20 group-hover:shadow-indigo-500/40 transition-shadow">
+              <div className="w-full h-full rounded-[11px] bg-zinc-950 flex items-center justify-center">
+                <span className="font-mono font-black text-sm tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-purple-200 to-pink-300">
+                  JX
+                </span>
+              </div>
             </div>
             <div className="flex flex-col">
-              <span className="text-sm font-bold tracking-tight text-zinc-100 font-mono">
-                EVAL ENGINE
-              </span>
-              <span className="text-[9px] font-mono text-zinc-500 -mt-1 tracking-wider uppercase">
-                v2.0 Multi-Agent
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm font-black tracking-tight text-white font-mono">
+                  Jury<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-pink-400">X</span>
+                </span>
+                <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-zinc-800 text-zinc-300 border border-zinc-700">
+                  v2.0
+                </span>
+              </div>
+              <span className="text-[9px] font-mono text-zinc-500 -mt-0.5 tracking-wider uppercase">
+                Autonomous AI Jury
               </span>
             </div>
           </Link>

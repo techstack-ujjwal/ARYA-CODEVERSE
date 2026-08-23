@@ -15,6 +15,9 @@ import {
   AlertTriangle,
   RefreshCw,
   FileCheck,
+  Filter,
+  Check,
+  Clock,
 } from "lucide-react";
 import { JudgingAPI, JudgeScorePayload } from "@/lib/api/judging";
 import { ProjectsAPI } from "@/lib/api/projects";
@@ -22,11 +25,12 @@ import { Project, JudgeAssignment } from "@/types/api";
 import { useToast } from "@/lib/store/toast-context";
 import { useAuth } from "@/lib/store/auth-context";
 import { Button } from "@/components/ui/Button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardSlot, CardBadge } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Modal } from "@/components/ui/Modal";
 import { Textarea } from "@/components/ui/Textarea";
 import { RoleGuard } from "@/components/ui/RoleGuard";
+import { Toggle } from "@/components/ui/Toggle";
 
 export default function JudgePortalPage() {
   const { role } = useAuth();
@@ -35,6 +39,9 @@ export default function JudgePortalPage() {
   const [assignments, setAssignments] = useState<JudgeAssignment[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
+
+  // Interactive UI Toggle: Filter Pending Only
+  const [pendingOnly, setPendingOnly] = useState<boolean>(false);
 
   // Scoring Modal State
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -105,6 +112,18 @@ export default function JudgePortalPage() {
     }
   };
 
+  const scoredCount = projects.filter((p) => {
+    const a = assignments.find((assign) => assign.project_id === p.id);
+    return a?.status === "scored" || p.status === "finalized";
+  }).length;
+  const pendingCount = projects.length - scoredCount;
+
+  const displayProjects = projects.filter((p) => {
+    if (!pendingOnly) return true;
+    const a = assignments.find((assign) => assign.project_id === p.id);
+    return !(a?.status === "scored" || p.status === "finalized");
+  });
+
   return (
     <RoleGuard
       allowedRoles={["judge", "admin"]}
@@ -116,9 +135,11 @@ export default function JudgePortalPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-zinc-800/80">
           <div>
             <div className="flex items-center gap-2.5">
-              <Award className="w-6 h-6 text-amber-400" />
+              <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+                <Award className="w-4.5 h-4.5" />
+              </div>
               <h1 className="text-2xl font-bold text-zinc-100 tracking-tight">
-                Human Judge Evaluation Portal
+                JuryX Human Judge Evaluation Portal
               </h1>
             </div>
             <p className="text-xs text-zinc-400 mt-1">
@@ -126,7 +147,7 @@ export default function JudgePortalPage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Button
               variant="outline"
               size="sm"
@@ -138,27 +159,52 @@ export default function JudgePortalPage() {
           </div>
         </div>
 
-        {/* Assigned Projects Table / Cards */}
+        {/* Assigned Projects Table / Card Slots */}
         <div className="my-8">
-          <Card className="bg-zinc-950/60 border-zinc-800">
-            <CardHeader>
-              <CardTitle>Evaluation Queue ({projects.length} Total Projects)</CardTitle>
+          <Card variant="elevated" className="bg-zinc-950/80 border-zinc-800 shadow-xl">
+            <CardHeader
+              action={
+                <div className="flex items-center gap-4">
+                  {/* Interactive UI Toggle */}
+                  <Toggle
+                    checked={pendingOnly}
+                    onChange={setPendingOnly}
+                    size="sm"
+                    variant="amber"
+                    label={
+                      <span className="text-xs font-mono">
+                        Pending Only ({pendingCount})
+                      </span>
+                    }
+                  />
+                </div>
+              }
+            >
+              <CardTitle>
+                <div className="flex items-center gap-2.5">
+                  <span>Evaluation Queue</span>
+                  <Badge variant="warning" size="sm">
+                    {scoredCount} / {projects.length} SCORED
+                  </Badge>
+                </div>
+              </CardTitle>
               <CardDescription>
-                Click "Score Submission" to review student submissions, inspect multi-agent evidence, and record your score.
+                Click "Score Project" to review student submissions, inspect multi-agent evidence dossiers, and calibrate your human rubric rating.
               </CardDescription>
             </CardHeader>
+
             <CardContent>
               {isLoading ? (
                 <div className="py-12 text-center text-zinc-500">
                   <Activity className="w-6 h-6 animate-spin mx-auto mb-2" />
                   <p className="text-xs font-mono">Loading evaluation queue...</p>
                 </div>
-              ) : projects.length === 0 ? (
+              ) : displayProjects.length === 0 ? (
                 <p className="py-8 text-center text-xs text-zinc-500 font-mono">
-                  No projects available for evaluation.
+                  {pendingOnly ? "All assigned projects have been scored!" : "No projects available for evaluation."}
                 </p>
               ) : (
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto rounded-xl border border-zinc-800/80">
                   <table className="w-full text-left text-xs">
                     <thead className="bg-zinc-900/80 border-b border-zinc-800 text-zinc-400 font-mono uppercase text-[10px]">
                       <tr>
@@ -170,7 +216,7 @@ export default function JudgePortalPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-zinc-800/60">
-                      {projects.map((p) => {
+                      {displayProjects.map((p) => {
                         const assignment = assignments.find((a) => a.project_id === p.id);
                         const isScored = assignment?.status === "scored" || p.status === "finalized";
 
@@ -202,7 +248,7 @@ export default function JudgePortalPage() {
                             </td>
                             <td className="py-3.5 px-4 font-mono font-bold">
                               {assignment?.human_score ? (
-                                <span className="text-amber-400 font-mono">
+                                <span className="text-amber-400 font-mono font-black">
                                   {assignment.human_score} pts
                                 </span>
                               ) : isScored ? (
@@ -264,55 +310,51 @@ export default function JudgePortalPage() {
               className="flex items-center gap-1 text-[11px] text-amber-400 hover:text-amber-300 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
             >
               <Wand2 className="w-3 h-3" />
-              <span>Insert Sample Feedback</span>
+              <span>Fill Sample Score & Review</span>
             </button>
           </div>
 
           <form onSubmit={handleSubmitScore} className="space-y-4">
-            {/* Score Slider */}
-            <div className="p-4 rounded-xl bg-zinc-900 border border-zinc-800 space-y-3">
+            {/* Score Slider Slot */}
+            <CardSlot variant="warning" className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-zinc-300 font-mono uppercase tracking-wider">
-                  Human Calibrated Score (0 - 100)
-                </span>
-                <span className="text-2xl font-mono font-bold text-amber-400">
-                  {scorePayload.score}
-                  <span className="text-xs text-zinc-500 font-normal"> / 100</span>
+                <label className="text-xs font-semibold text-zinc-200">
+                  Calibrated Human Score (0 - 100) *
+                </label>
+                <span className="font-mono text-lg font-black text-amber-400">
+                  {scorePayload.score} <span className="text-xs font-normal text-zinc-500">/ 100</span>
                 </span>
               </div>
-
               <input
                 type="range"
                 min="0"
                 max="100"
-                step="1"
                 value={scorePayload.score}
                 onChange={(e) =>
-                  setScorePayload({ ...scorePayload, score: parseFloat(e.target.value) })
+                  setScorePayload({ ...scorePayload, score: parseInt(e.target.value) || 0 })
                 }
-                className="w-full h-2 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-amber-400"
+                className="w-full accent-amber-400 cursor-pointer h-2 bg-zinc-800 rounded-lg"
               />
-
               <div className="flex justify-between text-[10px] font-mono text-zinc-500">
-                <span>0 (Unusable)</span>
-                <span>50 (Fair)</span>
-                <span>75 (Good)</span>
-                <span>90+ (Exceptional)</span>
+                <span>0 (Unsatisfactory)</span>
+                <span>50 (Average)</span>
+                <span>100 (Exemplary)</span>
               </div>
-            </div>
+            </CardSlot>
 
             <Textarea
-              label="Qualitative Judge Feedback"
-              placeholder="Detail strengths in architecture, code modularity, live UX execution, or critical deficiencies..."
-              value={scorePayload.feedback || ""}
+              label="Qualitative Teacher / Judge Feedback *"
+              placeholder="Provide constructive feedback highlighting architectural strengths, UI/UX execution, and recommended technical improvements..."
+              value={scorePayload.feedback}
               onChange={(e) =>
                 setScorePayload({ ...scorePayload, feedback: e.target.value })
               }
-              rows={3}
+              rows={4}
+              required
             />
 
             <Textarea
-              label="Override / Score Adjustment Rationale"
+              label="Score Calibration Justification (Optional)"
               placeholder="Optional: Justify variance if adjusting significantly above or below the baseline AI evaluation score..."
               value={scorePayload.override_reason || ""}
               onChange={(e) =>
@@ -330,7 +372,7 @@ export default function JudgePortalPage() {
                 Cancel
               </Button>
               <Button type="submit" isLoading={isSubmittingScore}>
-                Submit Official Score
+                Save & Calibrate Score
               </Button>
             </div>
           </form>

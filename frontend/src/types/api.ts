@@ -140,6 +140,37 @@ export interface FeedbackReportData {
   created_at?: string;
 }
 
+export interface TeacherFeedback {
+  assignment_id: string;
+  project_id: string;
+  judge_id?: string | null;
+  human_score?: number | null;
+  comments?: string | null;
+  override_reason?: string | null;
+  status: "assigned" | "scored" | "pending";
+  created_at?: string | null;
+  updated_at?: string | null;
+}
+
+export interface DetailedAgentEvaluation {
+  id: string;
+  agent_name: string;
+  stage: "idea" | "ppt" | "product" | "shared" | string;
+  score: number;
+  confidence: number;
+  reasoning: string;
+  model_used?: string;
+  created_at?: string | null;
+  evidence?: Array<{
+    id?: string;
+    evidence_type: string;
+    source: string;
+    tool_used: string;
+    content?: any;
+    summary?: string;
+  }>;
+}
+
 export interface EvaluationSummary {
   project_id: string;
   project_name: string;
@@ -150,6 +181,8 @@ export interface EvaluationSummary {
     product_stage: { weight: number; score: number };
   };
   total_evaluations: number;
+  agent_evaluations?: DetailedAgentEvaluation[];
+  teacher_feedback?: TeacherFeedback | null;
 }
 
 export interface EvidenceItem {
@@ -176,8 +209,12 @@ export interface ConsistencyMetrics {
 export interface JudgeAssignment {
   assignment_id: string;
   project_id: string;
+  judge_id?: string;
   human_score?: number | null;
+  comments?: string | null;
   status: "assigned" | "scored";
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface LeaderboardEntry {
@@ -199,8 +236,11 @@ export interface Hackathon {
     product?: number;
     [key: string]: any;
   };
-  status: "draft" | "active" | "judging" | "completed";
+  status: "draft" | "active" | "judging" | "completed" | string;
   submission_deadline?: string | null;
+  total_projects?: number;
+  my_projects?: number;
+  is_enrolled?: boolean;
   created_at: string;
   updated_at: string;
 }
