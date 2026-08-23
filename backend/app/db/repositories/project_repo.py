@@ -27,8 +27,8 @@ class ProjectRepository(BaseRepository[Project]):
     async def list_by_hackathon(
         self, hackathon_id: Optional[str] = None, owner_id: Optional[str] = None
     ) -> List[Project]:
-        stmt = select(Project)
-        if hackathon_id:
+        stmt = select(Project).order_by(Project.created_at.desc())
+        if hackathon_id and hackathon_id != "all":
             stmt = stmt.where(Project.hackathon_id == hackathon_id)
         if owner_id:
             stmt = stmt.where(Project.owner_id == owner_id)

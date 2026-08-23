@@ -85,7 +85,7 @@ export default function HomePage() {
           {/* Top Pill */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-zinc-900/90 border border-zinc-800 text-xs text-zinc-300 font-mono mb-8 shadow-md backdrop-blur-md">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_10px_rgba(52,211,153,0.8)]" />
-            <span>JuryX Autonomous Multi-Agent Platform • v2.0</span>
+            <span>JuryX Autonomous Multi-Agent Platform</span>
           </div>
 
           {/* Heading */}

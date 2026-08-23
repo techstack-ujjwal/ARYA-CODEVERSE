@@ -2,15 +2,15 @@
 
 @layer base {
   :root {
-    --background: #090c10;
-    --foreground: #f0f4f8;
-    --card: #10151d;
-    --card-foreground: #f0f4f8;
-    --border: #1c2430;
-    --primary: #f0f4f8;
-    --primary-foreground: #090c10;
-    --accent: #0ea5e9;
-    --accent-glow: rgba(14, 165, 233, 0.12);
+    --background: #000000;
+    --foreground: #ffffff;
+    --card: #0a0a0c;
+    --card-foreground: #ffffff;
+    --border: #222226;
+    --primary: #ffffff;
+    --primary-foreground: #000000;
+    --accent: #38bdf8;
+    --accent-glow: rgba(255, 255, 255, 0.08);
   }
 
   body {
@@ -24,59 +24,58 @@
   }
 }
 
-/* Custom Sleek Dark Steel Scrollbar */
+/* Sleek Minimalist Pure Black Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #090c10;
+  background: #000000;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1c2430;
+  background: #27272a;
   border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #2d3748;
+  background: #3f3f46;
 }
 
-/* Crisp Carbon Grid Matrix */
+/* Crisp Minimalist Matrix Grid */
 .bg-grid-pattern {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
-/* Atmospheric Ambient Spotlight (Steel Slate & Dark Emerald, NOT AI slope purple) */
+/* Pure Black/White Atmospheric Ambient Top Spotlight */
 .ambient-glow {
   position: absolute;
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 1100px;
-  height: 450px;
-  background: radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.08) 0%, rgba(16, 185, 129, 0.04) 40%, transparent 70%);
+  width: 1200px;
+  height: 480px;
+  background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(56, 189, 248, 0.03) 35%, transparent 70%);
   pointer-events: none;
   z-index: 0;
 }
 
-/* Glassmorphic Surfaces */
+/* High-End Glassmorphic Dark Surfaces */
 .glass-panel {
-  background: rgba(16, 21, 29, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(10, 10, 12, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .glass-panel-elevated {
-  background: rgba(20, 27, 37, 0.88);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+  background: rgba(14, 14, 18, 0.94);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.95);
 }
 
 /* Specular top border sheen */
@@ -89,31 +88,31 @@
   position: absolute;
   inset: 0 0 auto 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.16), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
   pointer-events: none;
 }
 
-/* High-Contrast Non-AI Slope Text Gradients */
+/* High-Contrast Crisp Black & White Text Gradients */
 .text-gradient-primary {
-  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+  background: linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .text-gradient-accent {
-  background: linear-gradient(135deg, #f8fafc 0%, #38bdf8 50%, #34d399 100%);
+  background: linear-gradient(180deg, #ffffff 0%, #e4e4e7 60%, #38bdf8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .text-gradient-amber {
-  background: linear-gradient(135deg, #fde68a 0%, #f59e0b 100%);
+  background: linear-gradient(180deg, #fef08a 0%, #f59e0b 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .text-gradient-emerald {
-  background: linear-gradient(135deg, #a7f3d0 0%, #10b981 100%);
+  background: linear-gradient(180deg, #d1fae5 0%, #10b981 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }

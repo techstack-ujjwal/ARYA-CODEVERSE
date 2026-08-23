@@ -91,9 +91,6 @@ export function Navbar() {
                 <span className="text-sm font-black tracking-tight text-white font-mono">
                   Jury<span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-emerald-400">X</span>
                 </span>
-                <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-zinc-800 text-zinc-300 border border-zinc-700">
-                  v2.0
-                </span>
               </div>
               <span className="text-[9px] font-mono text-zinc-500 -mt-0.5 tracking-wider uppercase">
                 Autonomous AI Jury

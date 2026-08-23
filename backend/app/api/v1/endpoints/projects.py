@@ -61,10 +61,9 @@ async def list_projects(
     db: AsyncSession = Depends(get_db),
     current_user: AuthenticatedUser = Depends(get_current_user),
 ):
-    """Lists projects. Filterable by hackathon_id. Non-admins only see their own projects unless hackathon is public."""
+    """Lists projects. Filterable by hackathon_id."""
     project_repo = ProjectRepository(db)
-    owner_id = None if current_user.role in ["admin", "judge"] else current_user.user_id
-    projects = await project_repo.list_by_hackathon(hackathon_id=hackathon_id, owner_id=owner_id)
+    projects = await project_repo.list_by_hackathon(hackathon_id=hackathon_id)
     return APIResponse(
         success=True,
         message="Projects retrieved successfully",
