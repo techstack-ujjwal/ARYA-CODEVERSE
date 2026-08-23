@@ -14,20 +14,20 @@ export function DevRoleSwitcher() {
     {
       id: "participant",
       label: "Participant",
-      icon: <UserCheck className="w-3.5 h-3.5" />,
-      color: "text-sky-400 bg-sky-500/10 border-sky-500/20",
+      icon: <UserCheck className="w-3.5 h-3.5 text-white" />,
+      color: "text-white bg-zinc-900 border-zinc-700",
     },
     {
       id: "judge",
       label: "Judge",
-      icon: <Award className="w-3.5 h-3.5" />,
-      color: "text-amber-400 bg-amber-500/10 border-amber-500/20",
+      icon: <Award className="w-3.5 h-3.5 text-white" />,
+      color: "text-white bg-zinc-900 border-zinc-700",
     },
     {
       id: "admin",
       label: "Admin",
-      icon: <ShieldCheck className="w-3.5 h-3.5" />,
-      color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
+      icon: <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />,
+      color: "text-emerald-400 bg-emerald-950/60 border-emerald-800/80",
     },
   ];
 
@@ -55,7 +55,7 @@ export function DevRoleSwitcher() {
             onClick={() => setIsOpen(false)}
           />
           <div className="absolute right-0 mt-2 w-44 bg-zinc-950 border border-zinc-800 rounded-xl shadow-xl p-1.5 z-50 animate-in fade-in zoom-in-95">
-            <div className="px-2 py-1 text-[10px] uppercase font-mono tracking-wider text-zinc-500 font-semibold border-b border-zinc-800/80 mb-1">
+            <div className="px-2 py-1 text-[10px] uppercase font-mono tracking-wider text-zinc-500 font-semibold border-b border-zinc-800 mb-1">
               Switch Dev Role
             </div>
             {roles.map((r) => (
@@ -68,8 +68,8 @@ export function DevRoleSwitcher() {
                 className={cn(
                   "w-full flex items-center justify-between px-2.5 py-1.5 text-xs rounded-md transition-all text-left cursor-pointer",
                   role === r.id
-                    ? "bg-zinc-800 text-zinc-100 font-medium"
-                    : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900"
+                    ? "bg-zinc-800 text-white font-medium"
+                    : "text-zinc-400 hover:text-white hover:bg-zinc-900"
                 )}
               >
                 <div className="flex items-center gap-2">

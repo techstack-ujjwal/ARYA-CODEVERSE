@@ -7,7 +7,7 @@ export interface ToggleProps extends Omit<React.InputHTMLAttributes<HTMLInputEle
   label?: React.ReactNode;
   description?: string;
   size?: "sm" | "md" | "lg";
-  variant?: "default" | "indigo" | "emerald" | "amber";
+  variant?: "default" | "indigo" | "emerald" | "amber" | "danger";
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   className?: string;
@@ -19,7 +19,7 @@ export function Toggle({
   label,
   description,
   size = "md",
-  variant = "indigo",
+  variant = "default",
   leftIcon,
   rightIcon,
   disabled = false,
@@ -52,10 +52,11 @@ export function Toggle({
   };
 
   const activeColors = {
-    default: "bg-zinc-100 border-zinc-200 text-zinc-950",
-    indigo: "bg-indigo-600 border-indigo-500 shadow-[0_0_12px_rgba(99,102,241,0.4)]",
+    default: "bg-white border-white text-black",
+    indigo: "bg-white border-white text-black",
     emerald: "bg-emerald-600 border-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.4)]",
-    amber: "bg-amber-500 border-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.4)]",
+    amber: "bg-white border-white text-black",
+    danger: "bg-red-600 border-red-500 shadow-[0_0_12px_rgba(239,68,68,0.4)]",
   };
 
   const currentSize = sizeClasses[size];
@@ -90,17 +91,17 @@ export function Toggle({
             "rounded-full transition-all duration-200 ease-in-out border flex items-center",
             currentSize.track,
             checked
-              ? activeColors[variant]
+              ? activeColors[variant] || activeColors.default
               : "bg-zinc-900 border-zinc-800 group-hover:border-zinc-700"
           )}
         >
           {/* Knob */}
           <div
             className={cn(
-              "rounded-full bg-white transition-all duration-200 ease-in-out transform shadow-sm flex items-center justify-center pointer-events-none",
+              "rounded-full transition-all duration-200 ease-in-out transform shadow-sm flex items-center justify-center pointer-events-none",
               currentSize.knob,
               checked ? currentSize.translate : currentSize.translateZero,
-              checked && variant === "default" && "bg-zinc-950"
+              checked ? (variant === "emerald" || variant === "danger" ? "bg-white" : "bg-black") : "bg-white"
             )}
           />
         </div>
@@ -165,11 +166,11 @@ export function SegmentedToggle<T extends string>({
               "relative flex items-center gap-1.5 rounded-lg font-medium transition-all duration-150 cursor-pointer",
               size === "sm" ? "px-2.5 py-1 text-xs" : "px-3 py-1.5 text-xs",
               isActive
-                ? "bg-zinc-800 text-zinc-100 font-semibold shadow-sm border border-zinc-700/80"
-                : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40"
+                ? "bg-zinc-800 text-white font-semibold shadow-sm border border-zinc-700"
+                : "text-zinc-400 hover:text-white hover:bg-zinc-800/40"
             )}
           >
-            {opt.icon && <span className={cn(isActive ? "text-zinc-100" : "text-zinc-400")}>{opt.icon}</span>}
+            {opt.icon && <span className={cn(isActive ? "text-white" : "text-zinc-400")}>{opt.icon}</span>}
             <span>{opt.label}</span>
             {opt.badge && <span className="ml-1">{opt.badge}</span>}
           </button>

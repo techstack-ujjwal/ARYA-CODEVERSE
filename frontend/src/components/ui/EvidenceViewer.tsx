@@ -53,13 +53,13 @@ export function EvidenceViewer({ evidence, filter = "all" }: EvidenceViewerProps
   const getToolIcon = (toolName: string) => {
     const t = toolName.toLowerCase();
     if (t.includes("search") || t.includes("tavily") || t.includes("serp"))
-      return <Search className="w-3.5 h-3.5 text-sky-400" />;
+      return <Search className="w-3.5 h-3.5 text-white" />;
     if (t.includes("ast") || t.includes("radon") || t.includes("code"))
       return <Code2 className="w-3.5 h-3.5 text-emerald-400" />;
     if (t.includes("bandit") || t.includes("security") || t.includes("semgrep"))
-      return <Shield className="w-3.5 h-3.5 text-rose-400" />;
+      return <Shield className="w-3.5 h-3.5 text-red-400" />;
     if (t.includes("lighthouse") || t.includes("playwright") || t.includes("uptime"))
-      return <Globe className="w-3.5 h-3.5 text-indigo-400" />;
+      return <Globe className="w-3.5 h-3.5 text-white" />;
     return <Cpu className="w-3.5 h-3.5 text-zinc-400" />;
   };
 
@@ -84,7 +84,7 @@ export function EvidenceViewer({ evidence, filter = "all" }: EvidenceViewerProps
         return (
           <div
             key={ev.id}
-            className="p-4 rounded-xl bg-zinc-950/70 border border-zinc-800/80 hover:border-zinc-700/60 transition-colors space-y-3"
+            className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 hover:border-zinc-700 transition-colors space-y-3"
           >
             {/* Header: Tool, Source & Type */}
             <div className="flex items-center justify-between flex-wrap gap-2">
@@ -99,12 +99,12 @@ export function EvidenceViewer({ evidence, filter = "all" }: EvidenceViewerProps
               </div>
 
               <div className="flex items-center gap-2">
-                <Badge variant="purple" size="sm">
+                <Badge variant="default" size="sm">
                   {ev.evidence_type}
                 </Badge>
                 <button
                   onClick={() => handleCopyJSON(ev.id, ev.content)}
-                  className="flex items-center gap-1 text-[11px] text-zinc-400 hover:text-zinc-200 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 px-2 py-0.5 rounded transition-colors cursor-pointer"
+                  className="flex items-center gap-1 text-[11px] text-zinc-400 hover:text-white bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 px-2 py-0.5 rounded transition-colors cursor-pointer"
                   title="Copy formatted JSON payload"
                 >
                   {copiedId === ev.id ? (
@@ -122,12 +122,12 @@ export function EvidenceViewer({ evidence, filter = "all" }: EvidenceViewerProps
               </div>
             </div>
 
-            {/* Formatted Content Cards instead of Raw JSON */}
+            {/* Formatted Content Cards */}
             <div className="space-y-2">
               {/* Web Search Query Item */}
               {content.query && (
-                <div className="flex items-start gap-2 p-2.5 rounded-lg bg-zinc-900/60 border border-zinc-800/60 text-xs">
-                  <span className="font-mono text-[11px] text-sky-400 font-semibold uppercase tracking-wider shrink-0 mt-0.5">
+                <div className="flex items-start gap-2 p-2.5 rounded-lg bg-zinc-900 border border-zinc-800 text-xs">
+                  <span className="font-mono text-[11px] text-white font-semibold uppercase tracking-wider shrink-0 mt-0.5">
                     Query:
                   </span>
                   <span className="text-zinc-200 font-mono text-xs">"{content.query}"</span>
@@ -145,7 +145,7 @@ export function EvidenceViewer({ evidence, filter = "all" }: EvidenceViewerProps
                           "font-bold",
                           content.status === "verified" || content.status === "ok"
                             ? "text-emerald-400"
-                            : "text-amber-400"
+                            : "text-zinc-300"
                         )}
                       >
                         {content.status.toUpperCase()}
@@ -161,15 +161,15 @@ export function EvidenceViewer({ evidence, filter = "all" }: EvidenceViewerProps
                   {content.latency_ms !== undefined && (
                     <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-[11px] font-mono text-zinc-300">
                       <span className="text-zinc-500">Response:</span>
-                      <span className="text-sky-400 font-bold">{content.latency_ms}ms</span>
+                      <span className="text-white font-bold">{content.latency_ms}ms</span>
                     </div>
                   )}
                 </div>
               )}
 
-              {/* Findings or Notes list */}
+              {/* Findings list */}
               {Array.isArray(content.findings) && content.findings.length > 0 && (
-                <div className="p-2.5 rounded-lg bg-zinc-900/60 border border-zinc-800/60 space-y-1.5">
+                <div className="p-2.5 rounded-lg bg-zinc-900 border border-zinc-800 space-y-1.5">
                   <div className="text-[11px] font-mono text-zinc-400 uppercase tracking-wider">
                     Key Findings ({content.findings.length}):
                   </div>
@@ -184,14 +184,14 @@ export function EvidenceViewer({ evidence, filter = "all" }: EvidenceViewerProps
                 </div>
               )}
 
-              {/* Summary or Notes text */}
+              {/* Summary text */}
               {content.summary && (
-                <p className="text-xs text-zinc-300 leading-relaxed bg-zinc-900/40 p-2.5 rounded-lg border border-zinc-800/40">
+                <p className="text-xs text-zinc-300 leading-relaxed bg-zinc-900 p-2.5 rounded-lg border border-zinc-800">
                   {content.summary}
                 </p>
               )}
 
-              {/* Generic Key-Value grid for unhandled structured fields */}
+              {/* Generic Key-Value grid */}
               {Object.entries(content)
                 .filter(
                   ([k]) =>
@@ -212,7 +212,7 @@ export function EvidenceViewer({ evidence, filter = "all" }: EvidenceViewerProps
             </div>
 
             {/* Collapsible Raw Inspector */}
-            <div className="pt-2 border-t border-zinc-800/60">
+            <div className="pt-2 border-t border-zinc-800">
               <button
                 onClick={() => toggleRaw(ev.id)}
                 className="flex items-center gap-1.5 text-[11px] font-mono text-zinc-500 hover:text-zinc-300 transition-colors cursor-pointer"
@@ -226,7 +226,7 @@ export function EvidenceViewer({ evidence, filter = "all" }: EvidenceViewerProps
               </button>
 
               {isRawOpen && (
-                <pre className="mt-2 p-3 rounded-lg bg-zinc-950 border border-zinc-800 text-[11px] text-zinc-300 overflow-x-auto max-h-52 overflow-y-auto font-mono">
+                <pre className="mt-2 p-3 rounded-lg bg-black border border-zinc-800 text-[11px] text-zinc-300 overflow-x-auto max-h-52 overflow-y-auto font-mono">
                   {JSON.stringify(ev.content, null, 2)}
                 </pre>
               )}

@@ -27,7 +27,7 @@ interface PersonaProfile {
   userId: string;
   avatarBg: string;
   initials: string;
-  roleBadgeColor: "info" | "warning" | "success" | "purple";
+  roleBadgeColor: "default" | "success" | "danger";
   permissions: string[];
 }
 
@@ -38,9 +38,9 @@ const PROFILES: Record<UserRole, PersonaProfile> = {
     title: "Lead Engineer @ NexusAgent",
     email: "alex.chen@hackathon.dev",
     userId: "user_participant",
-    avatarBg: "bg-sky-500/20 text-sky-400 border-sky-500/30",
+    avatarBg: "bg-zinc-800 text-white border-zinc-700",
     initials: "AC",
-    roleBadgeColor: "info",
+    roleBadgeColor: "default",
     permissions: [
       "Submit Idea, PPT & Code Repos",
       "Run Instant Pre-Judging Diagnostics",
@@ -53,9 +53,9 @@ const PROFILES: Record<UserRole, PersonaProfile> = {
     title: "Senior AI Evaluator & Research Judge",
     email: "s.jenkins@stanford.edu",
     userId: "user_judge",
-    avatarBg: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+    avatarBg: "bg-zinc-800 text-white border-zinc-700",
     initials: "SJ",
-    roleBadgeColor: "warning",
+    roleBadgeColor: "default",
     permissions: [
       "Access Assigned Projects Queue",
       "Inspect AI Evidence & Claim Dossiers",
@@ -68,7 +68,7 @@ const PROFILES: Record<UserRole, PersonaProfile> = {
     title: "Hackathon Director & Governance Lead",
     email: "marcus.vance@hackathon.global",
     userId: "user_admin",
-    avatarBg: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+    avatarBg: "bg-emerald-950/60 text-emerald-400 border-emerald-800/80",
     initials: "MV",
     roleBadgeColor: "success",
     permissions: [
@@ -95,7 +95,7 @@ export function UserProfileMenu() {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-2.5 py-1 rounded-xl bg-zinc-900/90 border border-zinc-800 hover:border-zinc-700 transition-all cursor-pointer shadow-sm group"
+        className="flex items-center gap-2 px-2.5 py-1 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-zinc-700 transition-all cursor-pointer shadow-sm group"
         title="Click to view profile & switch role"
       >
         {/* Avatar */}
@@ -128,9 +128,9 @@ export function UserProfileMenu() {
             className="fixed inset-0 z-40"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute right-0 mt-2 w-80 bg-zinc-950/95 backdrop-blur-2xl border border-zinc-800/90 rounded-2xl shadow-2xl p-4 z-50 animate-in fade-in zoom-in-95 space-y-4 specular-border">
+          <div className="absolute right-0 mt-2 w-80 bg-zinc-950 border border-zinc-800 rounded-2xl shadow-2xl p-4 z-50 animate-in fade-in zoom-in-95 space-y-4">
             {/* Active User Card */}
-            <div className="flex items-start gap-3 pb-3 border-b border-zinc-800/80">
+            <div className="flex items-start gap-3 pb-3 border-b border-zinc-800">
               <div
                 className={cn(
                   "w-10 h-10 rounded-xl border flex items-center justify-center font-mono font-bold text-xs shrink-0",
@@ -141,7 +141,7 @@ export function UserProfileMenu() {
               </div>
               <div className="flex flex-col min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-zinc-100 truncate">
+                  <span className="text-sm font-bold text-white truncate">
                     {currentProfile.name}
                   </span>
                   <Badge variant={currentProfile.roleBadgeColor} size="sm">
@@ -158,7 +158,7 @@ export function UserProfileMenu() {
             </div>
 
             {/* Active Permissions Summary */}
-            <div className="space-y-1.5 bg-zinc-900/60 p-2.5 rounded-xl border border-zinc-800/60">
+            <div className="space-y-1.5 bg-zinc-900/60 p-2.5 rounded-xl border border-zinc-800">
               <div className="text-[10px] font-mono uppercase text-zinc-500 tracking-wider font-semibold">
                 Role Permissions
               </div>
@@ -187,8 +187,8 @@ export function UserProfileMenu() {
                       className={cn(
                         "w-full flex items-center justify-between p-2 rounded-xl border text-left transition-all cursor-pointer",
                         isSelected
-                          ? "bg-zinc-800/90 border-zinc-700 text-zinc-100"
-                          : "bg-zinc-900/40 border-zinc-800/60 hover:bg-zinc-900 text-zinc-300 hover:text-zinc-100"
+                          ? "bg-zinc-800 border-zinc-700 text-white"
+                          : "bg-zinc-900 border-zinc-800 hover:bg-zinc-800 text-zinc-300 hover:text-white"
                       )}
                     >
                       <div className="flex items-center gap-2 min-w-0">
@@ -216,10 +216,10 @@ export function UserProfileMenu() {
             </div>
 
             {/* Sign Out / Reset action */}
-            <div className="pt-2 border-t border-zinc-800/80">
+            <div className="pt-2 border-t border-zinc-800">
               <button
                 onClick={() => handleSelectRole("participant")}
-                className="w-full flex items-center justify-center gap-1.5 py-1.5 text-xs text-zinc-400 hover:text-zinc-200 transition-colors cursor-pointer"
+                className="w-full flex items-center justify-center gap-1.5 py-1.5 text-xs text-zinc-400 hover:text-white transition-colors cursor-pointer"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>Reset to Default Student Persona</span>

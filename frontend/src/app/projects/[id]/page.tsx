@@ -362,7 +362,7 @@ export default function ProjectWorkspacePage({
     {
       id: "teacher",
       label: "Teacher Feedback (30%)",
-      icon: <Award className="w-4 h-4 text-amber-400" />,
+      icon: <Award className="w-4 h-4 text-white" />,
       badge:
         teacherFeedback?.human_score !== null && teacherFeedback?.human_score !== undefined
           ? `${Math.round(teacherFeedback.human_score)}pts`
@@ -371,15 +371,15 @@ export default function ProjectWorkspacePage({
     {
       id: "feedback",
       label: "Instant Diagnostics",
-      icon: <Zap className="w-4 h-4 text-sky-400" />,
+      icon: <Zap className="w-4 h-4 text-emerald-400" />,
       badge: feedbackReport?.overall_health ? feedbackReport.overall_health.toUpperCase() : undefined,
     },
   ];
 
   if (isLoading && !project) {
     return (
-      <div className="flex flex-col items-center justify-center py-24 text-zinc-500">
-        <Activity className="w-8 h-8 animate-spin mb-3 text-zinc-400" />
+      <div className="flex flex-col items-center justify-center py-24 text-zinc-500 bg-black">
+        <Activity className="w-8 h-8 animate-spin mb-3 text-white" />
         <p className="text-xs font-mono">Loading workspace...</p>
       </div>
     );
@@ -387,10 +387,10 @@ export default function ProjectWorkspacePage({
 
   if (!isLoading && !project) {
     return (
-      <div className="max-w-md mx-auto px-4 py-24 text-center">
-        <Card variant="subtle" className="border-rose-500/20 bg-rose-500/5 p-8">
-          <AlertCircle className="w-8 h-8 text-rose-400 mx-auto mb-3" />
-          <h2 className="text-base font-bold text-zinc-100">Project Not Found</h2>
+      <div className="max-w-md mx-auto px-4 py-24 text-center bg-black">
+        <Card variant="subtle" className="border-red-800/40 bg-red-950/20 p-8">
+          <AlertCircle className="w-8 h-8 text-red-400 mx-auto mb-3" />
+          <h2 className="text-base font-bold text-white">Project Not Found</h2>
           <p className="text-xs text-zinc-400 mt-1 mb-6">
             {loadError || "The project ID you requested does not exist or you do not have permission to access it."}
           </p>
@@ -405,24 +405,24 @@ export default function ProjectWorkspacePage({
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full bg-black text-white">
       {/* Back Navigation & Workspace Header */}
       <div className="mb-6">
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-200 transition-colors mb-3"
+          className="inline-flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white transition-colors mb-3"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Back to Dashboard</span>
         </Link>
 
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-zinc-800/80">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-zinc-800">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl sm:text-3xl font-black text-zinc-100 tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
                 {project?.name || "Project Workspace"}
               </h1>
-              <Badge variant={project?.status === "finalized" ? "success" : "purple"} size="md">
+              <Badge variant={project?.status === "finalized" ? "success" : "default"} size="md">
                 {project?.status?.toUpperCase() || "IDEA"}
               </Badge>
             </div>
@@ -442,7 +442,7 @@ export default function ProjectWorkspacePage({
             </Button>
 
             <Link href={`/projects/${projectId}/evaluation`}>
-              <Button variant="outline" size="sm" leftIcon={<Sparkles className="w-3.5 h-3.5 text-indigo-400" />}>
+              <Button variant="outline" size="sm" leftIcon={<Sparkles className="w-3.5 h-3.5 text-white" />}>
                 Audit Matrix
               </Button>
             </Link>
@@ -452,8 +452,7 @@ export default function ProjectWorkspacePage({
                 <Button
                   variant="primary"
                   size="sm"
-                  className="bg-amber-500/20 text-amber-300 border-amber-500/40 hover:bg-amber-500/30 font-semibold"
-                  leftIcon={<Award className="w-3.5 h-3.5 text-amber-400" />}
+                  leftIcon={<Award className="w-3.5 h-3.5" />}
                 >
                   Grade in Judge Portal
                 </Button>
@@ -464,9 +463,9 @@ export default function ProjectWorkspacePage({
 
         {/* Role Perspective Notice Banner */}
         {role === "judge" && (
-          <div className="mt-3 p-3 rounded-xl bg-amber-500/5 border border-amber-500/20 flex items-center justify-between text-xs text-amber-300">
+          <div className="mt-3 p-3 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-between text-xs text-zinc-200">
             <span className="flex items-center gap-2">
-              <Award className="w-4 h-4 text-amber-400 shrink-0" />
+              <Award className="w-4 h-4 text-white shrink-0" />
               <span>
                 <strong>Judge Evaluation Mode:</strong> Submissions are in read-only inspection mode to preserve student work. Click "Grade in Judge Portal" to submit your official score.
               </span>
@@ -520,7 +519,7 @@ export default function ProjectWorkspacePage({
                     <button
                       type="button"
                       onClick={handleFillDemoIdea}
-                      className="flex items-center gap-1 text-[11px] text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded-md transition-colors cursor-pointer"
+                      className="flex items-center gap-1 text-[11px] text-white hover:text-zinc-200 bg-zinc-800 border border-zinc-700 px-2 py-0.5 rounded-md transition-colors cursor-pointer"
                     >
                       <Wand2 className="w-3 h-3" />
                       <span>Fill Demo Idea</span>
@@ -586,9 +585,9 @@ export default function ProjectWorkspacePage({
                       <span
                         className={
                           totalIdeaWords > 500
-                            ? "text-rose-400 font-bold"
+                            ? "text-red-400 font-bold"
                             : totalIdeaWords > 450
-                            ? "text-amber-400 font-semibold"
+                            ? "text-zinc-200 font-semibold"
                             : "text-zinc-300"
                         }
                       >
@@ -598,7 +597,7 @@ export default function ProjectWorkspacePage({
                     <Progress
                       value={totalIdeaWords}
                       max={500}
-                      variant={totalIdeaWords > 500 ? "danger" : totalIdeaWords > 450 ? "warning" : "purple"}
+                      variant={totalIdeaWords > 500 ? "danger" : "default"}
                     />
                   </div>
 
@@ -667,9 +666,9 @@ export default function ProjectWorkspacePage({
                       {ideaEval.evidence.slice(0, 3).map((ev, idx) => (
                         <div
                           key={idx}
-                          className="p-2 rounded bg-zinc-900/80 border border-zinc-800/60 text-[11px] text-zinc-300 font-mono truncate"
+                          className="p-2 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 font-mono truncate"
                         >
-                          <span className="text-sky-400 mr-1.5">[{ev.type}]</span>
+                          <span className="text-white mr-1.5 font-bold">[{ev.type}]</span>
                           {ev.summary}
                         </div>
                       ))}
@@ -718,17 +717,17 @@ export default function ProjectWorkspacePage({
                       onDrop={handleDrop}
                       className={`border-2 border-dashed rounded-xl p-6 text-center transition-all ${
                         isDragging
-                          ? "border-indigo-500 bg-indigo-500/10"
+                          ? "border-white bg-zinc-900"
                           : "border-zinc-800 hover:border-zinc-700 bg-zinc-950/40"
                       }`}
                     >
                       <UploadCloud
                         className={`w-8 h-8 mx-auto mb-2 transition-colors ${
-                          isDragging ? "text-indigo-400" : "text-zinc-500"
+                          isDragging ? "text-white" : "text-zinc-500"
                         }`}
                       />
                       <label className="block text-xs font-medium text-zinc-300 cursor-pointer">
-                        <span className="text-indigo-400 hover:underline">Choose PDF file</span> or drag and drop here
+                        <span className="text-white hover:underline">Choose PDF file</span> or drag and drop here
                         <input
                           type="file"
                           accept="application/pdf,.pdf"
@@ -741,7 +740,7 @@ export default function ProjectWorkspacePage({
                       <p className="text-[11px] text-zinc-500 mt-1">PDF format up to 10MB</p>
                       {pptFile && (
                         <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-zinc-900 border border-zinc-700 text-xs text-zinc-200 font-mono">
-                          <FileText className="w-3.5 h-3.5 text-indigo-400" />
+                          <FileText className="w-3.5 h-3.5 text-white" />
                           <span>{pptFile.name}</span>
                           <span className="text-zinc-500">
                             ({(pptFile.size / 1024 / 1024).toFixed(2)} MB)
@@ -879,7 +878,7 @@ export default function ProjectWorkspacePage({
                     <button
                       type="button"
                       onClick={handleFillDemoProduct}
-                      className="flex items-center gap-1 text-[11px] text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded-md transition-colors cursor-pointer"
+                      className="flex items-center gap-1 text-[11px] text-white hover:text-zinc-200 bg-zinc-800 border border-zinc-700 px-2 py-0.5 rounded-md transition-colors cursor-pointer"
                     >
                       <Wand2 className="w-3 h-3" />
                       <span>Fill Demo Links</span>
@@ -1004,12 +1003,12 @@ export default function ProjectWorkspacePage({
       {/* TAB CONTENT: Instant Diagnostics (<90s) */}
       {activeTab === "feedback" && (
         <div className="space-y-6">
-          <Card className="bg-zinc-950/60 border-zinc-800">
+          <Card className="bg-zinc-950 border-zinc-800">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800">
               <div>
                 <div className="flex items-center gap-2">
-                  <Zap className="w-5 h-5 text-sky-400" />
-                  <h3 className="text-base font-bold text-zinc-100">
+                  <Zap className="w-5 h-5 text-emerald-400" />
+                  <h3 className="text-base font-bold text-white">
                     Instant Pre-Judging Diagnostics
                   </h3>
                 </div>
@@ -1021,7 +1020,7 @@ export default function ProjectWorkspacePage({
               <Button
                 onClick={handleTriggerInstantFeedback}
                 isLoading={isSubmittingFeedback}
-                leftIcon={<Zap className="w-4 h-4 text-sky-400" />}
+                leftIcon={<Zap className="w-4 h-4 text-emerald-400" />}
               >
                 Run Instant Diagnostic
               </Button>
@@ -1030,15 +1029,13 @@ export default function ProjectWorkspacePage({
             {feedbackReport ? (
               <div className="mt-6 space-y-6">
                 {/* Diagnostic Overview Banner */}
-                <div className="p-5 rounded-2xl bg-zinc-900/90 border border-zinc-800/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="p-5 rounded-2xl bg-zinc-900 border border-zinc-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
                     <div
                       className={`w-12 h-12 rounded-xl flex items-center justify-center font-mono font-bold text-lg ${
                         feedbackReport.overall_health === "ok"
-                          ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
-                          : feedbackReport.overall_health === "needs_attention"
-                          ? "bg-amber-500/10 text-amber-400 border border-amber-500/30"
-                          : "bg-rose-500/10 text-rose-400 border border-rose-500/30"
+                          ? "bg-emerald-950/60 text-emerald-400 border border-emerald-800/80"
+                          : "bg-red-950/60 text-red-400 border border-red-800/80"
                       }`}
                     >
                       {feedbackReport.overall_health === "ok"
@@ -1089,11 +1086,11 @@ export default function ProjectWorkspacePage({
 
                 {/* Priority Action Checklist with Estimated Score Boosts */}
                 {feedbackReport.top_fixes && feedbackReport.top_fixes.length > 0 && (
-                  <Card variant="elevated" className="border-amber-500/30 bg-gradient-to-b from-amber-500/5 to-transparent p-5 space-y-4">
+                  <Card variant="elevated" className="border-zinc-800 bg-zinc-950 p-5 space-y-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <AlertTriangle className="w-4 h-4 text-amber-400" />
-                        <h4 className="text-xs font-bold text-zinc-200 uppercase tracking-wider">
+                        <AlertTriangle className="w-4 h-4 text-white" />
+                        <h4 className="text-xs font-bold text-white uppercase tracking-wider">
                           Prioritized Action Roadmap (Estimated Score Boost: +10-15 pts)
                         </h4>
                       </div>
@@ -1113,8 +1110,8 @@ export default function ProjectWorkspacePage({
                             onClick={() => setExpandedFix(isExpanded ? null : idx)}
                             className={`p-3 rounded-xl border transition-all cursor-pointer ${
                               isExpanded
-                                ? "bg-zinc-900 border-amber-500/40"
-                                : "bg-zinc-900/60 border-zinc-800/80 hover:border-zinc-700"
+                                ? "bg-zinc-900 border-zinc-700"
+                                : "bg-zinc-950 border-zinc-800 hover:border-zinc-700"
                             }`}
                           >
                             <div className="flex items-start justify-between gap-3">
@@ -1122,8 +1119,8 @@ export default function ProjectWorkspacePage({
                                 <span
                                   className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-mono font-bold shrink-0 mt-0.5 ${
                                     isCritical
-                                      ? "bg-rose-500/20 text-rose-400 border border-rose-500/30"
-                                      : "bg-amber-500/20 text-amber-400 border border-amber-500/30"
+                                      ? "bg-red-950/60 text-red-400 border border-red-800/80"
+                                      : "bg-zinc-800 text-white border border-zinc-700"
                                   }`}
                                 >
                                   {idx + 1}
@@ -1139,24 +1136,24 @@ export default function ProjectWorkspacePage({
                                 <span
                                   className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded ${
                                     isCritical
-                                      ? "bg-rose-500/10 text-rose-400 border border-rose-500/20"
-                                      : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                                      ? "bg-red-950/60 text-red-400 border border-red-800/80"
+                                      : "bg-emerald-950/60 text-emerald-400 border border-emerald-800/80"
                                   }`}
                                 >
                                   {isCritical ? "CRITICAL RISK" : "+5 PTS BOOST"}
                                 </span>
                                 <ChevronRight
                                   className={`w-3.5 h-3.5 text-zinc-500 transition-transform ${
-                                    isExpanded ? "rotate-90 text-amber-400" : ""
+                                    isExpanded ? "rotate-90 text-white" : ""
                                   }`}
                                 />
                               </div>
                             </div>
 
                             {isExpanded && (
-                              <div className="mt-3 pt-3 border-t border-zinc-800/80 text-[11px] text-zinc-400 space-y-1.5 font-mono">
+                              <div className="mt-3 pt-3 border-t border-zinc-800 text-[11px] text-zinc-400 space-y-1.5 font-mono">
                                 <div className="text-zinc-300 font-sans">
-                                  <strong>How to fix:</strong> Review your configuration or deployment variables. Ensure all web services bind to <code className="text-indigo-400 bg-zinc-950 px-1 py-0.5 rounded">0.0.0.0</code> and public endpoints return HTTP 200 within 1000ms.
+                                  <strong>How to fix:</strong> Review your configuration or deployment variables. Ensure all web services bind to <code className="text-white bg-black border border-zinc-800 px-1 py-0.5 rounded">0.0.0.0</code> and public endpoints return HTTP 200 within 1000ms.
                                 </div>
                                 <div className="text-emerald-400 flex items-center gap-1.5 font-sans pt-1">
                                   <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
@@ -1185,8 +1182,8 @@ export default function ProjectWorkspacePage({
                           onClick={() => setDimFilter(cat)}
                           className={`text-[10px] font-mono uppercase px-2.5 py-1 rounded-md border transition-colors cursor-pointer ${
                             dimFilter === cat
-                              ? "bg-indigo-500/20 text-indigo-300 border-indigo-500/40 font-bold"
-                              : "bg-zinc-900/60 text-zinc-500 border-zinc-800 hover:text-zinc-300"
+                              ? "bg-white text-black border-white font-bold"
+                              : "bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-white"
                           }`}
                         >
                           {cat}
@@ -1208,7 +1205,7 @@ export default function ProjectWorkspacePage({
                       .map(([dimKey, dim]) => (
                         <div
                           key={dimKey}
-                          className="p-4 rounded-xl bg-zinc-900/80 border border-zinc-800 hover:border-zinc-700 transition-all flex flex-col justify-between"
+                          className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 hover:border-zinc-700 transition-all flex flex-col justify-between"
                         >
                           <div>
                             <div className="flex items-center justify-between mb-2">
@@ -1219,8 +1216,6 @@ export default function ProjectWorkspacePage({
                                 variant={
                                   dim.status === "ok"
                                     ? "success"
-                                    : dim.status === "needs_attention"
-                                    ? "warning"
                                     : "danger"
                                 }
                                 size="sm"
@@ -1232,7 +1227,7 @@ export default function ProjectWorkspacePage({
                             {dim.response_ms !== undefined && (
                               <div className="text-[11px] font-mono text-zinc-400 flex items-center justify-between">
                                 <span>Response Latency:</span>
-                                <span className={dim.response_ms < 500 ? "text-emerald-400 font-bold" : "text-amber-400 font-bold"}>
+                                <span className={dim.response_ms < 500 ? "text-emerald-400 font-bold" : "text-red-400 font-bold"}>
                                   {dim.response_ms}ms
                                 </span>
                               </div>
@@ -1241,7 +1236,7 @@ export default function ProjectWorkspacePage({
                             {dim.score !== undefined && (
                               <div className="text-[11px] font-mono text-zinc-400 flex items-center justify-between mt-1">
                                 <span>Hygiene Score:</span>
-                                <span className="text-indigo-400 font-bold">{dim.score}/100</span>
+                                <span className="text-white font-bold">{dim.score}/100</span>
                               </div>
                             )}
 
@@ -1252,7 +1247,7 @@ export default function ProjectWorkspacePage({
                             )}
 
                             {dim.findings && dim.findings.length > 0 && (
-                              <div className="text-[11px] text-rose-400 mt-2 line-clamp-2 font-mono">
+                              <div className="text-[11px] text-red-400 mt-2 line-clamp-2 font-mono">
                                 {dim.findings.join(", ")}
                               </div>
                             )}
@@ -1278,33 +1273,33 @@ export default function ProjectWorkspacePage({
       {/* TAB CONTENT: Teacher & Judge Feedback */}
       {activeTab === "teacher" && (
         <div className="space-y-6">
-          <Card className="border-amber-500/30 bg-gradient-to-b from-amber-950/20 via-zinc-900/60 to-zinc-950/80 p-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-amber-500/20">
+          <Card className="border-zinc-800 bg-zinc-950 p-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-zinc-800">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-zinc-900 border border-zinc-700 flex items-center justify-center text-white shrink-0">
                   <Award className="w-6 h-6" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="text-lg font-bold text-zinc-100">
+                    <h3 className="text-lg font-bold text-white">
                       Teacher & Faculty Judge Evaluation Report
                     </h3>
                     {teacherFeedback?.human_score !== null && teacherFeedback?.human_score !== undefined && (
-                      <Badge variant="warning" size="sm">
+                      <Badge variant="success" size="sm">
                         VERIFIED FACULTY REVIEW
                       </Badge>
                     )}
                   </div>
                   <p className="text-xs text-zinc-400 mt-0.5">
-                    Qualitative human expert assessment accounting for <strong className="text-amber-400">30% weight</strong> in the final composite hackathon ranking.
+                    Qualitative human expert assessment accounting for <strong className="text-emerald-400">30% weight</strong> in the final composite hackathon ranking.
                   </p>
                 </div>
               </div>
 
               {teacherFeedback?.human_score !== null && teacherFeedback?.human_score !== undefined && (
-                <div className="p-3.5 rounded-xl bg-zinc-950/90 border border-amber-500/30 text-right font-mono shrink-0 shadow-lg">
+                <div className="p-3.5 rounded-xl bg-zinc-900 border border-zinc-700 text-right font-mono shrink-0 shadow-lg">
                   <div className="text-[10px] text-zinc-400 uppercase tracking-wider font-semibold">Teacher / Judge Score</div>
-                  <div className="text-2xl font-black text-amber-400">
+                  <div className="text-2xl font-black text-emerald-400">
                     {teacherFeedback.human_score.toFixed(1)} <span className="text-xs text-zinc-500 font-normal">/ 100</span>
                   </div>
                   <div className="text-[10px] text-emerald-400 font-semibold mt-0.5">30.0% Final Composite Weight</div>
@@ -1314,9 +1309,9 @@ export default function ProjectWorkspacePage({
 
             {teacherFeedback && (teacherFeedback.human_score !== null || teacherFeedback.comments) ? (
               <div className="mt-6 space-y-6">
-                <div className="p-5 rounded-xl bg-zinc-900/90 border border-zinc-800 space-y-3">
+                <div className="p-5 rounded-xl bg-zinc-900 border border-zinc-800 space-y-3">
                   <div className="flex items-center justify-between text-xs text-zinc-400 font-mono">
-                    <span className="flex items-center gap-1.5 text-amber-300 font-semibold">
+                    <span className="flex items-center gap-1.5 text-white font-semibold">
                       <Sparkles className="w-3.5 h-3.5" />
                       Detailed Qualitative Feedback & Assessment Notes
                     </span>
@@ -1324,33 +1319,33 @@ export default function ProjectWorkspacePage({
                       <span>Reviewed: {new Date(teacherFeedback.updated_at).toLocaleDateString()}</span>
                     )}
                   </div>
-                  <div className="text-xs text-zinc-200 leading-relaxed whitespace-pre-line font-sans bg-zinc-950/80 p-5 rounded-lg border border-zinc-800/80">
+                  <div className="text-xs text-zinc-200 leading-relaxed whitespace-pre-line font-sans bg-black p-5 rounded-lg border border-zinc-800">
                     {teacherFeedback.comments || "No written notes provided by the faculty judge."}
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono text-xs">
-                  <div className="p-4 rounded-xl bg-zinc-900/60 border border-zinc-800">
+                  <div className="p-4 rounded-xl bg-zinc-900 border border-zinc-800">
                     <div className="text-[10px] text-zinc-500 uppercase font-semibold">Grading Status</div>
                     <div className="text-sm font-bold text-emerald-400 mt-1 capitalize flex items-center gap-1.5">
                       <CheckCircle2 className="w-4 h-4" />
                       {teacherFeedback.status || "Scored & Calibrated"}
                     </div>
                   </div>
-                  <div className="p-4 rounded-xl bg-zinc-900/60 border border-zinc-800">
+                  <div className="p-4 rounded-xl bg-zinc-900 border border-zinc-800">
                     <div className="text-[10px] text-zinc-500 uppercase font-semibold">Reviewer Identifier</div>
-                    <div className="text-sm font-bold text-zinc-200 mt-1">{teacherFeedback.judge_id || "Lead Faculty Judge"}</div>
+                    <div className="text-sm font-bold text-white mt-1">{teacherFeedback.judge_id || "Lead Faculty Judge"}</div>
                   </div>
-                  <div className="p-4 rounded-xl bg-zinc-900/60 border border-zinc-800">
+                  <div className="p-4 rounded-xl bg-zinc-900 border border-zinc-800">
                     <div className="text-[10px] text-zinc-500 uppercase font-semibold">Composite Calibration</div>
-                    <div className="text-sm font-bold text-indigo-400 mt-1">70% AI Engine / 30% Judge</div>
+                    <div className="text-sm font-bold text-white mt-1">70% AI Engine / 30% Judge</div>
                   </div>
                 </div>
               </div>
             ) : (
               <div className="mt-6 p-10 rounded-xl bg-zinc-900/40 border border-dashed border-zinc-800 text-center">
-                <Clock className="w-10 h-10 text-amber-400/60 mx-auto mb-3 animate-pulse" />
-                <h4 className="text-sm font-semibold text-zinc-200">Awaiting Teacher & Human Judge Scoring</h4>
+                <Clock className="w-10 h-10 text-zinc-500 mx-auto mb-3 animate-pulse" />
+                <h4 className="text-sm font-semibold text-white">Awaiting Teacher & Human Judge Scoring</h4>
                 <p className="text-xs text-zinc-400 mt-1 max-w-md mx-auto">
                   Your project has been queued for faculty review. Once the judge submits their qualitative assessment and rubric score, it will automatically reflect here.
                 </p>

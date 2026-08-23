@@ -71,7 +71,7 @@ export function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-zinc-800/80 bg-zinc-950/85 backdrop-blur-xl specular-border">
+    <header className="sticky top-0 z-40 w-full border-b border-zinc-800 bg-black/90 backdrop-blur-xl specular-border">
       <div className="max-w-7xl mx-auto flex h-14 items-center justify-between px-4 sm:px-6">
         {/* Brand Logo */}
         <div className="flex items-center gap-6">
@@ -79,17 +79,15 @@ export function Navbar() {
             href="/"
             className="flex items-center gap-3 group transition-opacity hover:opacity-90"
           >
-            <div className="relative w-8 h-8 rounded-xl bg-gradient-to-br from-sky-400 via-teal-500 to-emerald-500 p-[1px] shadow-sm shadow-sky-500/20 group-hover:shadow-sky-500/35 transition-shadow">
-              <div className="w-full h-full rounded-[11px] bg-zinc-950 flex items-center justify-center">
-                <span className="font-mono font-black text-sm tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-sky-200 via-teal-100 to-emerald-200">
-                  JX
-                </span>
-              </div>
+            <div className="w-8 h-8 rounded-xl bg-zinc-900 border border-zinc-700 flex items-center justify-center shadow-sm">
+              <span className="font-mono font-black text-sm tracking-tight text-white">
+                JX
+              </span>
             </div>
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5">
                 <span className="text-sm font-black tracking-tight text-white font-mono">
-                  Jury<span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-emerald-400">X</span>
+                  Jury<span className="text-emerald-400">X</span>
                 </span>
               </div>
               <span className="text-[9px] font-mono text-zinc-500 -mt-0.5 tracking-wider uppercase">
@@ -111,8 +109,8 @@ export function Navbar() {
                   className={cn(
                     "flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-all",
                     isActive
-                      ? "bg-zinc-800 text-zinc-100 font-semibold shadow-sm"
-                      : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900"
+                      ? "bg-zinc-800 text-white font-semibold shadow-sm"
+                      : "text-zinc-400 hover:text-white hover:bg-zinc-900"
                   )}
                 >
                   {link.icon}
@@ -137,14 +135,14 @@ export function Navbar() {
                 isBackendHealthy === true
                   ? "bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.6)]"
                   : isBackendHealthy === false
-                  ? "bg-rose-500"
-                  : "bg-amber-400"
+                  ? "bg-red-500"
+                  : "bg-zinc-500"
               )}
             />
             <span className="text-zinc-300 font-semibold">API</span>
             {agentStatus && (
               <span className="text-zinc-500 flex items-center gap-0.5 ml-1">
-                <Cpu className="w-3 h-3 text-indigo-400" />
+                <Cpu className="w-3 h-3 text-zinc-400" />
                 <span className="text-[10px] text-zinc-300">17 Agents</span>
               </span>
             )}
@@ -154,7 +152,7 @@ export function Navbar() {
 
           <Link
             href="/dashboard"
-            className="hidden lg:flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-lg bg-zinc-100 text-zinc-950 hover:bg-white transition-all font-semibold shadow-sm"
+            className="hidden lg:flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-lg bg-white text-black hover:bg-zinc-200 transition-all font-semibold shadow-sm"
           >
             <PlusCircle className="w-3.5 h-3.5" />
             <span>Workspace</span>
@@ -163,7 +161,7 @@ export function Navbar() {
           {/* Mobile Menu Hamburger Toggle */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-1.5 rounded-lg text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900 border border-zinc-800 transition-colors cursor-pointer"
+            className="md:hidden p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-900 border border-zinc-800 transition-colors cursor-pointer"
             aria-label="Toggle navigation menu"
           >
             {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
@@ -173,7 +171,7 @@ export function Navbar() {
 
       {/* Mobile Drawer Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden border-t border-zinc-800/80 bg-zinc-950 px-4 py-3 space-y-2 animate-in slide-in-from-top-2 duration-150">
+        <div className="md:hidden border-t border-zinc-800 bg-black px-4 py-3 space-y-2 animate-in slide-in-from-top-2 duration-150">
           <div className="space-y-1">
             {navLinks.map((link) => {
               const isActive =
@@ -184,10 +182,10 @@ export function Navbar() {
                   key={link.href}
                   href={link.href}
                   className={cn(
-                    "flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg transition-all",
+                    "flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg transition-colors",
                     isActive
-                      ? "bg-zinc-800 text-zinc-100 font-semibold"
-                      : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900"
+                      ? "bg-zinc-800 text-white font-semibold"
+                      : "text-zinc-400 hover:text-white hover:bg-zinc-900"
                   )}
                 >
                   {link.icon}
@@ -197,22 +195,17 @@ export function Navbar() {
             })}
           </div>
 
-          <div className="pt-2 border-t border-zinc-800/60 flex items-center justify-between text-xs font-mono text-zinc-400">
+          <div className="pt-2 border-t border-zinc-800 flex items-center justify-between text-xs font-mono text-zinc-400">
             <span className="flex items-center gap-1.5">
               <span
                 className={cn(
                   "w-2 h-2 rounded-full",
-                  isBackendHealthy ? "bg-emerald-400" : "bg-rose-500"
+                  isBackendHealthy ? "bg-emerald-400" : "bg-red-500"
                 )}
               />
-              Backend: {isBackendHealthy ? "Online" : "Offline"}
+              {isBackendHealthy ? "FastAPI Online" : "Backend Offline"}
             </span>
-            <button
-              onClick={checkHealth}
-              className="text-[11px] text-zinc-400 hover:text-zinc-200 flex items-center gap-1"
-            >
-              <RefreshCw className="w-3 h-3" /> Re-check
-            </button>
+            <span>Role: {role}</span>
           </div>
         </div>
       )}

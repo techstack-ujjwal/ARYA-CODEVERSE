@@ -21,11 +21,11 @@ export function Progress({
   const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
 
   const variants = {
-    default: "bg-zinc-100",
+    default: "bg-white",
     success: "bg-emerald-500",
-    warning: "bg-amber-500",
-    danger: "bg-rose-500",
-    purple: "bg-indigo-500",
+    warning: "bg-red-400",
+    danger: "bg-red-500",
+    purple: "bg-white",
   };
 
   const sizes = {
@@ -42,9 +42,9 @@ export function Progress({
           <span>{Math.round(percentage)}%</span>
         </div>
       )}
-      <div className={cn("w-full bg-zinc-800/80 rounded-full overflow-hidden", sizes[size])}>
+      <div className={cn("w-full bg-zinc-800 rounded-full overflow-hidden", sizes[size])}>
         <div
-          className={cn("h-full rounded-full transition-all duration-500 ease-out", variants[variant])}
+          className={cn("h-full rounded-full transition-all duration-500 ease-out", variants[variant] || variants.default)}
           style={{ width: `${percentage}%` }}
         />
       </div>

@@ -22,12 +22,11 @@ export function ScoreMeter({
 }: ScoreMeterProps) {
   const percentage = Math.min(Math.max((score / maxScore) * 100, 0), 100);
 
-  // Color mapping based on score tiers
+  // Color mapping strictly Black/White/Grey, Green (high), Red (low)
   const getColor = (pct: number) => {
-    if (pct >= 80) return { stroke: "#10b981", text: "text-emerald-400", bg: "bg-emerald-500/10" };
-    if (pct >= 60) return { stroke: "#6366f1", text: "text-indigo-400", bg: "bg-indigo-500/10" };
-    if (pct >= 40) return { stroke: "#f59e0b", text: "text-amber-400", bg: "bg-amber-500/10" };
-    return { stroke: "#f43f5e", text: "text-rose-400", bg: "bg-rose-500/10" };
+    if (pct >= 75) return { stroke: "#10b981", text: "text-emerald-400", bg: "bg-emerald-950/60" };
+    if (pct >= 50) return { stroke: "#ffffff", text: "text-white", bg: "bg-zinc-900" };
+    return { stroke: "#ef4444", text: "text-red-400", bg: "bg-red-950/60" };
   };
 
   const color = getColor(percentage);

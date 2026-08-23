@@ -12,8 +12,8 @@ export default function NotFound() {
         </div>
 
         <div>
-          <span className="text-xs font-mono uppercase text-indigo-400 tracking-wider font-semibold">404 Error</span>
-          <h2 className="text-xl font-bold text-zinc-100 mt-1">Page Not Found</h2>
+          <span className="text-xs font-mono uppercase text-zinc-400 tracking-wider font-semibold">404 Error</span>
+          <h2 className="text-xl font-bold text-white mt-1">Page Not Found</h2>
           <p className="text-xs text-zinc-400 mt-2 leading-relaxed">
             The page or JuryX evaluation resource you are looking for does not exist or has been moved.
           </p>

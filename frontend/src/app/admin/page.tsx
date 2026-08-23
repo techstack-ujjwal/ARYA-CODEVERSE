@@ -177,7 +177,7 @@ export default function AdminControlRoomPage() {
     {
       id: "plagiarism",
       label: "Anti-Cheating & Plagiarism Matrix",
-      icon: <Flame className="w-4 h-4 text-rose-400" />,
+      icon: <Flame className="w-4 h-4 text-red-400" />,
       badge: flags.length ? `${flags.length}` : undefined,
     },
     {
@@ -193,14 +193,14 @@ export default function AdminControlRoomPage() {
       title="Admin & Governance Control Room Restricted"
       description="The Admin Control Room is restricted to Hackathon Organizers and Platform Administrators. Switch to Admin mode in dev settings to manage rubric weights, anti-cheating telemetry, and score finalization."
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-zinc-800/80">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full bg-black text-white">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-zinc-800">
           <div>
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+              <div className="w-8 h-8 rounded-xl bg-zinc-900 border border-zinc-700 flex items-center justify-center text-white">
                 <ShieldCheck className="w-4.5 h-4.5" />
               </div>
-              <h1 className="text-2xl font-bold text-zinc-100 tracking-tight">
+              <h1 className="text-2xl font-bold text-white tracking-tight">
                 JuryX Admin & Governance Control Room
               </h1>
             </div>
@@ -238,21 +238,21 @@ export default function AdminControlRoomPage() {
 
         {/* TAB 1: Score Finalization */}
         {activeTab === "finalization" && (
-          <Card className="bg-zinc-950/60 border-zinc-800">
+          <Card className="bg-zinc-950 border-zinc-800">
             <CardHeader>
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                  <CardTitle>Batch Finalization Trigger & Scoring Ratio Calibrator</CardTitle>
+                  <CardTitle className="text-white">Batch Finalization Trigger & Scoring Ratio Calibrator</CardTitle>
                   <CardDescription>
                     Synthesizes multi-agent scores with human judge ratings into a definitive composite score. Adjust the AI vs. Human weight ratio in real-time.
                   </CardDescription>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant="purple" size="sm">
+                  <Badge variant="default" size="sm">
                     AI: {aiWeight}%
                   </Badge>
                   <span className="text-zinc-600 font-mono">+</span>
-                  <Badge variant="warning" size="sm">
+                  <Badge variant="default" size="sm">
                     HUMAN: {humanWeight}%
                   </Badge>
                 </div>
@@ -260,10 +260,10 @@ export default function AdminControlRoomPage() {
             </CardHeader>
             <CardContent>
               {/* Interactive Weight Calibrator */}
-              <div className="mb-6 p-4 rounded-xl border border-zinc-800 bg-zinc-900/40 space-y-3">
+              <div className="mb-6 p-4 rounded-xl border border-zinc-800 bg-zinc-900/60 space-y-3">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
-                    <Sliders className="w-4 h-4 text-indigo-400" />
+                    <Sliders className="w-4 h-4 text-white" />
                     <span className="text-xs font-semibold text-zinc-200">
                       Scoring Weight Ratio Calibrator
                     </span>
@@ -274,8 +274,8 @@ export default function AdminControlRoomPage() {
                       onClick={() => setAiWeight(70)}
                       className={`text-[10px] font-mono px-2 py-0.5 rounded border transition-colors cursor-pointer ${
                         aiWeight === 70
-                          ? "bg-indigo-500/20 text-indigo-300 border-indigo-500/40 font-bold"
-                          : "bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200"
+                          ? "bg-white text-black border-white font-bold"
+                          : "bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-white"
                       }`}
                     >
                       70/30 (Default)
@@ -285,8 +285,8 @@ export default function AdminControlRoomPage() {
                       onClick={() => setAiWeight(50)}
                       className={`text-[10px] font-mono px-2 py-0.5 rounded border transition-colors cursor-pointer ${
                         aiWeight === 50
-                          ? "bg-indigo-500/20 text-indigo-300 border-indigo-500/40 font-bold"
-                          : "bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200"
+                          ? "bg-white text-black border-white font-bold"
+                          : "bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-white"
                       }`}
                     >
                       50/50 Balanced
@@ -296,127 +296,81 @@ export default function AdminControlRoomPage() {
                       onClick={() => setAiWeight(85)}
                       className={`text-[10px] font-mono px-2 py-0.5 rounded border transition-colors cursor-pointer ${
                         aiWeight === 85
-                          ? "bg-indigo-500/20 text-indigo-300 border-indigo-500/40 font-bold"
-                          : "bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200"
+                          ? "bg-white text-black border-white font-bold"
+                          : "bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-white"
                       }`}
                     >
-                      85/15 High-AI
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setAiWeight(100)}
-                      className={`text-[10px] font-mono px-2 py-0.5 rounded border transition-colors cursor-pointer ${
-                        aiWeight === 100
-                          ? "bg-indigo-500/20 text-indigo-300 border-indigo-500/40 font-bold"
-                          : "bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200"
-                      }`}
-                    >
-                      100% Autonomous AI
+                      85/15 High AI
                     </button>
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <div className="flex items-center justify-between text-[11px] font-mono text-zinc-400">
-                    <span className="text-indigo-400">🤖 AI Engine: {aiWeight}%</span>
-                    <span className="text-amber-400">⚖️ Human Judges: {humanWeight}%</span>
+                  <div className="flex justify-between text-xs font-mono">
+                    <span className="text-zinc-400">AI Swarm Weight: {aiWeight}%</span>
+                    <span className="text-emerald-400">Human Judge Weight: {humanWeight}%</span>
                   </div>
                   <input
                     type="range"
-                    min="0"
-                    max="100"
+                    min="10"
+                    max="90"
                     step="5"
                     value={aiWeight}
                     onChange={(e) => setAiWeight(Number(e.target.value))}
-                    className="w-full h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                    className="w-full accent-white cursor-pointer bg-zinc-800 rounded-lg h-2"
                   />
-                  <div className="flex justify-between text-[10px] text-zinc-600 font-mono">
-                    <span>0% (Human Only)</span>
-                    <span>50%</span>
-                    <span>70% (Standard)</span>
-                    <span>100% (AI Autonomous)</span>
-                  </div>
                 </div>
               </div>
 
               {isLoading ? (
                 <div className="py-12 text-center text-zinc-500">
-                  <Activity className="w-6 h-6 animate-spin mx-auto mb-2" />
-                  <p className="text-xs font-mono">Loading projects telemetry...</p>
+                  <Activity className="w-6 h-6 animate-spin mx-auto mb-2 text-white" />
+                  <p className="text-xs font-mono">Loading projects...</p>
                 </div>
               ) : projects.length === 0 ? (
                 <p className="py-8 text-center text-xs text-zinc-500 font-mono">
-                  No projects registered in this hackathon.
+                  No projects available for finalization.
                 </p>
               ) : (
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto rounded-xl border border-zinc-800">
                   <table className="w-full text-left text-xs">
-                    <thead className="bg-zinc-900/80 border-b border-zinc-800 text-zinc-400 font-mono uppercase text-[10px]">
+                    <thead className="bg-zinc-900 border-b border-zinc-800 text-zinc-400 font-mono uppercase text-[10px]">
                       <tr>
                         <th className="py-3 px-4">Project Name</th>
-                        <th className="py-3 px-4">Pipeline Status</th>
-                        <th className="py-3 px-4">AI Score (70%)</th>
-                        <th className="py-3 px-4">Human Judge (30%)</th>
-                        <th className="py-3 px-4">Final Composite</th>
-                        <th className="py-3 px-4 text-right">Action</th>
+                        <th className="py-3 px-4">Current Stage</th>
+                        <th className="py-3 px-4">Status</th>
+                        <th className="py-3 px-4 text-right">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-zinc-800/60">
+                    <tbody className="divide-y divide-zinc-800 font-mono">
                       {projects.map((p) => {
-                        const isFinalized = p.status === "finalized";
                         const isComputing = computingProjectId === p.id;
+                        const isFinalized = p.status === "finalized";
 
                         return (
                           <tr key={p.id} className="hover:bg-zinc-900/40 transition-colors">
-                            <td className="py-3.5 px-4 font-semibold text-zinc-200">
+                            <td className="py-3.5 px-4 font-sans font-semibold text-white">
                               {p.name}
+                            </td>
+                            <td className="py-3.5 px-4 uppercase text-zinc-400">
+                              {p.status}
                             </td>
                             <td className="py-3.5 px-4">
                               <Badge
-                                variant={
-                                  isFinalized
-                                    ? "success"
-                                    : p.status === "product"
-                                    ? "purple"
-                                    : p.status === "ppt"
-                                    ? "warning"
-                                    : "default"
-                                }
+                                variant={isFinalized ? "success" : "default"}
                                 size="sm"
                               >
-                                {p.status.toUpperCase()}
+                                {isFinalized ? "FINALIZED" : "PENDING FINALIZATION"}
                               </Badge>
-                            </td>
-                            <td className="py-3.5 px-4 font-mono text-zinc-300">
-                              {p.status === "idea" ? (
-                                <span className="text-zinc-600">Pending</span>
-                              ) : (
-                                "Calculated"
-                              )}
-                            </td>
-                            <td className="py-3.5 px-4 font-mono text-zinc-300">
-                              {isFinalized ? (
-                                <span className="text-amber-400 font-bold">Graded</span>
-                              ) : (
-                                <span className="text-zinc-500">In Queue</span>
-                              )}
-                            </td>
-                            <td className="py-3.5 px-4 font-mono font-bold">
-                              {isFinalized ? (
-                                <span className="text-emerald-400 font-mono text-sm">Published</span>
-                              ) : (
-                                <span className="text-zinc-600">--</span>
-                              )}
                             </td>
                             <td className="py-3.5 px-4 text-right">
                               <Button
                                 size="sm"
                                 variant={isFinalized ? "outline" : "primary"}
-                                onClick={() => handleComputeFinalScore(p.id, p.name)}
                                 isLoading={isComputing}
-                                leftIcon={<Sparkles className="w-3.5 h-3.5" />}
+                                onClick={() => handleComputeFinalScore(p.id, p.name)}
                               >
-                                {isFinalized ? "Re-Compute" : "Finalize Score"}
+                                {isFinalized ? "Re-Compute Score" : "Compute & Publish"}
                               </Button>
                             </td>
                           </tr>
@@ -432,40 +386,45 @@ export default function AdminControlRoomPage() {
 
         {/* TAB 2: Plagiarism Matrix */}
         {activeTab === "plagiarism" && (
-          <Card className="bg-zinc-950/60 border-zinc-800">
+          <Card className="bg-zinc-950 border-zinc-800">
             <CardHeader>
-              <CardTitle>Anti-Cheating & Plagiarism Matrix</CardTitle>
+              <CardTitle className="text-white">Anti-Cheating & Cross-Project Similarity Matrix</CardTitle>
               <CardDescription>
-                Submissions flagged by the similarity vector agent against public GitHub repositories and prior hackathon entries.
+                Live AST structure hashes and text embeddings flags for cross-team plagiarism or public benchmark leakage.
               </CardDescription>
             </CardHeader>
             <CardContent>
               {flags.length === 0 ? (
-                <div className="py-12 text-center text-zinc-500">
+                <div className="py-12 text-center text-zinc-500 font-mono">
                   <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto mb-2" />
-                  <h4 className="text-xs font-semibold text-zinc-300">
-                    Zero Plagiarism Flags Detected
-                  </h4>
-                  <p className="text-[11px] text-zinc-500 mt-1">
-                    All analyzed project submissions are within acceptable uniqueness thresholds.
-                  </p>
+                  <p className="text-xs text-white">Zero high-confidence plagiarism flags detected across all projects.</p>
+                  <p className="text-[11px] text-zinc-500 mt-1">Cross-project AST token similarity is within nominal parameters (&lt;30%).</p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {flags.map((flag) => (
                     <div
                       key={flag.flag_id}
-                      className="p-4 rounded-xl bg-zinc-900/80 border border-rose-500/20 text-xs space-y-2"
+                      className="p-4 rounded-xl bg-zinc-900 border border-red-800/60 flex items-start justify-between gap-4 text-xs"
                     >
-                      <div className="flex items-center justify-between">
-                        <span className="font-bold text-zinc-100">{flag.project_name}</span>
-                        <Badge variant="danger" size="sm">
-                          {Math.round(flag.similarity_score * 100)}% SIMILARITY
-                        </Badge>
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-red-400">
+                            Similarity Match: {(flag.similarity_score * 100).toFixed(1)}%
+                          </span>
+                          <Badge variant="danger" size="sm">
+                            {flag.status.toUpperCase()}
+                          </Badge>
+                        </div>
+                        <p className="text-zinc-300 text-[11px]">
+                          Target Project: <span className="font-mono text-white">{flag.project_name} ({flag.project_id})</span> • Source:{" "}
+                          <span className="font-mono text-white">{flag.matched_source || "Public Repo Benchmark"}</span>
+                        </p>
                       </div>
-                      <p className="text-[11px] text-zinc-400 font-mono">
-                        Matched Source: <span className="text-zinc-200">{flag.matched_source}</span>
-                      </p>
+
+                      <Badge variant="danger" size="sm">
+                        RISK ALERT
+                      </Badge>
                     </div>
                   ))}
                 </div>
@@ -476,52 +435,78 @@ export default function AdminControlRoomPage() {
 
         {/* TAB 3: Hackathons & Rubrics */}
         {activeTab === "hackathons" && (
-          <div className="space-y-6">
-            <div className="flex justify-end">
-              <Button
-                onClick={() => setIsHackathonModalOpen(true)}
-                size="sm"
-                leftIcon={<Plus className="w-4 h-4" />}
-              >
-                Create Hackathon Event
-              </Button>
-            </div>
+          <Card className="bg-zinc-950 border-zinc-800">
+            <CardHeader
+              action={
+                <Button
+                  size="sm"
+                  onClick={() => setIsHackathonModalOpen(true)}
+                  leftIcon={<Plus className="w-3.5 h-3.5" />}
+                >
+                  New Hackathon
+                </Button>
+              }
+            >
+              <CardTitle className="text-white">Active Hackathons & Multi-Stage Rubrics</CardTitle>
+              <CardDescription>
+                Configure stage weights (Idea, PPT, Product) and active deadlines per hackathon tournament.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {hackathons.map((h) => (
+                  <div
+                    key={h.id}
+                    className="p-4.5 rounded-xl bg-zinc-900 border border-zinc-800 space-y-3"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h4 className="text-sm font-bold text-white">{h.name}</h4>
+                        <p className="text-xs text-zinc-400 mt-0.5 line-clamp-2">{h.description}</p>
+                      </div>
+                      <Badge variant={h.status === "active" ? "success" : "default"} size="sm">
+                        {h.status.toUpperCase()}
+                      </Badge>
+                    </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {hackathons.map((h) => (
-                <Card key={h.id} className="p-5 bg-zinc-900/60 border-zinc-800">
-                  <div className="flex items-center justify-between mb-2">
-                    <Badge variant="purple" size="sm">
-                      {h.status.toUpperCase()}
-                    </Badge>
+                    <div className="pt-2 border-t border-zinc-800 grid grid-cols-3 gap-2 text-center text-xs font-mono">
+                      <div className="p-2 rounded bg-zinc-950 border border-zinc-800">
+                        <span className="text-zinc-400 text-[10px] block">Idea Weight</span>
+                        <span className="font-bold text-white">
+                          {((h.rubric_weights?.idea || 0.2) * 100).toFixed(0)}%
+                        </span>
+                      </div>
+                      <div className="p-2 rounded bg-zinc-950 border border-zinc-800">
+                        <span className="text-zinc-400 text-[10px] block">PPT Weight</span>
+                        <span className="font-bold text-white">
+                          {((h.rubric_weights?.ppt || 0.25) * 100).toFixed(0)}%
+                        </span>
+                      </div>
+                      <div className="p-2 rounded bg-zinc-950 border border-zinc-800">
+                        <span className="text-zinc-400 text-[10px] block">Product</span>
+                        <span className="font-bold text-white">
+                          {((h.rubric_weights?.product || 0.55) * 100).toFixed(0)}%
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <h3 className="text-base font-bold text-zinc-100">{h.name}</h3>
-                  <p className="text-xs text-zinc-400 mt-1 line-clamp-2">
-                    {h.description || "Active Hackathon Event"}
-                  </p>
-
-                  <div className="mt-4 pt-3 border-t border-zinc-800 font-mono text-[11px] text-zinc-400 space-y-1">
-                    <div>Idea Weight: {((h.rubric_weights?.idea || 0.2) * 100).toFixed(0)}%</div>
-                    <div>PPT Deck Weight: {((h.rubric_weights?.ppt || 0.25) * 100).toFixed(0)}%</div>
-                    <div>Product Weight: {((h.rubric_weights?.product || 0.55) * 100).toFixed(0)}%</div>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         )}
 
-        {/* Create Hackathon Modal */}
+        {/* Modal: New Hackathon */}
         <Modal
           isOpen={isHackathonModalOpen}
           onClose={() => setIsHackathonModalOpen(false)}
-          title="Create New Hackathon Event"
-          description="Define event name and custom rubric weights for the multi-agent pipeline."
+          title="Create New Hackathon Tournament"
+          description="Define tournament properties and stage scoring weights. Total weights must sum to 100%."
         >
           <form onSubmit={handleCreateHackathon} className="space-y-4">
             <Input
               label="Hackathon Name *"
-              placeholder="e.g. AI Breakthrough Hackathon 2026"
+              placeholder="e.g. Next-Gen Web3 & AI Summit 2026"
               value={hackathonForm.name}
               onChange={(e) => setHackathonForm({ ...hackathonForm, name: e.target.value })}
               required
@@ -529,88 +514,63 @@ export default function AdminControlRoomPage() {
 
             <Textarea
               label="Description"
-              placeholder="Event theme, target developer cohort, guidelines..."
-              value={hackathonForm.description || ""}
+              placeholder="Brief description of the challenge domain and eligibility..."
+              value={hackathonForm.description}
               onChange={(e) =>
                 setHackathonForm({ ...hackathonForm, description: e.target.value })
               }
-              rows={2}
+              rows={3}
             />
 
-            {/* Rubric Weights Tuner */}
-            <div className="p-3.5 rounded-xl bg-zinc-900 border border-zinc-800 space-y-3">
-              <div className="flex items-center justify-between text-xs font-semibold text-zinc-200">
-                <span className="flex items-center gap-1.5">
-                  <Sliders className="w-3.5 h-3.5 text-indigo-400" />
-                  <span>Custom Stage Rubric Weights</span>
-                </span>
-                <span
-                  className={`font-mono ${
-                    hackathonForm.ideaWeight + hackathonForm.pptWeight + hackathonForm.productWeight === 100
-                      ? "text-emerald-400 font-bold"
-                      : "text-rose-400 font-bold"
-                  }`}
-                >
-                  Total: {hackathonForm.ideaWeight + hackathonForm.pptWeight + hackathonForm.productWeight}% / 100%
-                </span>
-              </div>
-
-              <div className="grid grid-cols-3 gap-2 text-xs">
+            <div className="space-y-2 pt-2 border-t border-zinc-800">
+              <span className="text-xs font-semibold text-zinc-300 block">
+                Multi-Stage Rubric Weights (Must sum to 100%):
+              </span>
+              <div className="grid grid-cols-3 gap-3">
                 <Input
-                  label="Stage 1 Idea (%)"
+                  label="Idea Weight (%)"
                   type="number"
                   min="0"
                   max="100"
                   value={hackathonForm.ideaWeight}
                   onChange={(e) =>
-                    setHackathonForm({
-                      ...hackathonForm,
-                      ideaWeight: parseInt(e.target.value) || 0,
-                    })
+                    setHackathonForm({ ...hackathonForm, ideaWeight: Number(e.target.value) })
                   }
                 />
-
                 <Input
-                  label="Stage 2 PPT (%)"
+                  label="PPT Weight (%)"
                   type="number"
                   min="0"
                   max="100"
                   value={hackathonForm.pptWeight}
                   onChange={(e) =>
-                    setHackathonForm({
-                      ...hackathonForm,
-                      pptWeight: parseInt(e.target.value) || 0,
-                    })
+                    setHackathonForm({ ...hackathonForm, pptWeight: Number(e.target.value) })
                   }
                 />
-
                 <Input
-                  label="Stage 3 Product (%)"
+                  label="Product Weight (%)"
                   type="number"
                   min="0"
                   max="100"
                   value={hackathonForm.productWeight}
                   onChange={(e) =>
-                    setHackathonForm({
-                      ...hackathonForm,
-                      productWeight: parseInt(e.target.value) || 0,
-                    })
+                    setHackathonForm({ ...hackathonForm, productWeight: Number(e.target.value) })
                   }
                 />
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-4 border-t border-zinc-800">
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-zinc-800">
               <Button
                 type="button"
-                variant="ghost"
+                variant="outline"
+                size="sm"
                 onClick={() => setIsHackathonModalOpen(false)}
-                disabled={isCreatingHackathon}
               >
                 Cancel
               </Button>
-              <Button type="submit" isLoading={isCreatingHackathon}>
-                Create Hackathon
+              <Button type="submit" size="sm" isLoading={isCreatingHackathon}>
+                Create Event
               </Button>
             </div>
           </form>

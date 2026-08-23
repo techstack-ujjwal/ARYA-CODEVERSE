@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { ShieldAlert, UserCheck, Award, ShieldCheck, ArrowLeft, RefreshCw } from "lucide-react";
+import { ShieldAlert, UserCheck, Award, ShieldCheck, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/lib/store/auth-context";
 import { UserRole } from "@/types/api";
 import { Button } from "@/components/ui/Button";
@@ -33,18 +33,18 @@ export function RoleGuard({
   const roleMeta: Record<UserRole, { label: string; icon: React.ReactNode; color: string }> = {
     participant: {
       label: "Participant",
-      icon: <UserCheck className="w-4 h-4 text-sky-400" />,
-      color: "border-sky-500/20 bg-sky-500/10 text-sky-400",
+      icon: <UserCheck className="w-4 h-4 text-white" />,
+      color: "border-zinc-700 bg-zinc-900 text-white",
     },
     judge: {
       label: "Judge",
-      icon: <Award className="w-4 h-4 text-amber-400" />,
-      color: "border-amber-500/20 bg-amber-500/10 text-amber-400",
+      icon: <Award className="w-4 h-4 text-white" />,
+      color: "border-zinc-700 bg-zinc-900 text-white",
     },
     admin: {
       label: "Admin",
       icon: <ShieldCheck className="w-4 h-4 text-emerald-400" />,
-      color: "border-emerald-500/20 bg-emerald-500/10 text-emerald-400",
+      color: "border-emerald-800/80 bg-emerald-950/60 text-emerald-400",
     },
   };
 
@@ -54,16 +54,16 @@ export function RoleGuard({
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-16 w-full">
-      <Card variant="elevated" className="border-amber-500/30 bg-zinc-950/80 p-8 text-center space-y-6">
-        <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400 shadow-[0_0_24px_rgba(245,158,11,0.15)]">
+      <Card variant="elevated" className="border-zinc-800 bg-zinc-950 p-8 text-center space-y-6">
+        <div className="w-14 h-14 rounded-2xl bg-zinc-900 border border-zinc-700 flex items-center justify-center mx-auto text-white">
           <ShieldAlert className="w-7 h-7" />
         </div>
 
         <div className="space-y-2">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-semibold uppercase tracking-wider bg-amber-500/10 text-amber-400 border border-amber-500/20">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-semibold uppercase tracking-wider bg-zinc-900 text-white border border-zinc-700">
             Access Restricted
           </div>
-          <h2 className="text-xl font-bold text-zinc-100 tracking-tight">
+          <h2 className="text-xl font-bold text-white tracking-tight">
             {title || `${requiredRoleLabel} Access Required`}
           </h2>
           <p className="text-xs text-zinc-400 max-w-md mx-auto leading-relaxed">
@@ -73,7 +73,7 @@ export function RoleGuard({
         </div>
 
         {/* Quick Role Switcher for Dev / Evaluation */}
-        <div className="p-4 rounded-xl bg-zinc-900/90 border border-zinc-800 text-left space-y-3">
+        <div className="p-4 rounded-xl bg-zinc-900 border border-zinc-800 text-left space-y-3">
           <div className="flex items-center justify-between text-xs">
             <span className="font-mono text-zinc-400">Current Role:</span>
             <Badge variant="outline" size="sm">
