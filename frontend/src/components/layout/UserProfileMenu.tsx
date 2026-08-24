@@ -187,7 +187,7 @@ export function UserProfileMenu() {
                       className={cn(
                         "w-full flex items-center justify-between p-2 rounded-xl border text-left transition-all cursor-pointer",
                         isSelected
-                          ? "bg-[#18181B] text-white border-[#18181B]"
+                          ? "bg-[#18181B] text-white border-[#18181B] dark:bg-zinc-800 dark:border-zinc-600 dark:text-zinc-100 shadow-xs"
                           : "bg-[#FAF8F5] border-[#E8E3D8] hover:bg-[#F4EFE6] text-[#18181B]"
                       )}
                     >

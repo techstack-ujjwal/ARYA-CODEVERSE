@@ -6,8 +6,10 @@ import { usePathname } from "next/navigation";
 import { UserProfileMenu } from "./UserProfileMenu";
 import { useAuth } from "@/lib/store/auth-context";
 import { HealthAPI } from "@/lib/api/health";
+import { AgentHealthResponse } from "@/types/api";
+import { Toggle } from "@/components/ui/Toggle";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import {
-  Activity,
   Layers,
   Trophy,
   Award,
@@ -16,8 +18,7 @@ import {
   Cpu,
   Menu,
   X,
-  Sparkles,
-  ArrowRight,
+  Radio,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -25,8 +26,26 @@ export function Navbar() {
   const pathname = usePathname();
   const { role } = useAuth();
   const [isBackendHealthy, setIsBackendHealthy] = useState<boolean | null>(null);
-  const [agentStatus, setAgentStatus] = useState<any>(null);
+  const [agentStatus, setAgentStatus] = useState<AgentHealthResponse | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+  const [isLiveSync, setIsLiveSync] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("juryx_live_sync");
+      if (stored !== null) {
+        setIsLiveSync(stored === "true");
+      }
+    }
+  }, []);
+
+  const handleToggleLiveSync = (enabled: boolean) => {
+    setIsLiveSync(enabled);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("juryx_live_sync", enabled ? "true" : "false");
+      window.dispatchEvent(new CustomEvent("juryx_live_sync_changed", { detail: { enabled } }));
+    }
+  };
 
   const checkHealth = async () => {
     try {
@@ -72,8 +91,8 @@ export function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-[#E8E3D8] bg-[#FAF8F5]/90 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto flex h-15 items-center justify-between px-4 sm:px-6">
+    <header className="sticky top-0 z-40 w-full border-b border-[#E8E3D8] bg-[#FAF8F5]/90 backdrop-blur-md transition-colors">
+      <div className="max-w-7xl mx-auto flex h-14 items-center justify-between px-4 sm:px-6">
         {/* Brand Logo */}
         <div className="flex items-center gap-6">
           <Link
@@ -88,7 +107,7 @@ export function Navbar() {
                 <span className="text-sm font-extrabold tracking-tight text-[#18181B] font-mono">
                   Jury<span className="text-[#3A4B86]">X</span>
                 </span>
-                <span className="text-[10px] font-mono font-bold text-[#2D5A36] bg-[#D8EAD9] px-2 py-0.2 rounded-full">
+                <span className="text-[10px] font-mono font-bold text-[#2D5A36] bg-[#D8EAD9] px-2 py-0.5 rounded-full">
                   Swarm v2.4
                 </span>
               </div>
@@ -120,8 +139,8 @@ export function Navbar() {
           </nav>
         </div>
 
-        {/* Right Actions: Health Pulse & Dev Switcher */}
-        <div className="flex items-center gap-3">
+        {/* Right Actions: Health Pulse, Live Telemetry, Theme Toggle, Profile & Action */}
+        <div className="flex items-center gap-2 sm:gap-2.5">
           {/* Live Backend Connection Indicator */}
           <button
             onClick={checkHealth}
@@ -147,6 +166,35 @@ export function Navbar() {
             )}
           </button>
 
+          {/* Live Swarm Telemetry Stream Toggle */}
+          <div
+            className="hidden xl:flex items-center gap-2 px-2.5 py-1 rounded-xl bg-white border border-[#E8E3D8] hover:border-[#D6CFBE] transition-all shadow-2xs"
+            title="Toggle Live Swarm Telemetry & Realtime Auto-Sync"
+          >
+            <Toggle
+              id="navbar-live-sync-toggle"
+              checked={isLiveSync}
+              onChange={handleToggleLiveSync}
+              size="sm"
+              variant="emerald"
+              label={
+                <span className="text-[11px] font-mono font-bold text-[#18181B] flex items-center gap-1.5 cursor-pointer select-none">
+                  <Radio
+                    className={cn(
+                      "w-3 h-3 transition-colors",
+                      isLiveSync ? "text-[#2D5A36] animate-pulse" : "text-[#71717A]"
+                    )}
+                  />
+                  <span>{isLiveSync ? "Live" : "Paused"}</span>
+                </span>
+              }
+            />
+          </div>
+
+          {/* Theme Toggle (Light / Dark) */}
+          <ThemeToggle variant="switch" />
+
+          {/* User Profile & Role Switcher */}
           <UserProfileMenu />
 
           <Link
@@ -170,7 +218,7 @@ export function Navbar() {
 
       {/* Mobile Drawer Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden border-t border-[#E8E3D8] bg-[#FAF8F5] px-4 py-3 space-y-2 animate-in slide-in-from-top-2 duration-150 shadow-lg">
+        <div className="md:hidden border-t border-[#E8E3D8] bg-[#FAF8F5] px-4 py-3 space-y-3 animate-in slide-in-from-top-2 duration-150 shadow-lg">
           <div className="space-y-1">
             {navLinks.map((link) => {
               const isActive =
@@ -192,6 +240,29 @@ export function Navbar() {
                 </Link>
               );
             })}
+          </div>
+
+          {/* Mobile Theme Appearance Toggle */}
+          <ThemeToggle variant="full" />
+
+          {/* Mobile Live Swarm Telemetry Toggle */}
+          <div className="py-2.5 px-3 rounded-xl bg-white border border-[#E8E3D8] flex items-center justify-between shadow-2xs">
+            <span className="text-xs font-semibold text-[#18181B] flex items-center gap-2">
+              <Radio
+                className={cn(
+                  "w-3.5 h-3.5",
+                  isLiveSync ? "text-[#2D5A36] animate-pulse" : "text-[#71717A]"
+                )}
+              />
+              <span>Live Swarm Telemetry</span>
+            </span>
+            <Toggle
+              id="navbar-mobile-live-sync-toggle"
+              checked={isLiveSync}
+              onChange={handleToggleLiveSync}
+              size="sm"
+              variant="emerald"
+            />
           </div>
 
           <div className="pt-2 border-t border-[#E8E3D8] flex items-center justify-between text-xs font-mono text-[#52525B]">

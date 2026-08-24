@@ -92,13 +92,13 @@ export function Toggle({
             currentSize.track,
             checked
               ? activeColors[variant] || activeColors.default
-              : "bg-[#E8E3D8] border-[#D6CFBE] group-hover:border-[#B5AC9D]"
+              : "bg-[#E8E3D8] border-[#D6CFBE] dark:bg-zinc-800 dark:border-zinc-700 group-hover:border-[#B5AC9D] dark:group-hover:border-zinc-500"
           )}
         >
           {/* Knob */}
           <div
             className={cn(
-              "rounded-full transition-all duration-200 ease-in-out transform shadow-xs flex items-center justify-center pointer-events-none bg-white",
+              "rounded-full transition-all duration-200 ease-in-out transform shadow-xs flex items-center justify-center pointer-events-none bg-white dark:bg-zinc-200",
               currentSize.knob,
               checked ? currentSize.translate : currentSize.translateZero
             )}
@@ -165,11 +165,11 @@ export function SegmentedToggle<T extends string>({
               "relative flex items-center gap-1.5 rounded-lg font-semibold transition-all duration-150 cursor-pointer",
               size === "sm" ? "px-2.5 py-1 text-xs" : "px-3 py-1.5 text-xs",
               isActive
-                ? "bg-[#18181B] text-white shadow-xs"
-                : "text-[#52525B] hover:text-[#18181B] hover:bg-[#FAF8F5]"
+                ? "bg-[#18181B] text-white shadow-xs dark:bg-zinc-100 dark:text-zinc-900"
+                : "text-[#52525B] hover:text-[#18181B] hover:bg-[#FAF8F5] dark:text-zinc-400 dark:hover:text-white dark:hover:bg-zinc-800"
             )}
           >
-            {opt.icon && <span className={cn(isActive ? "text-white" : "text-[#71717A]")}>{opt.icon}</span>}
+            {opt.icon && <span className={cn(isActive ? "text-white dark:text-zinc-900" : "text-[#71717A]")}>{opt.icon}</span>}
             <span>{opt.label}</span>
             {opt.badge && <span className="ml-1">{opt.badge}</span>}
           </button>

@@ -145,7 +145,26 @@ export default function DashboardPage() {
     }
   }, []);
 
-  // Live Auto-Refresh Timer Toggle Effect
+  // Live Auto-Refresh Timer Toggle Effect & Navbar Sync
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("juryx_live_sync");
+      if (stored !== null) {
+        setAutoRefresh(stored === "true");
+      }
+    }
+
+    const handleLiveSync = (e: Event) => {
+      const customEvent = e as CustomEvent<{ enabled: boolean }>;
+      if (customEvent.detail?.enabled !== undefined) {
+        setAutoRefresh(customEvent.detail.enabled);
+      }
+    };
+
+    window.addEventListener("juryx_live_sync_changed", handleLiveSync);
+    return () => window.removeEventListener("juryx_live_sync_changed", handleLiveSync);
+  }, []);
+
   useEffect(() => {
     if (!autoRefresh) return;
     const interval = setInterval(() => {
